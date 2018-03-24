@@ -1,0 +1,156 @@
+[quote, Isaac Asimov]
+> Self-education is, I firmly believe, the only kind of education there is.
+
+== Purpose
+
+This repository is mainly for personal education, developing the same
+domain in different languages/frameworks.
+
+== Domain
+
+The following picture is just a rough explanation about the services and their purpose.
+Since I want to play with something little more challanging than simple CRUD, I've
+created a pseudo workflow.
+In order to keep the image free from to many connections, I've decided to make a logical
+connection (dashed line), which actually means a response to the orchestration. In case
+of the Akka service-implementation (not orchestration) the message flow will also be different,
+but the overall meaning remains the same.
+
+[ditaa]
+....
+
+       +--------------------------------------------------------------------+
+       |                                                                    |
+       |         Some Kind of Orchestration (Camunda, Akka Integration)     |
+       |                                                                    |
+       +--------------------------------------------------------------------+
+            |                            |                             |
+            |                   Request  |                             |
+   New Bike |                   Approval |                             |Expedition Planned
+            |                            |                             |
+            |                            v                             |
+            v                      /------------\                      v
+       /---------\    Rejected     |    Wife    |     Accepted    /---------\
+       |  Bikes  |<---------------=|------------|=--------------->|  Tours  |
+       |         |  (5 is enough)  |    Rule    |  (with Family)  |         |
+       \---------/                 |   Engine   |                 \---------/
+            |                      \------------/                      |
+            |                                                          |
+            v                                                          v
+         +-----+                                                    +-----+
+         |{s}  |                                                    |{s}  |
+         |     |                                                    |     |
+         |     |                                                    |     |
+         +-----+                                                    +-----+
+
+....
+
+Here a short step-by-step explanation for a bike-workflow (tour goes pretty much the same for now)
+
+. add a new Bike
+.. the bikes-domain creates this bike, with a pending approval state
+.. modification is not allowed until approved
+. request approval from the wife-domain
+** decides with some simple rules if the request is to be approved
+** depending on the language this might be something more advanced (e.g. Drools as a rules engine)
+. change state according to approval
+
+== Languages / Frameworks / Tools
+
+The plan is to implement several services in the following languages/frameworks
+
+* Rust -> in progress
+* Go -> in progress
+* JavaEE
+* Akka (Scala)
+* Spring
+
+Orchestration will probably be done with the following
+
+* Camunda
+* Akka (Reactive style)
+
+And if there is time, the deployment within some PaaS
+
+* Dockerize
+* Run on Openshift
+* Acceptance tests using Hiptest
+
+
+= Resources
+
+This section will describe the basic resources used for the communcation between the services.
+An exception will be Akka, which will pass messages accross service-boundaries (see README in module).
+
+I've choosen to use POST for all methods that will change the state of a class/struct not directly
+covered by this current resource. For instance, a new bike-resource can only be created via POST,
+because it will also create an pending-approval. Since this simulates some workflow, it is not
+idempotent. Once a bike is approved, it can be modified via PUT
+
+Instead of using the entities as the resource-representation, dedicated types
+will be used. This makes it easier to encapsulate domain-knowledge at the
+entity-level and gives more control over the interface (not leaking fields unintentionally)
+
+NOTE: The `port` will be different depending on the implementation in order to switch. Docker will make
+      this easier later
+
+==== Bike-Service
+
+
+
+.Table Usage
+|===
+|URL |HTTP Method |Description
+
+|http://localhost:8080/bikes
+|GET
+|List all available bikes
+
+
+|http://localhost:8080/bikes/{id}
+|POST
+|Creates a new bike with an pending approval
+
+|http://localhost:8080/bikes/{id}
+|PUT
+|Change the bike with {id}. For fun, only "approved" bike can be changed.
+
+|http://localhost:8080/bikes/{id}
+|GET
+|List the bike with {id}
+
+|http://localhost:8080/bikes/{id}/approval
+|GET
+|List approval-status of bike with {id}
+
+|http://localhost:8080/bikes/{id}/approval
+|POST
+|approve/reject approval-status (going back to pending is not allowed)
+|===
+
+
+==== Tour-Service
+
+TODO
+
+== Orchestration
+
+==== Camunda
+
+Camunda offers a way to orchestrate microservices using its BPMN notation.
+
+.Get and run Camunda
+----
+docker pull camunda/camunda-bpm-platform:latest
+docker run -d --name camunda -p 8080:8080 camunda/camunda-bpm-platform:latest
+----
+
+localhost:8080/camunda-welcome/index.html
+
+TODO
+
+==== Akka
+
+Akka can be used to implement basic integration patterns. Let's see how this turns out...
+
+TODO

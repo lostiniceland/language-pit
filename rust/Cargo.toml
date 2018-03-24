@@ -1,0 +1,3 @@
+[workspace]
+members = [ "alloy-bikes", "alloy-tours", "iron-maiden" ]
+

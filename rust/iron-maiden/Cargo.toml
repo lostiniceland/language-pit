@@ -1,0 +1,6 @@
+[package]
+name = "iron-maiden"
+version = "0.1.0"
+authors = ["Marc Schlegel <marc.schlegel@gmx.de>"]
+
+[dependencies]
