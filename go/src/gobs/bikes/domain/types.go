@@ -32,14 +32,10 @@ type Bikes []Bike
 type Parts []Part
 
 
-type ServerAdapter interface {
-	ListenAndServe(bikeRepo BikeRepository)
-}
-
 type BikeRepository interface {
 	FindBike(id int) (Bike, error)
 	FindAllBikes() Bikes
-	AddBike(bike *Bike) Bikes
+	AddBike(bike *Bike) Bike
 	SaveBike(bike *Bike) error
 }
 

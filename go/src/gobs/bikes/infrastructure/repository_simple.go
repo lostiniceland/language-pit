@@ -30,7 +30,7 @@ func (store *SimpleStorage) FindAllBikes() domain.Bikes {
 }
 
 // Add the given bike to the store and assigns an identity to the bike
-func (store *SimpleStorage) AddBike(bike *domain.Bike) domain.Bikes {
+func (store *SimpleStorage) AddBike(bike *domain.Bike) domain.Bike {
 	store.bikesMutex.Lock()
 	if len(store.bikes) == 0 {
 		bike.Id = 1
@@ -39,7 +39,7 @@ func (store *SimpleStorage) AddBike(bike *domain.Bike) domain.Bikes {
 	}
 	store.bikes = append(store.bikes, *bike)
 	store.bikesMutex.Unlock()
-	return store.bikes
+	return *bike
 }
 
 func (store *SimpleStorage) SaveBike(bike *domain.Bike) error {

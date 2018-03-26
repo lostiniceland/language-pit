@@ -55,12 +55,9 @@ func (store *GormSqlLite3Repository) FindAllBikes() domain.Bikes {
 	return bikes
 }
 
-func (store *GormSqlLite3Repository) AddBike(bike *domain.Bike) domain.Bikes {
+func (store *GormSqlLite3Repository) AddBike(bike *domain.Bike) domain.Bike {
 	store.db.Save(&bike)
-	// not good...works for now
-	var bikes domain.Bikes
-	store.db.Find(&bikes)
-	return bikes
+	return *bike
 }
 
 
