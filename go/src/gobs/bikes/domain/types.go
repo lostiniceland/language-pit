@@ -46,6 +46,7 @@ type BikeRepository interface {
 	FindAllBikes() Bikes
 	AddBike(bike *Bike) Bike
 	SaveBike(bike *Bike) error
+	Close()
 }
 
 

@@ -16,7 +16,7 @@ type GormSqlLite3Repository struct {
 }
 
 
-func NewGormSqlLite3Storage (path string) GormSqlLite3Repository {
+func NewGormSqlLite3Storage (path string) domain.BikeRepository {
 	db, err := gorm.Open("sqlite3", path)
 	if err != nil {
 		log.Fatal(err)
@@ -37,7 +37,7 @@ func NewGormSqlLite3Storage (path string) GormSqlLite3Repository {
 		os.Exit(1)
 	}()
 
-	return store
+	return &store
 
 }
 

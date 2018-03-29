@@ -12,8 +12,8 @@ type SimpleStorage struct {
 	bikes      domain.Bikes
 }
 
-func NewSimpleStorage() SimpleStorage {
-	return SimpleStorage{bikes: domain.Bikes{}}
+func NewSimpleStorage() domain.BikeRepository {
+	return &SimpleStorage{bikes: domain.Bikes{}}
 }
 
 func (store *SimpleStorage) FindBike(id int) (domain.Bike, error) {

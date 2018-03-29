@@ -13,7 +13,7 @@ import (
 var _ = Describe("SimpleRepository", func() {
 
 	var (
-		sut SimpleStorage
+		sut domain.BikeRepository
 	)
 
 	BeforeEach(func() {
@@ -29,11 +29,11 @@ var _ = Describe("SimpleRepository", func() {
 		ch := make(chan int)
 		for i := 0; i < channelCount; i++ {
 
-			go func (repo *SimpleStorage, ch chan<-int){
+			go func (repo domain.BikeRepository, ch chan<-int){
 				var bike = domain.NewBike("Nicolai", "Helius AM Pinion", 16.0, domain.Parts{})
 				repo.AddBike(bike)
 				ch <- bike.Id
-			}(&sut, ch)
+			}(sut, ch)
 		}
 
 		for i := 0; i < channelCount; i++ {
@@ -55,7 +55,7 @@ var _ = Describe("GormRepository", func() {
 	const testDbFilename = "test.db"
 
 	var (
-		sut GormSqlLite3Repository
+		sut domain.BikeRepository
 		bike *domain.Bike
 	)
 

@@ -12,3 +12,5 @@
 .settings/
 .classpath
 .project
+
+scala-akka/gradlew.bat

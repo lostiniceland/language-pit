@@ -24,7 +24,8 @@ func (service HttpRouterService) ListenAndServe(app application.Application) {
 	routeBikes(r, app)
 	routeApproval(r, app)
 
-	http.ListenAndServe(":"+service.Port, r)
+	http.ListenAndServe(service.Port, r)
+	log.Println("Stopping httprouter server")
 }
 
 func routeBikes(r *httprouter.Router, app application.Application) {
