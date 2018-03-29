@@ -4,7 +4,7 @@ import "errors"
 
 
 func NewBike( manufacturer string, name string, weight float32, parts Parts) *Bike {
-	return &Bike{Manufacturer: manufacturer, Name: name, Weight: weight, Parts: parts, Approval: &Approval{Status: Pending}}
+	return &Bike{Manufacturer: manufacturer, Name: name, Weight: weight, Parts: parts, Approval: Pending}
 }
 
 func (bike *Bike) AddPart(name string, weight float32){
@@ -13,60 +13,40 @@ func (bike *Bike) AddPart(name string, weight float32){
 
 func(bike *Bike) RemovePart(part *Part){
 	for i, p := range bike.Parts {
-		if IsPartEqual(&p, part) {
+		if part.Id == p.Id {
 			bike.Parts = append(bike.Parts[:i], bike.Parts[i+1:]...)
 			break
 		}
 	}
 }
 
-// TODO not the best solution
-func IsBikeEqual(left *Bike, right *Bike) bool {
-	var equal = left.Manufacturer == right.Manufacturer && left.Name == right.Name && left.Weight == right.Weight
-	if equal {
-		equal = left.Approval.Id == right.Approval.Id && left.Approval.Status == right.Approval.Status
-	}
-	if equal {
-		// compare parts
-		if len(left.Parts) != len(right.Parts) {
-			return false
-		}
 
-		if (left.Parts == nil) != (right.Parts == nil) {
-			return false
-		}
-
-		for i, v := range left.Parts {
-			if v != right.Parts[i] {
-				return false
-			}
-		}
-	}
-	return equal
-}
-
-// TODO not the best solution
-func IsPartEqual (left *Part, right *Part) bool {
-	return left.Name == right.Name && left.Weight == right.Weight
-}
-
-func (bike *Bike) Update(manufacturer string, name string, weight float32, parts Parts) (error) {
-	if bike.Approval.Status != Accepted {
+func (bike *Bike) Update(manufacturer string, name string, weight float32, parts []PartDTO) (error) {
+	if bike.Approval != Accepted {
 		return errors.New("only approved bikes can be modified")
 	}
 	bike.Manufacturer = manufacturer
 	bike.Name = name
 	bike.Weight = weight
-	bike.Parts = parts
+
+	for _, dto := range parts {
+		for _, part := range bike.Parts {
+			if part.Id == dto.Id {
+				part.Name = dto.Name
+				part.Weight = dto.Weight
+				break
+			}
+		}
+	}
 
 	return nil
 }
 
 func (bike *Bike) UpdateApproval(status ApprovalStatus) (error) {
-	if status == Pending && bike.Approval.Status != Pending {
+	if status == Pending && bike.Approval != Pending {
 		return errors.New("Cannot change approval back to pending")
 	}
-	bike.Approval.Status = status
+	bike.Approval = status
 	return nil
 }
 

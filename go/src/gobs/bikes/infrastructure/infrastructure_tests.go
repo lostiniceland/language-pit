@@ -77,17 +77,16 @@ var _ = Describe("GormRepository", func() {
 			Manufacturer: "Nicolai",
 			Name: "Helius AM Pinion",
 			Weight: 16.0 ,
-			Parts: domain.Parts{domain.Part{"BOS Deville", 2.0}},
-			Approval: &domain.Approval{Status: domain.Pending},
+			Parts: domain.Parts{domain.Part{Name: "BOS Deville", Weight: 2.0}},
+			Approval: domain.Pending,
 		}
 	})
 
 
 	It("should be able to add a bike to the database", func() {
-		Skip("Gorm doesn persist relation at the moment...need to figure out")
 		sut.AddBike(bike)
 		read, _ := sut.FindBike(1)
-		Ω(read).Should(Equal(bike))
+		Ω(read).Should(Equal(*bike))
 	})
 })
 

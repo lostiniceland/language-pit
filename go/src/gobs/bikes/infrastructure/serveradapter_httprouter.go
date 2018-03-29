@@ -45,7 +45,7 @@ func routeBikes(r *httprouter.Router, app application.Application) {
 			w.WriteHeader(http.StatusBadRequest)
 			fmt.Fprint(w, err)
 		} else {
-			bikeP, err := app.CreateBike(postData.Manufacturer, postData.Name, postData.Weight, postData.Parts)
+			bikeP, err := app.CreateBike(postData.Manufacturer, postData.Name, postData.Weight, convertPartResourcesToDTOs(postData.Parts))
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				fmt.Fprint(w, err)
@@ -92,7 +92,7 @@ func routeBikes(r *httprouter.Router, app application.Application) {
 				w.WriteHeader(http.StatusBadRequest)
 				fmt.Fprint(w, err)
 			} else {
-				bike, err := app.UpdateBike(id, resource.Manufacturer, resource.Name, resource.Weight, resource.Parts)
+				bike, err := app.UpdateBike(id, resource.Manufacturer, resource.Name, resource.Weight, convertPartResourcesToDTOs(resource.Parts))
 				if err != nil {
 					// TODO improve, because some errors are more appropriate for MethodNotAllowed
 					w.WriteHeader(http.StatusInternalServerError)
@@ -126,7 +126,7 @@ func routeApproval(r *httprouter.Router, app application.Application) {
 			} else {
 				var approvalResource = ApprovalResource{
 					BikeId:   bikeEntity.Id,
-					Approval: convertStatus(bikeEntity.Approval.Status),
+					Approval: convertStatus(bikeEntity.Approval),
 				}
 				body, _ := json.MarshalIndent(approvalResource, "", "  ")
 				w.Header().Set("Content-Type", "application/json")
@@ -157,7 +157,7 @@ func routeApproval(r *httprouter.Router, app application.Application) {
 				} else {
 					var approvalResource = ApprovalResource{
 						BikeId:   bikeEntity.Id,
-						Approval: convertStatus(bikeEntity.Approval.Status),
+						Approval: convertStatus(bikeEntity.Approval),
 					}
 					body, _ := json.MarshalIndent(approvalResource, "", "\t")
 					w.Header().Set("Content-Type", "application/json")

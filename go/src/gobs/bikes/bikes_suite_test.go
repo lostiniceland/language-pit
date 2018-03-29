@@ -7,7 +7,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestDomain(t *testing.T) {
+func TestBikesSuite(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Bikes Suite")
 }
+

@@ -6,8 +6,8 @@ import (
 )
 
 func main() {
-	var repository = infrastructure.NewSimpleStorage()
-	//var repository = infrastructure.NewGormSqlLite3Storage("/tmp/gorm.db")
+	//var repository = infrastructure.NewSimpleStorage()
+	var repository = infrastructure.NewGormSqlLite3Storage("/tmp/gorm.db")
 	defer repository.Close()
 	var adapter = infrastructure.HttpRouterService{"8080"}
 	application.StartApplication(adapter, &repository)

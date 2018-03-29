@@ -9,7 +9,7 @@ type dependencyHolder struct {
 
 func StartApplication (adapter ServerAdapter, repository domain.BikeRepository) {
 	if len(repository.FindAllBikes()) == 0 {
-		var parts = domain.Parts { domain.Part{"BOS", 2.0} }
+		var parts = domain.Parts { domain.Part{Name: "BOS", Weight: 2.0} }
 		var bike = domain.NewBike("Nicolai", "Helius AM Pinion", 16.0, parts)
 		repository.AddBike(bike)
 	}
@@ -17,8 +17,12 @@ func StartApplication (adapter ServerAdapter, repository domain.BikeRepository) 
 }
 
 
-func (app *dependencyHolder) CreateBike(manufacturer string, name string, weight float32, parts domain.Parts) (domain.Bike, error) {
-	var newBikeP = domain.NewBike(manufacturer, name, weight, parts)
+func (app *dependencyHolder) CreateBike(manufacturer string, name string, weight float32, parts []domain.PartDTO) (domain.Bike, error) {
+	var domainParts = make(domain.Parts, len(parts), cap(parts))
+	for _, part := range parts {
+		domainParts = append(domainParts, domain.Part{Name: part.Name, Weight: part.Weight})
+	}
+	var newBikeP = domain.NewBike(manufacturer, name, weight, domainParts)
 	// TODO add error-handling
 	app.repository.AddBike(newBikeP)
 	return *newBikeP, nil
@@ -26,7 +30,7 @@ func (app *dependencyHolder) CreateBike(manufacturer string, name string, weight
 
 
 // Handles the retrieval by id, updating the entity and storing it
-func (app *dependencyHolder) UpdateBike(id int, manufacturer string, name string, weight float32, parts domain.Parts) (domain.Bike, error) {
+func (app *dependencyHolder) UpdateBike(id int, manufacturer string, name string, weight float32, parts []domain.PartDTO) (domain.Bike, error) {
 	var bike domain.Bike
 	bike, err := app.repository.FindBike(id)
 	if err != nil {

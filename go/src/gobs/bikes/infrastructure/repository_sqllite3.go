@@ -22,8 +22,8 @@ func NewGormSqlLite3Storage (path string) GormSqlLite3Repository {
 		log.Fatal(err)
 		panic("Cannot connect to database!")
 	}
-	db.LogMode(true)
-	db.AutoMigrate(domain.Bike{}, domain.Part{}, domain.Approval{})
+	//db.LogMode(true)
+	db.AutoMigrate(domain.Bike{}, domain.Part{})
 	log.Print("Database created")
 
 	store := GormSqlLite3Repository{db }
@@ -43,15 +43,21 @@ func NewGormSqlLite3Storage (path string) GormSqlLite3Repository {
 
 func (store *GormSqlLite3Repository) FindBike(id int) (domain.Bike, error) {
 	var bike domain.Bike
-	if store.db.Where("id = ?", id).First(&bike).RecordNotFound() {
+	//if store.db.Where("id = ?", id).First(&bike).RecordNotFound() {
+	//	return domain.Bike{}, errors.New("bike with id not found")
+	//}
+	if store.db.Preload("Parts").Find(&bike).Where("id = ?", id).RecordNotFound() {
 		return domain.Bike{}, errors.New("bike with id not found")
 	}
+	//var approval domain.Approval
+	//store.db.Model(&bike).Related(&approval)
+	//bike.Approval = &approval
 	return bike, nil
 }
 
 func (store *GormSqlLite3Repository) FindAllBikes() domain.Bikes {
 	var bikes domain.Bikes
-	store.db.Find(&bikes)
+	store.db.Preload("Parts").Find(&bikes)
 	return bikes
 }
 
@@ -78,3 +84,4 @@ func (store *GormSqlLite3Repository) Close() {
 	}
 	log.Print("Database closed")
 }
+
