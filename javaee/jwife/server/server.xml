@@ -1,0 +1,22 @@
+<server description="Default Server">
+
+  <featureManager>
+    <feature>webProfile-7.0</feature>
+  </featureManager>
+
+  <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="8080"/>
+
+  <dataSource id="DefaultDataSource" jndiName="jdbc/derbyEmbedded">
+    <jdbcDriver libraryRef="DerbyLib"/>
+    <properties.derby.embedded databaseName="${env.DERBY_DB_LOCATION}" createDatabase="create"/>
+  </dataSource>
+
+  <library id="DerbyLib">
+    <fileset dir="${server.config.dir}/derbyLib"/>
+  </library>
+
+  <jndiEntry jndiName="orchestrationUrl" value='"http://localhost:9090/"' />
+
+  <webApplication contextRoot="wife" location="wife.war"/>
+
+</server>

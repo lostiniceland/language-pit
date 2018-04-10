@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package wife;
+
+option java_package = "wife.infrastructure.protobuf";
+option go_package = "infrastructure";
+
+
+message BikeApprovalsMessage {
+  repeated BikeApprovalMessage approvals = 1;
+}
+
+message BikeApprovalMessage {
+  int64 bike_id = 1;
+  float value = 2;
+  ApprovalEnumType approval = 3;
+}
+
+
+message CreateBikeApprovalMessage {
+  int64 bike_id = 1;
+  float value = 2;
+}
+
+
+message BikeApprovedMessage {
+  int64 bike_id = 1;
+}
+
+message BikeRejectedMessage {
+  int64 bike_id = 1;
+}
+
+enum ApprovalEnumType {
+  PENDING = 0;
+  ACCEPTED = 1;
+  REJECTED = 2;
+}

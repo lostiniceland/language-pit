@@ -1,0 +1,51 @@
+syntax = "proto3";
+package bikes;
+
+option java_package = "bikes.infrastructure.protobuf";
+option go_package = "infrastructure";
+
+message BikesMessage {
+  repeated BikeMessage bikes = 1;
+}
+
+message BikeMessage {
+  string manufacturer = 1;
+  string name = 2;
+  float weight = 3;
+  float value = 4;
+  repeated PartType parts = 5;
+  ApprovalEnumType approval = 6;
+}
+
+message CreateBikeMessage {
+  string manufacturer = 1;
+  string name = 2;
+  float weight = 3;
+  float value = 4;
+  repeated PartType parts = 5;
+}
+
+message PartType {
+  string name = 1;
+  float weight = 2;
+}
+
+enum ApprovalEnumType {
+  PENDING = 0;
+  ACCEPTED = 1;
+  REJECTED = 2;
+}
+
+message ApprovalMessage {
+  int64 bike_id = 1;
+  ApprovalEnumType approval = 2;
+}
+
+message BikeCreatedMessage {
+  int64 bike_id = 1;
+  float value = 2;
+}
+
+message BikeDeletedMessage {
+  int64 bike_id = 1;
+}

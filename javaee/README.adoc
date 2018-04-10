@@ -1,0 +1,28 @@
+== Java-Enterprise
+
+=== JPA
+At the moment JPA is used to implement the repositories defined in the domain-layer.
+This may not be optimal for a pure resource-based application since advanced features
+like lazy-loading of entites (especially joins) cannot be used as most of the entities
+will be exposed via JSON.
+
+.Ways to improve
+* make use of Views on the database level
+* use plain SQL (or some other framework for more control)
+* leverage JPA in some other way
+
+
+=== Docker
+
+Since JavaEE relies on a application-server hosting the application a Docker container
+has been added to the gradle-build.
+
+.Build and run
+----
+gradlew war buildImage
+docker run -it --rm -p 8080:8080 languagepit/javaee:openliberty
+curl http://localhost:8080/bikes
+----
+
+The environment DERBY_DB_LOCATION can be used to store the embedded database
+on a volumne if needed
