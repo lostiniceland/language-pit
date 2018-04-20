@@ -1,8 +1,6 @@
 package infrastructure
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 	"gobs/bikes/domain"
 	"sort"
 	"os"
@@ -24,13 +22,13 @@ var _ = Describe("SimpleRepository", func() {
 	It("should compute id under concurrent load correctly (tests the mutex)", func() {
 		var channelCount = 100
 
-		var generatedBikeIds = make([]int, channelCount)
+		var generatedBikeIds = make([]int64, channelCount)
 
-		ch := make(chan int)
+		ch := make(chan int64)
 		for i := 0; i < channelCount; i++ {
 
-			go func (repo domain.BikeRepository, ch chan<-int){
-				var bike = domain.NewBike("Nicolai", "Helius AM Pinion", 16.0, domain.Parts{})
+			go func(repo domain.BikeRepository, ch chan<- int64) {
+				var bike = domain.NewBike("Nicolai", "Helius AM Pinion", 16.0, 8000.0, domain.Parts{})
 				repo.AddBike(bike)
 				ch <- bike.Id
 			}(sut, ch)
@@ -44,7 +42,9 @@ var _ = Describe("SimpleRepository", func() {
 		for i := 0; i < channelCount; i++ {
 			expected = append(expected, i + 1)
 		}
-		sort.Ints(generatedBikeIds) // sort, because channels might come back in different order
+		sort.Slice(generatedBikeIds, func(i, j int) bool {
+			return generatedBikeIds[i] < generatedBikeIds[j]
+		}) // sort, because channels might come back in different order
 		Expect(expected).To(Equal(generatedBikeIds))
 	})
 })

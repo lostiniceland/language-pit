@@ -41,7 +41,7 @@ func NewGormSqlLite3Storage (path string) domain.BikeRepository {
 
 }
 
-func (store *GormSqlLite3Repository) FindBike(id int) (domain.Bike, error) {
+func (store *GormSqlLite3Repository) FindBike(id int64) (domain.Bike, error) {
 	var bike domain.Bike
 	//if store.db.Where("id = ?", id).First(&bike).RecordNotFound() {
 	//	return domain.Bike{}, errors.New("bike with id not found")

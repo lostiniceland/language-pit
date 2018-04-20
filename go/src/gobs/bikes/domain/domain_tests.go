@@ -1,10 +1,5 @@
 package domain
 
-import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-)
-
 var _ = Describe("Domain", func() {
 
 	var (
@@ -32,7 +27,7 @@ var _ = Describe("Domain", func() {
 	Describe("Bike", func() {
 		It("should have a constructor", func() {
 			expectedDefault.Parts = Parts{} // constructor doesnt add any parts
-			var b = NewBike("Nicolai", "Helius AM Pinion", 16.0, Parts{})
+			var b = NewBike("Nicolai", "Helius AM Pinion", 16.0, 0.0, Parts{})
 			Expect(b).To(Equal(&expectedDefault))
 		})
 		It("should be able to add parts", func() {
@@ -50,9 +45,9 @@ var _ = Describe("Domain", func() {
 	Describe("Logic", func(){
 		It("only approved bikes can be modified", func(){
 			var expected = Bike{Id: 1, Manufacturer: "Nicolai Updated", Name: "Helius AM Pinion Updated", Weight: 15.0, Approval: Accepted}
-			var bike = &Bike{Id: 1, Manufacturer: "Nicolai", Name: "Helius AM Pinion", Weight: 16.0, Approval: Accepted }
+			var bike = &Bike{Id: 1, Manufacturer: "Nicolai", Name: "Helius AM Pinion", Weight: 16.0, Value: 8000.0, Approval: Accepted}
 
-			bike.Update(expected.Manufacturer, expected.Name, expected.Weight, []PartDTO{})
+			bike.Update(expected.Manufacturer, expected.Name, expected.Weight, 8000.0, []Part{})
 
 			Expect(bike).To(Equal(&expected))
 		})
@@ -60,11 +55,11 @@ var _ = Describe("Domain", func() {
 			var expected = Bike{Id: 1, Manufacturer: "Nicolai Updated", Name: "Helius AM Pinion Updated", Weight: 15.0 }
 			var bike = &Bike{Id: 1, Manufacturer: "Nicolai", Name: "Helius AM Pinion", Weight: 16.0, Approval: Pending}
 
-			err := bike.Update(expected.Manufacturer, expected.Name, expected.Weight, []PartDTO{})
+			err := bike.Update(expected.Manufacturer, expected.Name, expected.Weight, 8000.0, []Part{})
 
 			Ω(err).Should(HaveOccurred())
 			// check that reference wasnt updated
-			Ω(bike).Should(Equal(&Bike{Id: 1, Manufacturer: "Nicolai", Name: "Helius AM Pinion", Weight: 16.0, Approval: Pending}))
+			Ω(bike).Should(Equal(&Bike{Id: 1, Manufacturer: "Nicolai", Name: "Helius AM Pinion", Weight: 16.0, Value: 8000.0, Approval: Pending}))
 		})
 	})
 })

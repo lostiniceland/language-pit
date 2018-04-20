@@ -10,19 +10,18 @@ type dependencyHolder struct {
 func StartApplication (adapter ServerAdapter, repository domain.BikeRepository) {
 	if len(repository.FindAllBikes()) == 0 {
 		var parts = domain.Parts { domain.Part{Name: "BOS", Weight: 2.0} }
-		var bike = domain.NewBike("Nicolai", "Helius AM Pinion", 16.0, parts)
+		var bike = domain.NewBike("Nicolai", "Helius AM Pinion", 8000.0, 16.0, parts)
 		repository.AddBike(bike)
 	}
 	adapter.ListenAndServe(&dependencyHolder{repository: repository})
 }
 
-
-func (app *dependencyHolder) CreateBike(manufacturer string, name string, weight float32, parts []domain.PartDTO) (domain.Bike, error) {
+func (app *dependencyHolder) CreateBike(manufacturer string, name string, weight float32, value float32, parts []domain.Part) (domain.Bike, error) {
 	var domainParts = make(domain.Parts, len(parts), cap(parts))
 	for _, part := range parts {
 		domainParts = append(domainParts, domain.Part{Name: part.Name, Weight: part.Weight})
 	}
-	var newBikeP = domain.NewBike(manufacturer, name, weight, domainParts)
+	var newBikeP = domain.NewBike(manufacturer, name, weight, value, domainParts)
 	// TODO add error-handling
 	app.repository.AddBike(newBikeP)
 	return *newBikeP, nil
@@ -30,13 +29,13 @@ func (app *dependencyHolder) CreateBike(manufacturer string, name string, weight
 
 
 // Handles the retrieval by id, updating the entity and storing it
-func (app *dependencyHolder) UpdateBike(id int, manufacturer string, name string, weight float32, parts []domain.PartDTO) (domain.Bike, error) {
+func (app *dependencyHolder) UpdateBike(id int64, manufacturer string, name string, weight float32, value float32, parts []domain.Part) (domain.Bike, error) {
 	var bike domain.Bike
 	bike, err := app.repository.FindBike(id)
 	if err != nil {
 		return bike, err
 	}
-	err = bike.Update(manufacturer, name, weight, parts)
+	err = bike.Update(manufacturer, name, weight, value, parts)
 	if err != nil {
 		return bike, err
 	}
@@ -47,9 +46,7 @@ func (app *dependencyHolder) UpdateBike(id int, manufacturer string, name string
 	return bike, nil
 }
 
-
-
-func (app *dependencyHolder) UpdateApproval(id int, status domain.ApprovalStatus) (domain.Bike, error) {
+func (app *dependencyHolder) UpdateApproval(id int64, status domain.ApprovalStatus) (domain.Bike, error) {
 	var bike domain.Bike
 	bike, err := app.repository.FindBike(id)
 	if err != nil {

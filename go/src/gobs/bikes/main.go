@@ -15,14 +15,14 @@ const (
 
 func main() {
 
-	var (
-		port   = envString("PORT", defaultPort)
-		dbUrl = envString("DB_URL", defaultSqlLitePath)
+	port := envString("PORT", defaultPort)
+	dbUrl := envString("DB_URL", defaultSqlLitePath)
 
-		httpPort   = flag.String("http.port", ":"+port, "HTTP listen address")
-		sqlLiteUrl = flag.String("db.url", dbUrl, "SqlLite3 Url (path)")
-		inmemory   = flag.Bool("inmem", false, "use in-memory repositories")
-	)
+	httpPort := flag.String("http.port", ":"+port, "HTTP listen address")
+	sqlLiteUrl := flag.String("db.url", dbUrl, "SqlLite3 Url (path)")
+	inmemory := flag.Bool("inmem", false, "use in-memory repositories")
+
+	flag.Parse()
 
 	var repository domain.BikeRepository
 	if *inmemory {

@@ -16,7 +16,7 @@ func NewSimpleStorage() domain.BikeRepository {
 	return &SimpleStorage{bikes: domain.Bikes{}}
 }
 
-func (store *SimpleStorage) FindBike(id int) (domain.Bike, error) {
+func (store *SimpleStorage) FindBike(id int64) (domain.Bike, error) {
 	for _, bike := range store.bikes {
 		if bike.Id == id {
 			return bike, nil
@@ -39,11 +39,6 @@ func (store *SimpleStorage) AddBike(bike *domain.Bike) domain.Bike {
 	}
 	store.bikes = append(store.bikes, *bike)
 	store.bikesMutex.Unlock()
-	// this is safe outside the mutex
-	for i, part := range bike.Parts {
-		part.Id = i
-		part.BikeId = bike.Id
-	}
 	return *bike
 }
 
