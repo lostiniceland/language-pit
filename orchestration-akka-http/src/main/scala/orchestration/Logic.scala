@@ -3,8 +3,10 @@ package orchestration
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
+import bikes.infrastructure.protobuf.ApprovalEnumType.{ACCEPTED, REJECTED}
+import bikes.infrastructure.protobuf._
 import orchestration.Bikes.BikeCommand
-import wife.infrastructure.protobuf.CreateBikeApprovalMessage
+import wife.infrastructure.protobuf._
 
 import scala.concurrent.Future
 import scala.util.{Failure, Success}
@@ -37,7 +39,7 @@ object ServiceRouter {
   def props(): Props = Props(new ServiceRouter)
 }
 
-class ServiceRouter extends Actor with ActorLogging with ProtobufSupport {
+class ServiceRouter extends Actor with ActorLogging {
 
   import Approvals._
   import Bikes._
@@ -65,11 +67,29 @@ class ServiceRouter extends Actor with ActorLogging with ProtobufSupport {
       }
     }
     case command: ApprovalCommand => command match {
-      case created: BikeCreated => {
-
+      case created: BikeApproved => {
+        Http().singleRequest(
+          Post("http://localhost:8080/bikes/{}/approval")
+            .withEntity(ApprovalMessage(bikeId = created.id, approval = ACCEPTED).toByteArray)
+        ).onComplete {
+          case Success(res) => res status match {
+            case StatusCodes.InternalServerError => sys.error("broken")
+            case StatusCodes.Created => println("fine")
+          }
+          case Failure(_) => sys.error("something wrong")
+        }
       }
       case rejected: BikeRejected => {
-
+        Http().singleRequest(
+          Post("http://localhost:8080/bikes/{}/approval")
+            .withEntity(ApprovalMessage(bikeId = rejected.id, approval = REJECTED).toByteArray)
+        ).onComplete {
+          case Success(res) => res status match {
+            case StatusCodes.InternalServerError => sys.error("broken")
+            case StatusCodes.Created => println("fine")
+          }
+          case Failure(_) => sys.error("something wrong")
+        }
       }
     }
   }
