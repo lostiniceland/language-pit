@@ -1,0 +1,9 @@
+package {{ context.package }}{{{ relative_package }}}
+
+import spock.lang.*
+
+class Actionwords {{#curly}}{{#indent}}{{each rendered_children.actionwords}}
+  {{{this}}}
+{{/each}}
+{{/indent}}
+{{/curly}}

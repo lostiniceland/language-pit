@@ -1,0 +1,12 @@
+== End-To-End-Testing using Hiptest
+
+Testing the composition of all services is done with Spock, as in the other java-based projects.
+The difference is, that the test-managent is handled by Hiptest (https://hiptest.com/).
+
+The creation and composition is done in the Hiptest-UI. Hiptests uses a construct known as
+Actionwords which will be generated as empty skeletons and are implemted manually.
+The actual tests are a composition of those actionwords. This way, it is easy to identify
+tests which are duplicates or unused actionswords.
+
+For details visit Hiptest
+
