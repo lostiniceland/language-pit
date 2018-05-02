@@ -1,15 +1,27 @@
 package bikes.domain
 
+import nl.jqno.equalsverifier.EqualsVerifier
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class DomainSpec extends Specification {
 
-  def Bike sut
+  Bike sut
 
   def setup(){
     sut = new Bike("manufacturer", "name", 12.0F, 4000F)
   }
+
+  def 'Part is a ValueObject' () {
+    given:
+    Part partA = new Part("name", 2f)
+    Part partB = new Part("name", 2f)
+    expect:
+    partA == partB
+    and:
+    EqualsVerifier.forClass(Part).usingGetClass().verify()
+  }
+
 
   def 'only Approved bikes can be updated'() {
     given:

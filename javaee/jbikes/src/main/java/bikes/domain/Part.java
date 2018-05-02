@@ -1,13 +1,12 @@
 package bikes.domain;
 
-import com.google.auto.value.AutoValue;
+import java.util.Objects;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 
 @Access(AccessType.FIELD)
 @Embeddable
-@AutoValue
 public class Part {
 
   private String name;
@@ -28,5 +27,23 @@ public class Part {
 
   public float getWeight() {
     return weight;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Part part = (Part) o;
+    return Float.compare(part.weight, weight) == 0 &&
+        Objects.equals(name, part.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, weight);
   }
 }
