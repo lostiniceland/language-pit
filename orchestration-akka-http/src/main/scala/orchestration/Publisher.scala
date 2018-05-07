@@ -2,14 +2,12 @@ package orchestration
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props}
+import akka.actor.{Actor, ActorLogging, ActorSystem, Props}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.client.RequestBuilding.{Get, Post}
 import akka.http.scaladsl.model._
-import orchestration.BikesPublisher._
 import orchestration.Commands._
-import orchestration.DefaultMessages.{Continue, Start, Stop}
-import orchestration.WifePublisher._
+import orchestration.DefaultMessages.Continue
 import wife.infrastructure.protobuf.{BikeApprovedMessage, BikeRejectedMessage, CreateBikeApprovalMessage}
 
 import scala.concurrent.duration.FiniteDuration
@@ -18,30 +16,22 @@ import scala.util.{Failure, Success}
 
 
 object BikesPublisher {
-  case class BikesEndpointDown(failedCommand: BikeCommandNotDelivered, exception: Throwable)
-  case class BikeCommandNotDelivered(failedCommand: BikeCommand)
-
   def props(): Props = Props(new BikesPublisher)
 }
 
 object WifePublisher {
-  case class WifeEndpointDown(failedCommand: WifeCommandNotDelivered, exception: Throwable)
-  case class WifeCommandNotDelivered(command: Command)
-
   def props(): Props = Props(new WifePublisher)
 }
 
 
-class BikesPublisher extends Actor with ActorLogging {
+class BikesPublisher extends Actor with ActorLogging with HttpHealthCheck {
 
-  implicit val system: ActorSystem = context.system
-  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+  override implicit val healthCheckUrl: String = "http://localhost:8080/bikes/health"
 
   override def receive: Receive = running
 
   def running: Receive = {
     case approved: BikeApproved =>
-      val origSender = sender
       val responseFuture: Future[HttpResponse] = Http().singleRequest(
         Post("http://localhost:8080/bikes")
           .withEntity(
@@ -54,10 +44,12 @@ class BikesPublisher extends Actor with ActorLogging {
             case StatusCodes.Created => log.info("Event '{}' successfully delivered", approved)
             case any: Any => log.warning("Unhandled statuscode '{}'", any)
           }
-          case Failure(e) => origSender ! BikesEndpointDown(BikeCommandNotDelivered(approved), e)
+          case Failure(e) =>
+            // TODO handle failed-message
+            context.become(targetNotAvailable)
+            self ! Continue
         }
     case rejected: BikeRejected =>
-      val origSender = sender
       val responseFuture: Future[HttpResponse] = Http().singleRequest(
         Post("http://localhost:8080/bikes")
           .withEntity(
@@ -70,21 +62,22 @@ class BikesPublisher extends Actor with ActorLogging {
             case StatusCodes.Created => log.info("Event '{}' successfully delivered", rejected)
             case any: Any => log.warning("Unhandled statuscode '{}'", any)
           }
-          case Failure(e) => origSender ! BikesEndpointDown(BikeCommandNotDelivered(rejected), e)
+          case Failure(e) =>
+            // TODO handle failed-message
+            context.become(targetNotAvailable)
+            self ! Continue
         }
   }
 }
 
-class WifePublisher extends Actor with ActorLogging {
+class WifePublisher extends Actor with ActorLogging with HttpHealthCheck {
 
-  implicit val system: ActorSystem = context.system
-  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+  override implicit val healthCheckUrl: String = "http://localhost:8090/wife/health"
 
   override def receive: Receive = running
 
   def running: Receive = {
     case created: BikeCreated =>
-      val origSender = sender
       val responseFuture: Future[HttpResponse] = Http().singleRequest(
         Post("http://localhost:8090/wife/bikes")
           .withEntity(
@@ -97,85 +90,47 @@ class WifePublisher extends Actor with ActorLogging {
             case StatusCodes.Created => log.info("Event '{}' successfully delivered", created)
             case any: Any => log.warning("Unhandled statuscode '{}'", any)
           }
-          case Failure(e) => origSender ! WifeEndpointDown(WifeCommandNotDelivered(created), e)
+          case Failure(e) =>
+            // TODO handle failed-message
+            context.become(targetNotAvailable)
+            self ! Continue
         }
   }
 }
 
 
-object BikesHealthChecker {
-  def props(): Props = Props(new BikesHealthChecker)
-}
+protected trait HttpHealthCheck extends Actor with ActorLogging {
 
-class BikesHealthChecker extends HttpHealthCheck {
-
-  val sleepDuration = FiniteDuration(1, TimeUnit.SECONDS)
-
-  override def receive: Receive = stopped
-
-  def stopped: Receive = {
-    case Start =>
-      context.become(running)
-      self ! Continue
-  }
-
-  def running: Receive = {
-    case Stop => context.become(stopped)
-    case Continue =>
-      performHealthCheck("http://localhost:8080/bikes/health")
-      val s = self
-      context.system.scheduler.scheduleOnce(sleepDuration) {
-        s ! Continue
-      }
-  }
-}
-
-
-object WifeHealthChecker {
-  def props(): Props = Props(new WifeHealthChecker)
-}
-
-class WifeHealthChecker extends HttpHealthCheck  {
-
-  val sleepDuration = FiniteDuration(1, TimeUnit.SECONDS)
-
-  override def receive: Receive = stopped
-
-  def stopped: Receive = {
-    case Start =>
-      context.become(running)
-      self ! Continue
-  }
-
-  def running: Receive = {
-    case Stop => context.become(stopped)
-    case Continue =>
-      performHealthCheck("http://localhost:8090/wife/health")
-      val s = self
-      context.system.scheduler.scheduleOnce(sleepDuration) {
-        s ! Continue
-      }
-  }
-}
-
-
-
-abstract class HttpHealthCheck extends Actor with ActorLogging {
-
+  val sleepDuration = FiniteDuration(2, TimeUnit.SECONDS)
   implicit val system: ActorSystem = context.system
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-  def performHealthCheck(url: String): Unit ={
-    val responseFuture: Future[HttpResponse] = Http().singleRequest(Get(url))
+  implicit val healthCheckUrl: String
+
+  private def performHealthCheck(): Unit = {
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(Get(healthCheckUrl))
     responseFuture
       .onComplete {
         case Success(res) => res.status match {
           case StatusCodes.OK =>
-            log.info("Service at {} available again", url)
+            log.info("Service at {} available again", healthCheckUrl)
             context.unbecome()
-          case any: Any => log.info("UNAVAILABLE Service at '{}'", url)
+          case any: Any => log.info("UNAVAILABLE Service at '{}'", healthCheckUrl)
         }
-        case Failure(e) => log.info("UNAVAILABLE Service at '{}' with Exception '{}'", url, e.getMessage)
+        case Failure(e) => log.info("UNAVAILABLE Service at '{}' with Exception '{}'", healthCheckUrl, e.getMessage)
+      }
+  }
+
+  /**
+    * This behaviour will cause the actor to ping the required target until a OK-StatusCode is returned. Then the
+    * behaviour is switched back to the previous state
+    */
+  def targetNotAvailable: Receive = {
+    case Continue =>
+      performHealthCheck()
+      val s = self
+      context.system.scheduler.scheduleOnce(sleepDuration) {
+        s ! Continue
       }
   }
 }
