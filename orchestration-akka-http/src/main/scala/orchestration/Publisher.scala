@@ -16,10 +16,8 @@ import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
-sealed trait EndpointAvailable
 
 object BikesPublisher {
-  case class BikesEndpointUp() extends EndpointAvailable
   case class BikesEndpointDown(failedCommand: BikeCommandNotDelivered, exception: Throwable)
   case class BikeCommandNotDelivered(failedCommand: BikeCommand)
 
@@ -27,7 +25,6 @@ object BikesPublisher {
 }
 
 object WifePublisher {
-  case class WifeEndpointUp() extends EndpointAvailable
   case class WifeEndpointDown(failedCommand: WifeCommandNotDelivered, exception: Throwable)
   case class WifeCommandNotDelivered(command: Command)
 
@@ -83,8 +80,6 @@ class WifePublisher extends Actor with ActorLogging {
   implicit val system: ActorSystem = context.system
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-
-
   override def receive: Receive = running
 
   def running: Receive = {
@@ -127,7 +122,7 @@ class BikesHealthChecker extends HttpHealthCheck {
   def running: Receive = {
     case Stop => context.become(stopped)
     case Continue =>
-      performHealthCheck("http://localhost:8080/bikes/health", sender, BikesEndpointUp())
+      performHealthCheck("http://localhost:8080/bikes/health")
       val s = self
       context.system.scheduler.scheduleOnce(sleepDuration) {
         s ! Continue
@@ -155,7 +150,7 @@ class WifeHealthChecker extends HttpHealthCheck  {
   def running: Receive = {
     case Stop => context.become(stopped)
     case Continue =>
-      performHealthCheck("http://localhost:8090/wife/health", sender, WifeEndpointUp())
+      performHealthCheck("http://localhost:8090/wife/health")
       val s = self
       context.system.scheduler.scheduleOnce(sleepDuration) {
         s ! Continue
@@ -170,14 +165,14 @@ abstract class HttpHealthCheck extends Actor with ActorLogging {
   implicit val system: ActorSystem = context.system
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
-  def performHealthCheck(url: String, sender: ActorRef, okMessage: EndpointAvailable): Unit ={
+  def performHealthCheck(url: String): Unit ={
     val responseFuture: Future[HttpResponse] = Http().singleRequest(Get(url))
     responseFuture
       .onComplete {
         case Success(res) => res.status match {
           case StatusCodes.OK =>
             log.info("Service at {} available again", url)
-            sender ! okMessage
+            context.unbecome()
           case any: Any => log.info("UNAVAILABLE Service at '{}'", url)
         }
         case Failure(e) => log.info("UNAVAILABLE Service at '{}' with Exception '{}'", url, e.getMessage)

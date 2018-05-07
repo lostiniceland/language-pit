@@ -2,13 +2,11 @@ package orchestration
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import akka.persistence.PersistentActor
-import orchestration.BikesPublisher.{BikesEndpointDown, BikesEndpointUp}
+import orchestration.BikesPublisher.{BikesEndpointDown}
 import orchestration.Commands.{BikeApproved, BikeCreated, BikeRejected}
 import orchestration.DefaultMessages.{Start, Stop}
-import orchestration.WifePublisher.{WifeEndpointDown, WifeEndpointUp}
+import orchestration.WifePublisher.{WifeEndpointDown}
 
-import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
 object Commands {
 
@@ -43,22 +41,12 @@ class ServiceRouter extends Actor with ActorLogging {
   override def receive: Receive = {
     case down: BikesEndpointDown =>
       // TODO persist
-
       bikeServiceAvailable = false
       healthCheckerWifeService ! Start
-    case up: BikesEndpointUp =>
-      healthCheckerBikeService ! Stop
-      bikeServiceAvailable = true
-      // TODO load stored messages and replay
     case down: WifeEndpointDown =>
       // TODO persist
-
       bikeServiceAvailable = false
       healthCheckerWifeService ! Start
-    case up: WifeEndpointUp =>
-      healthCheckerBikeService ! Stop
-      bikeServiceAvailable = true
-    // TODO load stored messages and replay
     case created: BikeCreated =>
       publisherWifeService ! created
     case approved: BikeApproved =>
