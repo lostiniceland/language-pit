@@ -1,3 +1,7 @@
+plugins {
+  id "scala"
+}
+
 ext {
   versionScala = '2.12.5'
   versionScalaTest = '3.0.5'
@@ -7,22 +11,13 @@ ext {
   versionLevelDb = '0.10'
 }
 
-
 version = '0.1.0'
 
 repositories {
   mavenCentral()
 }
 
-apply plugin: 'scala'
-
-sourceSets {
-  main {
-    scala {
-      srcDirs = ["src/main/scala", "src/main/scala-gen"]
-    }
-  }
-}
+sourceSets.main.scala.srcDirs += 'build/generated/source/proto/main/scala'
 
 dependencies {
   compile group: 'com.typesafe.akka', name: 'akka-http_2.12', version: '10.1.1'
@@ -38,3 +33,14 @@ dependencies {
   testCompile "org.specs2:specs2-core_2.11:4.0.3"
 }
 
+task preBuild {
+  new File("build/generated/source/proto/main/scala").mkdirs()
+
+}
+
+task generateProto(type: Exec, dependsOn: preBuild)  {
+  workingDir "${projectDir}"
+  commandLine = './generate_protobuf.sh'
+}
+
+compileScala.dependsOn generateProto
