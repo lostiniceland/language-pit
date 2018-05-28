@@ -8,6 +8,7 @@ import akka.http.scaladsl.client.RequestBuilding.{Get, Post}
 import akka.http.scaladsl.model._
 import orchestration.Commands._
 import orchestration.DefaultMessages.Continue
+import scalapb.GeneratedMessage
 import wife.infrastructure.protobuf.{BikeApprovedMessage, BikeRejectedMessage, CreateBikeApprovalMessage}
 
 import scala.concurrent.duration.FiniteDuration
@@ -24,7 +25,7 @@ object WifePublisher {
 }
 
 
-class BikesPublisher extends Actor with ActorLogging with HttpHealthCheck {
+class BikesPublisher extends Actor with ActorLogging with HttpPostPublisher {
 
   override implicit val healthCheckUrl: String = "http://localhost:8080/bikes/health"
 
@@ -32,45 +33,13 @@ class BikesPublisher extends Actor with ActorLogging with HttpHealthCheck {
 
   def running: Receive = {
     case approved: BikeApproved =>
-      val responseFuture: Future[HttpResponse] = Http().singleRequest(
-        Post("http://localhost:8080/bikes")
-          .withEntity(
-            ProtobufSupport.headerContentTypeProto,
-            BikeApprovedMessage(bikeId = approved.id).toByteArray))
-      responseFuture
-        .onComplete {
-          case Success(res) => res.status match {
-            case StatusCodes.InternalServerError => sys.error("broken")
-            case StatusCodes.Created => log.info("Event '{}' successfully delivered", approved)
-            case any: Any => log.warning("Unhandled statuscode '{}'", any)
-          }
-          case Failure(e) =>
-            // TODO handle failed-message
-            context.become(targetNotAvailable)
-            self ! Continue
-        }
+      sendPostWithMessageAndHandleFailure("http://localhost:8080/bikes", BikeApprovedMessage(bikeId = approved.id))
     case rejected: BikeRejected =>
-      val responseFuture: Future[HttpResponse] = Http().singleRequest(
-        Post("http://localhost:8080/bikes")
-          .withEntity(
-            ProtobufSupport.headerContentTypeProto,
-            BikeRejectedMessage(bikeId = rejected.id).toByteArray))
-      responseFuture
-        .onComplete {
-          case Success(res) => res.status match {
-            case StatusCodes.InternalServerError => sys.error("broken")
-            case StatusCodes.Created => log.info("Event '{}' successfully delivered", rejected)
-            case any: Any => log.warning("Unhandled statuscode '{}'", any)
-          }
-          case Failure(e) =>
-            // TODO handle failed-message
-            context.become(targetNotAvailable)
-            self ! Continue
-        }
+      sendPostWithMessageAndHandleFailure("http://localhost:8080/bikes", BikeRejectedMessage(bikeId = rejected.id))
   }
 }
 
-class WifePublisher extends Actor with ActorLogging with HttpHealthCheck {
+class WifePublisher extends Actor with ActorLogging with HttpPostPublisher {
 
   override implicit val healthCheckUrl: String = "http://localhost:8090/wife/health"
 
@@ -78,23 +47,31 @@ class WifePublisher extends Actor with ActorLogging with HttpHealthCheck {
 
   def running: Receive = {
     case created: BikeCreated =>
-      val responseFuture: Future[HttpResponse] = Http().singleRequest(
-        Post("http://localhost:8090/wife/bikes")
-          .withEntity(
-            ProtobufSupport.headerContentTypeProto,
-            CreateBikeApprovalMessage(bikeId = created.id, value = created.value).toByteArray))
-      responseFuture
-        .onComplete {
-          case Success(res) => res.status match {
-            case StatusCodes.InternalServerError => sys.error("broken")
-            case StatusCodes.Created => log.info("Event '{}' successfully delivered", created)
-            case any: Any => log.warning("Unhandled statuscode '{}'", any)
-          }
-          case Failure(e) =>
-            // TODO handle failed-message
-            context.become(targetNotAvailable)
-            self ! Continue
+      sendPostWithMessageAndHandleFailure("http://localhost:8090/wife/bikes", CreateBikeApprovalMessage(bikeId = created.id, value = created.value))
+  }
+}
+
+
+protected trait HttpPostPublisher extends HttpHealthCheck {
+
+  def sendPostWithMessageAndHandleFailure[T <: GeneratedMessage](url: String, message: T) = {
+    val responseFuture: Future[HttpResponse] = Http().singleRequest(
+      Post(url)
+        .withEntity(
+          ProtobufSupport.headerContentTypeProto,
+          message.toByteArray))
+    responseFuture
+      .onComplete {
+        case Success(res) => res.status match {
+          case StatusCodes.InternalServerError => sys.error("broken")
+          case StatusCodes.Created => log.info("Event '{}' successfully delivered", message)
+          case any: Any => log.warning("Unhandled statuscode '{}'", any)
         }
+        case Failure(e) =>
+          // TODO handle failed-message
+          context.become(targetNotAvailable)
+          self ! Continue
+      }
   }
 }
 
