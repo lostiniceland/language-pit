@@ -40,7 +40,12 @@ task preBuild {
 
 task generateProto(type: Exec, dependsOn: preBuild)  {
   workingDir "${projectDir}"
-  commandLine = './generate_protobuf.sh'
+  if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+    commandLine 'cmd', '/c', 'generate_protobuf.bat'
+  }
+  else {
+    commandLine 'sh', '-c', 'generate_protobuf.sh'
+  }
 }
 
 compileScala.dependsOn generateProto
