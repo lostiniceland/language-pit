@@ -9,7 +9,6 @@ import wife.infrastructure.protobuf.{BikeApprovedMessage, BikeRejectedMessage}
 
 
 object WebServer extends HttpApp with ProtobufSupport {
-  // TODO improve the actor should not be created by the webserver. Dispatcher should be supervising this one
   lazy val routerService: ActorRef = systemReference.get().actorOf(ServiceRouter.props(), "dispatcher")
 
   override protected def routes: Route = pathPrefix("events") {

@@ -1,6 +1,5 @@
 package orchestration
 
-import akka.actor.Actor.Receive
 import akka.actor.{Actor, ActorLogging, ActorSystem, DeadLetter, Props}
 import com.typesafe.config.ConfigFactory
 
