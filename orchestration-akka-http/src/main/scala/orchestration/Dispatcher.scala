@@ -12,10 +12,10 @@ object Commands {
   case class BikeDeleted(id: Long) extends BikeCommand
 
   sealed trait ApprovalCommand extends Command
-
   case class BikeApproved(id: Long) extends ApprovalCommand
-
   case class BikeRejected(id: Long) extends ApprovalCommand
+
+  case class EventDelivered(command: Command) extends Command
 }
 
 
