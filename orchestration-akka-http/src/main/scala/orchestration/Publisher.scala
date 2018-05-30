@@ -168,7 +168,7 @@ protected trait HttpHealthCheck extends Actor with ActorLogging {
 
   val sleepDurationPing = FiniteDuration(2, TimeUnit.SECONDS)
   implicit val system: ActorSystem = context.system
-  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
+  implicit val executionContext: ExecutionContextExecutor = system.dispatchers.lookup("publisher-dispatcher")
 
   implicit val healthCheckUrl: String
 
