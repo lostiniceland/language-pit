@@ -45,7 +45,7 @@ task generateProto(type: Exec, dependsOn: preBuild)  {
     commandLine 'cmd', '/c', 'generate_protobuf.bat'
   }
   else {
-    commandLine 'sh', '-c', 'generate_protobuf.sh'
+    commandLine 'sh', 'generate_protobuf.sh'
   }
 }
 
