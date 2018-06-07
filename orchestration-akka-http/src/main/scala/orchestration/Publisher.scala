@@ -33,21 +33,6 @@ class BikesPublisher extends PersistentActor with ActorLogging with HttpPostPubl
 
   override implicit val healthCheckUrl: String = "http://localhost:8080/bikes/health"
 
-  override def receive: Receive = running
-
-  def running: Receive = {
-    case approved: BikeApproved =>
-      sendPostWithMessageAndHandleFailure(
-        "http://localhost:8080/bikes",
-        BikeApprovedMessage(bikeId = approved.id),
-        approved)
-    case rejected: BikeRejected =>
-      sendPostWithMessageAndHandleFailure(
-        "http://localhost:8080/bikes",
-        BikeRejectedMessage(bikeId = rejected.id),
-        rejected)
-  }
-
   override def receiveRecover: Receive = {
     case cmd: Command => updateState(cmd)
   }
@@ -99,7 +84,6 @@ class WifePublisher extends PersistentActor with ActorLogging with HttpPostPubli
     case cmd: Command => updateState(cmd)
     case RecoveryCompleted => state.foreach(cmd => self ! cmd)
   }
-
 
   override def receiveCommand: Receive = {
     case created: BikeCreated =>
