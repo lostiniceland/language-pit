@@ -1,0 +1,2 @@
+# use -e "http_proxy=http://<user>:<password>@<proxy>:<port>" when behind a corporate proxy with authentication. Ruby will then use this for outbound connections
+docker run -e "http_proxy=http://u000501:47114711Sy@proxysdv.spb.de:3128" --interactive --tty --rm --volume ${PWD}:/app hiptest/hiptest-publisher $args

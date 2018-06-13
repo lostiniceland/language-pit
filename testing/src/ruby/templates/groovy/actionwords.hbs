@@ -1,8 +1,8 @@
-package {{ context.package }}{{{ relative_package }}}
+package {{{ context.package }}}{{{ relative_package }}}
 
 import spock.lang.*
 
-class Actionwords {{#curly}}{{#indent}}{{each rendered_children.actionwords}}
+class Actionwords {{#curly}}{{#indent}}{{#each rendered_children.actionwords}}
   {{{this}}}
 {{/each}}
 {{/indent}}

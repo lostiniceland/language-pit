@@ -14,3 +14,6 @@
 .project
 
 scala-akka/gradlew.bat
+
+#HipTest
+**/*HipSpec.groovy
