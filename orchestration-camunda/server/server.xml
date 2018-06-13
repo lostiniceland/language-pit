@@ -1,0 +1,14 @@
+<server description="Default Server">
+
+  <featureManager>
+    <feature>webProfile-7.0</feature>
+  </featureManager>
+
+  <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="8080"/>
+
+  <jndiEntry jndiName="urlBikesService" value="'http://localhost:8080/'" />
+  <jndiEntry jndiName="urlWifeService" value="'http://localhost:8090/'" />
+
+  <webApplication contextRoot="events" location="orchestration-camunda.war"/>
+
+</server>
