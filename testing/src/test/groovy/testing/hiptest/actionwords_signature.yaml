@@ -1,0 +1,31 @@
+---
+- name: Create Bike
+  uid: 25d8e1b2-661f-4949-9b73-1a6d1e150b39
+  parameters:
+  - name: Manufacturer
+  - name: Name
+  - name: Weight
+  - name: Value
+  body_hash: d41d8cd98f00b204e9800998ecf8427e
+- name: Check approval-status of bike
+  uid: ecdc442d-2131-4277-8344-a387cc884992
+  parameters:
+  - name: ExpectedStatus
+  body_hash: d41d8cd98f00b204e9800998ecf8427e
+- name: Check approval-status with wife
+  uid: 0e8a46ba-18f9-4e8b-8d62-71db2ffe217a
+  parameters:
+  - name: ExpectedStatus
+  body_hash: d41d8cd98f00b204e9800998ecf8427e
+- name: 'Availability: Bike-Service'
+  uid: 64ca9647-2d80-4cd2-be73-cdef008951de
+  parameters: []
+  body_hash: d41d8cd98f00b204e9800998ecf8427e
+- name: 'Availability: Wife-Service'
+  uid: 472bde69-d0f0-4dd6-92e0-2c79faf875f9
+  parameters: []
+  body_hash: d41d8cd98f00b204e9800998ecf8427e
+- name: 'Availability: Orchestration-Layer'
+  uid: 322fdaf4-185a-42b8-a910-c017697171f1
+  parameters: []
+  body_hash: d41d8cd98f00b204e9800998ecf8427e

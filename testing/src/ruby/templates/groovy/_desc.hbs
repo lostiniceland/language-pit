@@ -1,0 +1,6 @@
+{{#if has_description?}}
+/**
+{{#comment ' *'}}{{rendered_children.description}}{{/comment}}
+{{#if has_tags?}}
+{{#comment ' *'}}Tags: {{{ join rendered_children.tags ' '}}}{{/comment}}
+{{/if}} */{{/if}}

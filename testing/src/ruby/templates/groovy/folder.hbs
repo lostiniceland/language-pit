@@ -11,6 +11,7 @@ class {{{ clear_extension context.filename }}} extends Specification {{#curly}}
 Actionwords {{{ context.call_prefix }}}
 
 def setupSpec() {{#curly}}{{#indent}}
+{{{ context.call_prefix }}} = new Actionwords()
 {{#each rendered_children.body}}{{{this}}}
 {{/each}}
 {{/indent}}
