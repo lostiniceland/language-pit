@@ -15,6 +15,13 @@ class EventSubscriberTest extends WordSpec with Matchers with ScalatestRouteTest
   override implicit val routerService: ActorRef = probe.ref
 
   "incoming requests" should {
+
+    "match GET 'events/health' for availablity-checks" in {
+      Get("/events/health") ~> route ~> check {
+        status shouldEqual StatusCodes.OK
+      }
+    }
+
     // TODO atm Protobuff is able to unmarshall certain messages which are not typesaf (e.g. a BikeCreatedMessage can be unmarshalled into a BikeApprovedMessage)
     "match POST 'events/bikes/created' with BikeCreatedMessage in Protobuf format" in {
       val message = BikeCreatedMessage(bikeId = 1, value = 1).toByteArray

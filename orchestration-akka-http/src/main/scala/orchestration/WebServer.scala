@@ -25,6 +25,11 @@ trait EventSubscriber extends Directives with ProtobufSupport {
   implicit val routerService: ActorRef
 
   val route: Route = pathPrefix("events") {
+    pathPrefix("health") {
+       get {
+         complete(StatusCodes.OK)
+       }
+    } ~
     pathPrefix("bikes" / "created") {
       post {
         decodeRequest {
