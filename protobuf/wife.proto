@@ -22,15 +22,6 @@ message CreateBikeApprovalMessage {
   float value = 2;
 }
 
-
-message BikeApprovedMessage {
-  int64 bike_id = 1;
-}
-
-message BikeRejectedMessage {
-  int64 bike_id = 1;
-}
-
 enum ApprovalEnumType {
   PENDING = 0;
   ACCEPTED = 1;

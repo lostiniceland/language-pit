@@ -1,6 +1,8 @@
 package wife.infrastructure.web;
 
 import com.google.protobuf.Message;
+import common.infrastructure.protobuf.Events.BikeApprovedMessage;
+import common.infrastructure.protobuf.Events.BikeRejectedMessage;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
@@ -16,8 +18,6 @@ import org.slf4j.LoggerFactory;
 import wife.application.ExternalEventPublisher;
 import wife.domain.BikeApprovedEvent;
 import wife.domain.BikeRejectedEvent;
-import wife.infrastructure.protobuf.Wife.BikeApprovedMessage;
-import wife.infrastructure.protobuf.Wife.BikeRejectedMessage;
 
 @ApplicationScoped
 public class JaxRsClient implements ExternalEventPublisher {

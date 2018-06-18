@@ -1,11 +1,12 @@
 package {{{ context.package }}}{{{ relative_package }}}
 
 import spock.lang.*
+import testing.support.BaseSpec
 
 {{#if needs_to_import_actionwords? }}import {{{ context.package }}}.Actionwords
 {{/if}}
 
-class {{{ clear_extension context.filename }}} extends Specification {{#curly}}
+class {{{ clear_extension context.filename }}} extends BaseSpec {{#curly}}
 {{#indent}}
 @Shared
 Actionwords {{{ context.call_prefix }}}

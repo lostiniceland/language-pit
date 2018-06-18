@@ -16,6 +16,9 @@
   </library>
 
   <jndiEntry jndiName="orchestrationUrl" value='"http://localhost:9090/"' />
+  <jndiEntry jndiName="kafkaHost" value='"${env.KAFKA_HOST}"' />
+  <jndiEntry jndiName="kafkaPort" value='"${env.KAFKA_PORT}"' />
+  <jndiEntry jndiName="kafkaEventTopic" value='"${env.KAFKA_EVENT_TOPIC}"' />
 
   <webApplication contextRoot="wife" location="wife.war"/>
 

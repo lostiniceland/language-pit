@@ -7,10 +7,11 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.client.RequestBuilding.{Get, Post}
 import akka.http.scaladsl.model._
 import akka.persistence.{PersistentActor, RecoveryCompleted}
+import common.infrastructure.protobuf._
 import orchestration.Commands._
 import orchestration.DefaultMessages.Continue
 import scalapb.GeneratedMessage
-import wife.infrastructure.protobuf.{BikeApprovedMessage, BikeRejectedMessage, CreateBikeApprovalMessage}
+import wife.infrastructure.protobuf.CreateBikeApprovalMessage
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.duration.FiniteDuration

@@ -3,9 +3,8 @@ package orchestration
 import akka.actor.ActorRef
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.{Directives, HttpApp, Route}
-import bikes.infrastructure.protobuf.BikeCreatedMessage
+import common.infrastructure.protobuf._
 import orchestration.Commands._
-import wife.infrastructure.protobuf.{BikeApprovedMessage, BikeRejectedMessage}
 
 
 object WebServer extends HttpApp with EventSubscriber {

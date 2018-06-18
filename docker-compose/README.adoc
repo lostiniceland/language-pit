@@ -1,0 +1,13 @@
+== Apache Kafka
+
+TODO
+
+=== Running
+
+The provided Docker-Compose contains the wurstmeister/kafka image, and is using the Confluent-Platform on top.
+Confluent-Platform provides the required REST-proxy for the kafka-topics-ui, which can be used to debug topics
+within the cluster.
+
+Connection to Kafka is established via <DOCKER_HOST_IP>:9092 (please refer to wurstmeister docu for why localhost
+is not recommeded).
+The topics-ui can be easily accessed with http://localhost:8000

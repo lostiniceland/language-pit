@@ -1,0 +1,38 @@
+syntax = "proto3";
+package events;
+
+option java_package = "common.infrastructure.protobuf";
+option go_package = "infrastructure";
+
+message EventsEnvelope {
+  // string correlation_id = 1;
+  // some other metadata
+  oneof payload {
+    BikeCreatedMessage bike_created = 11;
+    BikeDeletedMessage bike_deleted = 12;
+    BikeApprovedMessage bike_approved = 13;
+    BikeRejectedMessage bike_rejected = 14;
+  }
+}
+
+
+message BikeCreatedMessage {
+  int64 bike_id = 1;
+  float value = 2;
+}
+
+message BikeDeletedMessage {
+  int64 bike_id = 1;
+}
+
+message BikeApprovalCreatedMessage {
+  int64 bike_id = 1;
+}
+
+message BikeApprovedMessage {
+  int64 bike_id = 1;
+}
+
+message BikeRejectedMessage {
+  int64 bike_id = 1;
+}

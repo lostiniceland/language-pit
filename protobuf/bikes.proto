@@ -41,11 +41,6 @@ message ApprovalMessage {
   ApprovalEnumType approval = 2;
 }
 
-message BikeCreatedMessage {
-  int64 bike_id = 1;
-  float value = 2;
-}
-
 message BikeDeletedMessage {
   int64 bike_id = 1;
 }

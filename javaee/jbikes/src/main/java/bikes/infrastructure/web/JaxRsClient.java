@@ -2,8 +2,8 @@ package bikes.infrastructure.web;
 
 import bikes.application.ExternalEventPublisher;
 import bikes.domain.BikeCreatedEvent;
-import bikes.infrastructure.protobuf.Bikes.BikeCreatedMessage;
 import com.google.protobuf.Message;
+import common.infrastructure.protobuf.Events.BikeCreatedMessage;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
