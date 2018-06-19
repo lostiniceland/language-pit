@@ -1,6 +1,21 @@
+buildscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    classpath 'com.github.rholder:gradle-one-jar:1.0.4'
+  }
+}
+
 plugins {
   id "scala"
+  id "com.bmuschko.docker-remote-api" version "3.2.4"
 }
+
+apply plugin: "gradle-one-jar"
+
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 
 ext {
   versionScala = '2.12.5'
@@ -23,6 +38,7 @@ repositories {
 sourceSets.main.scala.srcDirs += 'build/generated/source/proto/main/scala'
 
 dependencies {
+  compile group: 'org.scala-lang', name: 'scala-library', version: versionScala
   compile group: 'com.typesafe.akka', name: 'akka-http_2.12', version: versionAkkaHttp
   compile group: 'com.typesafe.akka', name: 'akka-stream_2.12', version: versionAkka
   compile group: 'com.typesafe.akka', name: 'akka-persistence_2.12', version: versionAkka
@@ -38,6 +54,7 @@ dependencies {
   testCompile group: 'org.specs2', name: 'specs2-core_2.12', version: versionSpecs2
 }
 
+
 task generateProto(type: Exec)  {
   new File("build/generated/source/proto/main/scala").mkdirs()
   workingDir "${projectDir}"
@@ -49,4 +66,41 @@ task generateProto(type: Exec)  {
   }
 }
 
+
 compileScala.dependsOn generateProto
+
+
+task oneJar (type: OneJar){
+  // blocked by https://github.com/rholder/gradle-one-jar/issues/34
+  dependsOn compileScala
+  mainClass = "orchestration.Orchestration"
+  archiveName = "app.jar"
+//  archivePath = "$project.buildDir/docker"
+}
+
+//def dockerFolder = "$project.buildDir/docker"
+//
+//// Copy all necessary files to the Docker build-context directory
+//task prepareDocker() {
+//  copy {
+//    from jar
+//    into "$dockerFolder"
+//    rename { fileName ->
+//      fileName.replace(jar, "app.jar")
+//    }
+//  }
+//}
+//
+//task createDockerfile(type: Dockerfile) {
+//  dependsOn prepareDocker
+//  destFile = project.file("$dockerFolder/Dockerfile")
+//  from 'openjdk:8-jre-alpine'
+//  addFile('app.jar', '/')
+//  exposePort(9090)
+//}
+//
+//task buildImage(type: DockerBuildImage) {
+//  dependsOn createDockerfile
+//  inputDir = createDockerfile.destFile.parentFile
+//  tag = 'languagepit/orchestration:akka'
+//}
