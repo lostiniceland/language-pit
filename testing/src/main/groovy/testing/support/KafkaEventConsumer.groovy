@@ -28,8 +28,8 @@ class KafkaEventConsumer {
   }
 
   def x(){
-    ConsumerRecords<String, byte[]> records = kafkaConsumer.poll(500)
-    records.forEach { record ->
+    ConsumerRecords<String, byte[]> records = kafkaConsumer.poll(1000)
+    records.iterator().each { record ->
       def envelope = Events.EventsEnvelope.parseFrom(record.value())
       if (envelope.hasBikeCreated()) {
         logger.info(envelope.getBikeCreated().toString())
