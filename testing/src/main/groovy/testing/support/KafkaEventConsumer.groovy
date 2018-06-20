@@ -25,15 +25,18 @@ class KafkaEventConsumer {
     props.put("consumer.id", "testing-1")
     this.kafkaConsumer = new KafkaConsumer<>(props)
     kafkaConsumer.subscribe([topic])
-  }
+ }
 
-  def x(){
-    ConsumerRecords<String, byte[]> records = kafkaConsumer.poll(1000)
-    records.iterator().each { record ->
+  boolean x(){
+    ConsumerRecords<String, byte[]> records = kafkaConsumer.poll(500)
+    def found = false
+    records.forEach { record ->
       def envelope = Events.EventsEnvelope.parseFrom(record.value())
       if (envelope.hasBikeCreated()) {
         logger.info(envelope.getBikeCreated().toString())
+        found = true
       }
     }
+    found
   }
 }
