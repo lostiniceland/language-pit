@@ -12,10 +12,9 @@
   parameters:
   - name: ExpectedStatus
   body_hash: d41d8cd98f00b204e9800998ecf8427e
-- name: Check approval-status with wife
+- name: Wait for new Bike-Approval
   uid: 0e8a46ba-18f9-4e8b-8d62-71db2ffe217a
-  parameters:
-  - name: ExpectedStatus
+  parameters: []
   body_hash: d41d8cd98f00b204e9800998ecf8427e
 - name: 'Availability: Bike-Service'
   uid: 64ca9647-2d80-4cd2-be73-cdef008951de
@@ -27,5 +26,9 @@
   body_hash: d41d8cd98f00b204e9800998ecf8427e
 - name: 'Availability: Orchestration-Layer'
   uid: 322fdaf4-185a-42b8-a910-c017697171f1
+  parameters: []
+  body_hash: d41d8cd98f00b204e9800998ecf8427e
+- name: Cleanup State
+  uid: 181406dc-d8b3-4a1c-8a3b-9c7512663a7e
   parameters: []
   body_hash: d41d8cd98f00b204e9800998ecf8427e

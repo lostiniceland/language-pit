@@ -12,7 +12,8 @@ object Orchestration {
     val sysListener = system.actorOf(Props[DeadLetterSubscriber], "deadLetterListener")
     system.eventStream.subscribe(sysListener, classOf[DeadLetter])
     // start listening
-    WebServer.startServer("localhost", 9090, system)
+    WebServer.startServer("0.0.0.0", 9090, system)
+    system.terminate()
   }
 }
 

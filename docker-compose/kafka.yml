@@ -1,0 +1,25 @@
+version: '3.2'
+services:
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - 2181:2181
+
+  kafka:
+    image: wurstmeister/kafka:1.1.0
+    container_name: kafka
+    hostname: kafka
+    ports:
+      # use dynamic ports - "9092" when scaling to multiple nodes
+      - 9092:9092
+    environment:
+      # explicitly set hostname when scaling to multiple nodes
+      KAFKA_ADVERTISED_HOST_NAME: ${DOCKER_HOST_IP:-127.0.0.1}
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_CREATE_TOPICS: "language-pit.events:1:1"
+    volumes:
+        - /var/run/docker.sock:/var/run/docker.sock

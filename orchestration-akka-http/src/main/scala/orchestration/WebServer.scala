@@ -3,7 +3,7 @@ package orchestration
 import akka.actor.ActorRef
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.{Directives, HttpApp, Route}
-import common.infrastructure.protobuf._
+import common.infrastructure.protobuf.events._
 import orchestration.Commands._
 
 

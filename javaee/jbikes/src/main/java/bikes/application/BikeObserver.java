@@ -1,7 +1,7 @@
 package bikes.application;
 
 import bikes.domain.BikeCreatedEvent;
-import bikes.infrastructure.web.Kafka;
+import bikes.infrastructure.messaging.Kafka;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.enterprise.event.Observes;

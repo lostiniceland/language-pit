@@ -5,7 +5,7 @@ import orchestration.Commands.{BikeApproved, BikeCreated, BikeRejected}
 
 
 object Commands {
-  sealed trait Command
+  @SerialVersionUID(1l) sealed trait Command extends Serializable
 
   sealed trait BikeCommand extends Command
   case class BikeCreated(id: Long, value: Float) extends BikeCommand

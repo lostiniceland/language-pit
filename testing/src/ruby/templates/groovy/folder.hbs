@@ -12,7 +12,7 @@ class {{{ clear_extension context.filename }}} extends BaseSpec {{#curly}}
 Actionwords {{{ context.call_prefix }}}
 
 def setupSpec() {{#curly}}{{#indent}}
-{{{ context.call_prefix }}} = new Actionwords()
+{{{ context.call_prefix }}} = new Actionwords(eventConsumer)
 {{#each rendered_children.body}}{{{this}}}
 {{/each}}
 {{/indent}}

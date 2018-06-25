@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 
 public abstract class DomainEvent {
 
-  private ZonedDateTime occuredOn;
+  private final ZonedDateTime occuredOn;
 
   public DomainEvent() {
     this.occuredOn = ZonedDateTime.now();

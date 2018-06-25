@@ -1,4 +1,4 @@
-package bikes.infrastructure.web;
+package wife.infrastructure.messaging;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;

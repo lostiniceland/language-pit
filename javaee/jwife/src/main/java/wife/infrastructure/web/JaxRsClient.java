@@ -16,9 +16,14 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import wife.application.ExternalEventPublisher;
+import wife.domain.BikeApprovalCreatedEvent;
 import wife.domain.BikeApprovedEvent;
 import wife.domain.BikeRejectedEvent;
 
+/**
+ * @deprecated the Orchestration/Integration-Layer will use events rather than point-to-point
+ */
+@Deprecated
 @ApplicationScoped
 public class JaxRsClient implements ExternalEventPublisher {
 
@@ -40,7 +45,12 @@ public class JaxRsClient implements ExternalEventPublisher {
 
 
   @Override
-  public void notifyBikeAboutApproval(BikeApprovedEvent event) {
+  public void notifyAboutApprovalCreated(BikeApprovalCreatedEvent event) {
+    // NO-OP Orchestration does not care about this event
+  }
+
+  @Override
+  public void notifyAboutApproval(BikeApprovedEvent event) {
     Optional<Response> response = sendRequest(
         "events/approvals/accepted",
         () -> BikeApprovedMessage.newBuilder().setBikeId(event.getBikeId()).build());
@@ -51,7 +61,7 @@ public class JaxRsClient implements ExternalEventPublisher {
   }
 
   @Override
-  public void notifyBikeAboutReject(BikeRejectedEvent event) {
+  public void notifyAboutReject(BikeRejectedEvent event) {
     Optional<Response> response = sendRequest(
         "events/approvals/rejected",
         () -> BikeRejectedMessage.newBuilder().setBikeId(event.getBikeId()).build());

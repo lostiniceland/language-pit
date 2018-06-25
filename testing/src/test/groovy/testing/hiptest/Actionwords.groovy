@@ -1,9 +1,16 @@
 package testing.hiptest
 
 import groovyx.net.http.RESTClient
-import static groovyx.net.http.ContentType.*
+import testing.support.KafkaEventConsumer
+import testing.support.StatefullActionword
 
-class Actionwords {
+import static groovyx.net.http.ContentType.JSON
+
+class Actionwords extends StatefullActionword {
+
+  Actionwords(KafkaEventConsumer eventConsumer) {
+    super(eventConsumer)
+  }
 
   /**
    * Adds a  new bike without any parts.
@@ -21,21 +28,41 @@ class Actionwords {
         requestContentType: JSON
       )
     assert resp.status == 201
+    addState('created-bike-id', resp.headers['Location'].value.split('bikes/')[1])
     true
   }
 
 
   /**
    * Validates the status of a given bike according to the parameter ExpectedStatus
+   * 
+   * NOTE: makes use of shared state
    */
   boolean checkApprovalstatusOfBike(expectedStatus = "Pending"){
-
+    String bikeId = getState("created-bike-id", String)
+    def resp = bikeClient()
+        .get(
+        path: 'bikes/' + bikeId,
+        requestContentType: JSON
+    )
+    assert resp.status == 200
+    assert resp.data.approval == expectedStatus.toUpperCase()
     true
   }
 
 
-  boolean checkApprovalstatusWithWife(expectedStatus = "Pending"){
-
+  /**
+   * Once a bike gets created and additional approval must be created within the Wife-service. 
+   * This actionword must wait for the event that this approval has been created.
+   * 
+   * NOTE: makes use of shared state
+   */
+  boolean waitForNewBikeApproval(){
+    String id = getState("created-bike-id", String.class)
+    def event = eventConsumer.lookupEvent { envelope ->
+      return envelope.hasBikeCreated() && envelope.getBikeCreated().bikeId == Long.valueOf(id)
+    }
+    assert event.isPresent()
     true
   }
 
@@ -67,6 +94,10 @@ class Actionwords {
     true
   }
 
+  def cleanupState() {
+    clearState()
+    true
+  }
 
   static RESTClient bikeClient(){
     return new RESTClient("http://localhost:8080/")
@@ -75,5 +106,4 @@ class Actionwords {
   static RESTClient wifeClient(){
     return new RESTClient("http://localhost:8090/")
   }
-
 }

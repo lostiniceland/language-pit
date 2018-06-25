@@ -17,6 +17,10 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated the Orchestration/Integration-Layer will use events rather than point-to-point
+ */
+@Deprecated
 @ApplicationScoped
 public class JaxRsClient implements ExternalEventPublisher {
 

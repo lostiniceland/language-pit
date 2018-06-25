@@ -15,11 +15,11 @@ public class WifeObserver {
 
   @Asynchronous
   public void notifyWifeAboutNewBike(@Observes BikeApprovedEvent event) {
-    publisher.notifyBikeAboutApproval(event);
+    publisher.notifyAboutApproval(event);
   }
 
   @Asynchronous
   public void notifyWifeAboutNewBike(@Observes BikeRejectedEvent event) {
-    publisher.notifyBikeAboutReject(event);
+    publisher.notifyAboutReject(event);
   }
 }

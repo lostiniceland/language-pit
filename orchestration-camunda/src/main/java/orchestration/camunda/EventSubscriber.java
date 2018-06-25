@@ -1,6 +1,8 @@
 package orchestration.camunda;
 
-import bikes.infrastructure.protobuf.Bikes.BikeCreatedMessage;
+import common.infrastructure.protobuf.Events.BikeApprovedMessage;
+import common.infrastructure.protobuf.Events.BikeCreatedMessage;
+import common.infrastructure.protobuf.Events.BikeRejectedMessage;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
@@ -13,8 +15,6 @@ import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import wife.infrastructure.protobuf.Wife.BikeApprovedMessage;
-import wife.infrastructure.protobuf.Wife.BikeRejectedMessage;
 
 @Path("/")
 @Produces({MediaType.APPLICATION_JSON, "application/x-protobuf"})

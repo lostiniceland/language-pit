@@ -1,4 +1,4 @@
-package bikes.infrastructure.web;
+package bikes.infrastructure.messaging;
 
 import bikes.application.ExternalEventPublisher;
 import bikes.domain.BikeCreatedEvent;

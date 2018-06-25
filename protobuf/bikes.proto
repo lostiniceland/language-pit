@@ -31,9 +31,12 @@ message PartType {
 }
 
 enum ApprovalEnumType {
-  PENDING = 0;
-  ACCEPTED = 1;
-  REJECTED = 2;
+  // use as default for better compatibility
+  // furthermore the default value is not serialized which is a problem when converting to json where it should be visible to other clients
+  UNKNOWN = 0;
+  PENDING = 1;
+  ACCEPTED = 2;
+  REJECTED = 3;
 }
 
 message ApprovalMessage {

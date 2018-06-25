@@ -6,10 +6,10 @@ import spock.lang.Specification
 abstract class BaseSpec extends Specification {
 
   @Shared
-  KafkaEventConsumer consumer
+  KafkaEventConsumer eventConsumer
 
   def setupSpec(){
-    consumer = new KafkaEventConsumer()
+    eventConsumer = new KafkaEventConsumer()
   }
 
 }

@@ -1,8 +1,9 @@
 package {{{ context.package }}}{{{ relative_package }}}
 
 import spock.lang.*
+import testing.support.*
 
-class Actionwords {{#curly}}{{#indent}}{{#each rendered_children.actionwords}}
+class Actionwords extends StatefullActionword {{#curly}}{{#indent}}{{#each rendered_children.actionwords}}
   {{{this}}}
 {{/each}}
 {{/indent}}
