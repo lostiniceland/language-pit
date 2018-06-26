@@ -1,26 +1,9 @@
-buildscript{
-  // intermediate until PR is merged
-  dependencies{
-    classpath 'org.scala-lang:scala-library:2.12.5'
-    classpath 'org.scala-sbt:io_2.12:1.1.2'
-    classpath 'com.github.os72:protoc-jar:3.5.1.1'
-    classpath 'com.typesafe.scala-logging:scala-logging_2.12:3.7.2'
-    classpath 'com.google.protobuf:protobuf-java:3.5.1'
-    classpath 'com.thesamet.scalapb:compilerplugin_2.12:0.7.4'
-    classpath 'com.thesamet.scalapb:scalapb-runtime-grpc_2.12:0.7.4'
-    classpath 'com.thesamet.scalapb:scalapb-runtime_2.12:0.7.4'
-    classpath files('/home/marc/Development/git/scalapb-gradle-plugin/build/libs/scalapb-plugin-1.2.0.jar')
-  }
-}
-
 plugins {
   id "scala"
   id "com.bmuschko.docker-remote-api" version "3.2.4"
   id 'com.github.johnrengelman.shadow' version '2.0.4'
-//  id 'com.charlesahunt.scalapb' version '1.2.0'
+  id 'com.charlesahunt.scalapb' version '1.1.9'
 }
-
-apply plugin: 'com.charlesahunt.scalapb'
 
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.bmuschko.gradle.docker.tasks.image.Dockerfile
