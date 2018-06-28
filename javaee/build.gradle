@@ -71,17 +71,16 @@ project(':jbikes') {
   // Copy all necessary files to the Docker build-context directory
   task prepareDocker() {
     dependsOn war
-    copy {
-      from war.archivePath.toString()
-      from project.projectDir.toString() + "/server"
-      into "$libertyDockerFolder"
-      rename { fileName ->
-        fileName.replace(war.archiveName, "bikes.war")
+    doLast {
+      copy {
+        from war.archivePath.toString()
+        from project.projectDir.toString() + "/server"
+        into "$libertyDockerFolder"
       }
-    }
-    copy {
-      from project.projectDir.toString() + "/../derbyLib/"
-      into "$libertyDockerFolder/derbyLib"
+      copy {
+        from project.projectDir.toString() + "/../derbyLib/"
+        into "$libertyDockerFolder/derbyLib"
+      }
     }
   }
 
@@ -91,7 +90,7 @@ project(':jbikes') {
     from 'openliberty/open-liberty:latest'
     environmentVariable('DERBY_DB_LOCATION', '/tmp/jbikes-derby.db')
     addFile('server.xml', '/config/')
-    addFile('bikes.war', '/config/apps')
+    addFile(war.archiveName, '/config/apps')
     addFile('derbyLib', '/config/derbyLib')
     exposePort(8080)
   }
@@ -124,17 +123,17 @@ project(':jwife') {
 
   // Copy all necessary files to the Docker build-context directory
   task prepareDocker() {
-    copy {
-      from war.archivePath.toString()
-      from project.projectDir.toString() + "/server"
-      into "$libertyDockerFolder"
-      rename { fileName ->
-        fileName.replace(war.archiveName, "wife.war")
+    dependsOn war
+    doLast {
+      copy {
+        from war.archivePath.toString()
+        from project.projectDir.toString() + "/server"
+        into "$libertyDockerFolder"
       }
-    }
-    copy {
-      from project.projectDir.toString() + "/../derbyLib/"
-      into "$libertyDockerFolder/derbyLib"
+      copy {
+        from project.projectDir.toString() + "/../derbyLib/"
+        into "$libertyDockerFolder/derbyLib"
+      }
     }
   }
 
@@ -144,7 +143,7 @@ project(':jwife') {
     from 'openliberty/open-liberty:latest'
     environmentVariable('DERBY_DB_LOCATION', '/tmp/jwife-derby.db')
     addFile('server.xml', '/config/')
-    addFile('wife.war', '/config/apps')
+    addFile(war.archiveName, '/config/apps')
     addFile('derbyLib', '/config/derbyLib')
     exposePort(8080)
   }
