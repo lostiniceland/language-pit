@@ -76,6 +76,9 @@ project(':jbikes') {
         from war.archivePath.toString()
         from project.projectDir.toString() + "/server"
         into "$libertyDockerFolder"
+        rename { fileName ->
+          fileName.replace(war.archiveName, "bikes.war")
+        }
       }
       copy {
         from project.projectDir.toString() + "/../derbyLib/"
@@ -90,7 +93,7 @@ project(':jbikes') {
     from 'openliberty/open-liberty:latest'
     environmentVariable('DERBY_DB_LOCATION', '/tmp/jbikes-derby.db')
     addFile('server.xml', '/config/')
-    addFile(war.archiveName, '/config/apps')
+    addFile('bikes.war', '/config/apps')
     addFile('derbyLib', '/config/derbyLib')
     exposePort(8080)
   }
@@ -129,6 +132,9 @@ project(':jwife') {
         from war.archivePath.toString()
         from project.projectDir.toString() + "/server"
         into "$libertyDockerFolder"
+        rename { fileName ->
+          fileName.replace(war.archiveName, "wife.war")
+        }
       }
       copy {
         from project.projectDir.toString() + "/../derbyLib/"
@@ -143,7 +149,7 @@ project(':jwife') {
     from 'openliberty/open-liberty:latest'
     environmentVariable('DERBY_DB_LOCATION', '/tmp/jwife-derby.db')
     addFile('server.xml', '/config/')
-    addFile(war.archiveName, '/config/apps')
+    addFile('wife.war', '/config/apps')
     addFile('derbyLib', '/config/derbyLib')
     exposePort(8080)
   }
