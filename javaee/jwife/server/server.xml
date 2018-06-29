@@ -15,7 +15,7 @@
     <fileset dir="${server.config.dir}/derbyLib"/>
   </library>
 
-  <jndiEntry jndiName="orchestrationUrl" value='"${env.ORCHESTRATION_URL}' />
+  <jndiEntry jndiName="orchestrationUrl" value='"${env.ORCHESTRATION_URL}"' />
   <jndiEntry jndiName="kafkaHost" value='"${env.KAFKA_HOST}"' />
   <jndiEntry jndiName="kafkaPort" value='"${env.KAFKA_PORT}"' />
   <jndiEntry jndiName="kafkaEventTopic" value='"${env.KAFKA_EVENT_TOPIC}"' />
