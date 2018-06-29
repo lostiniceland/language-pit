@@ -120,7 +120,7 @@ protected trait HttpPostPublisher extends HttpHealthCheck {
 
   val sleepDurationRetry = FiniteDuration(20, TimeUnit.SECONDS)
 
-  def sendPostWithMessageAndHandleFailure[T <: GeneratedMessage](url: String, message: T, cmd: Command) = {
+  def sendPostWithMessageAndHandleFailure[T <: GeneratedMessage](url: String, message: T, cmd: Command): Unit = {
     val responseFuture: Future[HttpResponse] = Http().singleRequest(
       Post(url)
         .withEntity(
