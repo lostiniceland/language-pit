@@ -3,14 +3,12 @@ services:
   zookeeper:
     image: wurstmeister/zookeeper
     container_name: zookeeper
-    hostname: zookeeper
     ports:
       - 2181:2181
 
   kafka:
     image: wurstmeister/kafka:1.1.0
     container_name: kafka
-    hostname: kafka
     ports:
       # use dynamic ports - "9092" when scaling to multiple nodes
       - 9092:9092
@@ -27,12 +25,13 @@ services:
     image: languagepit/orchestration:akka
     depends_on:
       - kafka
-    hostname: "orchestration-akka"
     ports:
       - 9090:9090
     environment:
       BIKE_HOST: bike
+      BIKE_PORT: 8080
       WIFE_HOST: wife
+      WIFE_PORT: 8080
 
   bike:
     image: languagepit/javaee-bikes:openliberty
@@ -41,11 +40,11 @@ services:
     ports:
       - 8080:8080
     environment:
-      KAFKA_HOST: ${DOCKER_HOST_IP:-127.0.0.1}
+      KAFKA_HOST: "kafka"
       KAFKA_PORT: 9092
       KAFKA_EVENT_TOPIC: "language-pit.events"
       DERBY_DB_LOCATION: "/opt/wife-db"
-      ORCHESTRATION_URL: "http://orchestration-akka:9090/"
+      ORCHESTRATION_URL: "http://orchestration:9090/"
 
   wife:
     image: languagepit/javaee-wife:openliberty
@@ -54,9 +53,9 @@ services:
     ports:
       - 8090:8080
     environment:
-      KAFKA_HOST: ${DOCKER_HOST_IP:-127.0.0.1}
+      KAFKA_HOST: "kafka"
       KAFKA_PORT: 9092
       KAFKA_EVENT_TOPIC: "language-pit.events"
       DERBY_DB_LOCATION: "/opt/bikes.db"
-      ORCHESTRATION_URL: "http://orchestration-akka:9090/"
+      ORCHESTRATION_URL: "http://orchestration:9090/"
 

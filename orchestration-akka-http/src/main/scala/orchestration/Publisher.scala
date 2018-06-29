@@ -32,7 +32,7 @@ class BikesPublisher extends PersistentActor with ActorLogging with HttpPostPubl
 
   private val state: ListBuffer[Command] = ListBuffer[Command]()
 
-  override implicit val healthCheckUrl: String = s"http://${System.getenv("BIKE_HOST")}:8080/bikes/health"
+  override implicit val healthCheckUrl: String = s"http://${System.getenv("BIKE_HOST")}:${System.getenv("BIKE_PORT")}/bikes/health"
 
   override def receiveRecover: Receive = {
     case cmd: Command => updateState(cmd)
@@ -43,7 +43,7 @@ class BikesPublisher extends PersistentActor with ActorLogging with HttpPostPubl
       persist(approved) { approved =>
         updateState(approved)
         sendPostWithMessageAndHandleFailure(
-          s"http://${System.getenv("BIKE_HOST")}:8080/bikes",
+          s"http://${System.getenv("BIKE_HOST")}:${System.getenv("BIKE_PORT")}/bikes",
           BikeApprovedMessage(bikeId = approved.id),
           approved)
       }
@@ -51,7 +51,7 @@ class BikesPublisher extends PersistentActor with ActorLogging with HttpPostPubl
       persist(rejected){rejected =>
         updateState(rejected)
         sendPostWithMessageAndHandleFailure(
-          s"http://${System.getenv("BIKE_HOST")}:8080/bikes",
+          s"http://${System.getenv("BIKE_HOST")}:${System.getenv("BIKE_PORT")}/bikes",
           BikeRejectedMessage(bikeId = rejected.id),
           rejected)
       }
@@ -79,7 +79,7 @@ class WifePublisher extends PersistentActor with ActorLogging with HttpPostPubli
 
   private val state: ListBuffer[Command] = ListBuffer[Command]()
 
-  override implicit val healthCheckUrl: String = s"http://${System.getenv("WIFE_HOST")}:8090/wife/health"
+  override implicit val healthCheckUrl: String = s"http://${System.getenv("WIFE_HOST")}:${System.getenv("WIFE_PORT")}/wife/health"
 
   override def receiveRecover: Receive = {
     case cmd: Command => updateState(cmd)
@@ -91,7 +91,7 @@ class WifePublisher extends PersistentActor with ActorLogging with HttpPostPubli
       persist(created){ created =>
         updateState(created)
         sendPostWithMessageAndHandleFailure(
-          s"http://${System.getenv("WIFE_HOST")}:8090/wife/bikes",
+          s"http://${System.getenv("WIFE_HOST")}:${System.getenv("WIFE_PORT")}/wife/bikes",
           CreateBikeApprovalMessage(bikeId = created.id, value = created.value),
           created)
       }
