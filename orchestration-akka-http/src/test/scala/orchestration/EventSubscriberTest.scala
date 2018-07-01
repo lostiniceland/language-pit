@@ -4,7 +4,7 @@ import akka.actor.ActorRef
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import akka.testkit.TestProbe
-import common.infrastructure.protobuf._
+import common.infrastructure.protobuf.events._
 import org.scalatest.{Matchers, WordSpec}
 
 class EventSubscriberTest extends WordSpec with Matchers with ScalatestRouteTest with EventSubscriber {
