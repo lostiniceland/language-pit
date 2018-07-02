@@ -12,4 +12,8 @@ abstract class BaseSpec extends Specification {
     eventConsumer = new KafkaEventConsumer()
   }
 
+  def cleanupSpec(){
+    eventConsumer.close()
+  }
+
 }

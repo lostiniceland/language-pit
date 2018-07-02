@@ -15,6 +15,15 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 sourceSets.main.java.srcDirs += 'build/generated/source/proto/main/java'
 
+
+protobuf {
+  // Configure the protoc executable
+  protoc {
+    // Download from repositories
+    artifact = 'com.google.protobuf:protoc:3.5.1'
+  }
+}
+
 dependencies {
   compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
   compile group: 'com.google.protobuf', name: 'protobuf-java', version: '3.5.1'
