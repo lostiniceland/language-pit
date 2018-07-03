@@ -42,7 +42,7 @@ public class KafkaClient implements ExternalEventPublisher {
     props.put("bootstrap.servers", kafkaHost + ":" + kafkaPort);
     props.put("key.serializer", StringSerializer.class.getName());
     props.put("value.serializer", ByteArraySerializer.class.getName());
-    props.put("client.id", "bikes-1");
+    props.put("client.id", "wife");
     this.kafkaProducer = new KafkaProducer<>(props);
   }
 
