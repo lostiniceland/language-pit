@@ -2,6 +2,7 @@ package bikes.infrastructure.messaging;
 
 import bikes.application.ExternalEventPublisher;
 import bikes.domain.BikeCreatedEvent;
+import com.google.protobuf.Timestamp;
 import common.infrastructure.protobuf.Events.BikeCreatedMessage;
 import common.infrastructure.protobuf.Events.EventsEnvelope;
 import java.util.Properties;
@@ -43,11 +44,15 @@ public class KafkaClient implements ExternalEventPublisher {
 
   @Override
   public void notifyWifeAboutNewBike(BikeCreatedEvent event) {
-    EventsEnvelope envelope = EventsEnvelope.newBuilder().setBikeCreated(
-        BikeCreatedMessage.newBuilder()
-          .setBikeId(event.getBikeId())
-          .setValue(event.getValue())
-          .build()).build();
+    EventsEnvelope envelope = EventsEnvelope.newBuilder()
+        .setOccuredOn(Timestamp.newBuilder()
+            .setSeconds(event.getOccuredOn().toInstant().getEpochSecond())
+            .setNanos(event.getOccuredOn().toInstant().getNano()))
+        .setBikeCreated(
+          BikeCreatedMessage.newBuilder()
+            .setBikeId(event.getBikeId())
+            .setValue(event.getValue())
+            .build()).build();
     kafkaProducer.send(new ProducerRecord<>(kafkaEventTopic, envelope.toByteArray()));
     kafkaProducer.flush();
   }
