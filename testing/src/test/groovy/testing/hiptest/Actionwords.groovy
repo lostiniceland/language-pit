@@ -60,7 +60,7 @@ class Actionwords extends StatefullActionword {
   boolean waitForNewBikeApproval(){
     String id = getState("created-bike-id", String.class)
     def event = eventConsumer.lookupEvent { envelope ->
-      return envelope.hasBikeCreated() && envelope.getBikeCreated().bikeId == Long.valueOf(id)
+      return envelope.hasBikeApprovalCreated() && envelope.getBikeApprovalCreated().bikeId == Long.valueOf(id)
     }
     assert event.isPresent()
     true
