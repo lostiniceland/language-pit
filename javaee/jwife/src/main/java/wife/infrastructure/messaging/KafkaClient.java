@@ -50,6 +50,7 @@ public class KafkaClient implements ExternalEventPublisher {
 
   @Override
   public void notifyAboutApprovalCreated(BikeApprovalCreatedEvent event) {
+    logger.info("Sending event '{}' to Kafka");
     EventsEnvelope envelope = EventsEnvelope.newBuilder()
         .setOccuredOn(Timestamp.newBuilder()
             .setSeconds(event.getOccuredOn().toInstant().getEpochSecond())
@@ -65,6 +66,7 @@ public class KafkaClient implements ExternalEventPublisher {
 
   @Override
   public void notifyAboutApproval(BikeApprovedEvent event) {
+    logger.info("Sending event '{}' to Kafka");
     EventsEnvelope envelope = EventsEnvelope.newBuilder()
         .setOccuredOn(Timestamp.newBuilder()
             .setSeconds(event.getOccuredOn().toInstant().getEpochSecond())
@@ -80,6 +82,7 @@ public class KafkaClient implements ExternalEventPublisher {
 
   @Override
   public void notifyAboutReject(BikeRejectedEvent event) {
+    logger.info("Sending event '{}' to Kafka");
     EventsEnvelope envelope = EventsEnvelope.newBuilder()
         .setOccuredOn(Timestamp.newBuilder()
             .setSeconds(event.getOccuredOn().toInstant().getEpochSecond())
