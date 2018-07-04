@@ -45,7 +45,7 @@ public class KafkaClient implements ExternalEventPublisher {
 
   @Override
   public void notifyWifeAboutNewBike(BikeCreatedEvent event) {
-    logger.info("Sending event '{}' to Kafka");
+    logger.info("Sending event '{}' to Kafka", event.toString());
     EventsEnvelope envelope = EventsEnvelope.newBuilder()
         .setOccuredOn(Timestamp.newBuilder()
             .setSeconds(event.getOccuredOn().toInstant().getEpochSecond())
