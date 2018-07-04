@@ -3,17 +3,16 @@ package testing.support;
 import com.google.protobuf.InvalidProtocolBufferException;
 import common.infrastructure.protobuf.Events.EventsEnvelope;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -40,7 +39,6 @@ public class KafkaEventConsumer {
     final String kafkaPort = kafkaPortOverride != null ? kafkaPortOverride : defaultConfig.getProperty("KAFKA_PORT");
     final String topic = kafkaTopicOverride != null ? kafkaTopicOverride : defaultConfig.getProperty("KAFKA_EVENT_TOPIC");
 
-
     Properties props = new Properties();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -49,27 +47,22 @@ public class KafkaEventConsumer {
     props.put(ConsumerConfig.GROUP_ID_CONFIG, "testing");
     this.kafkaConsumer = new KafkaConsumer<>(props);
 
-    ConsumerRebalanceListener listener = new ConsumerRebalanceListener() {
-      @Override
-      public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-        logger.info("{} topic-partitions are revoked from this consumer", Arrays.toString(partitions.toArray()));
-      }
-
-      @Override
-      public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-        System.out.printf("%s topic-partitions are assigned to this consumer\n", Arrays.toString(partitions.toArray()));
-        for (TopicPartition topicPartition : partitions) {
-          System.out.println("Setting it to the end");
-          kafkaConsumer.seekToEnd(Collections.singletonList(topicPartition));
-        }
-      }
-    };
-
-    kafkaConsumer.subscribe(Collections.singletonList(topic), listener);
+    // Use manual partition-assignment to not fall into rebalancing-issues
+    List<TopicPartition> partitions = new ArrayList<>();
+    for (PartitionInfo partition : kafkaConsumer.partitionsFor(topic))
+      partitions.add(new TopicPartition(topic, partition.partition()));
+    kafkaConsumer.assign(partitions);
+    // do an intial poll for proper connection-setup TODO improve this
+    kafkaConsumer.poll(0);
   }
 
+  /**
+   * Retrieves all {@link EventsEnvelope}s from the topic and tests each with the given predicate
+   * @param predicate the test-function applied against each new {@link EventsEnvelope}
+   * @return the first envelope wrapped in an Optional that passed the predicate, otherwise empty.
+   */
   public Optional<EventsEnvelope> lookupEvent(Predicate<EventsEnvelope> predicate) {
-    ConsumerRecords<String, byte[]> records = kafkaConsumer.poll(2000);
+    ConsumerRecords<String, byte[]> records = kafkaConsumer.poll(500);
     try {
       for (ConsumerRecord<String, byte[]> record : records) {
         EventsEnvelope envelope = EventsEnvelope.parseFrom(record.value());
@@ -79,13 +72,12 @@ public class KafkaEventConsumer {
       }
     } catch (InvalidProtocolBufferException e) {
       logger.error(e.getMessage());
-    } finally {
-
     }
     return Optional.empty();
   }
 
   public void close() {
-    kafkaConsumer.close();
+    if(kafkaConsumer != null)
+      kafkaConsumer.close();
   }
 }
