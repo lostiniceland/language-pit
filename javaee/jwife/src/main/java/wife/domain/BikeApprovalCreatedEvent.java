@@ -18,4 +18,9 @@ public class BikeApprovalCreatedEvent extends DomainEvent {
   public long getBikeId() {
     return bikeId;
   }
+
+  @Override
+  public String toString() {
+    return String.format("%s {occuredOn=%s; id=%s; bikeId=%s}", getClass().getSimpleName(), getOccuredOn(), id, bikeId);
+  }
 }

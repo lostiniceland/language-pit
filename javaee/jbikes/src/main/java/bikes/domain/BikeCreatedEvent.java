@@ -18,4 +18,9 @@ public class BikeCreatedEvent extends DomainEvent {
   public float getValue() {
     return value;
   }
+
+  @Override
+  public String toString() {
+    return String.format("%s {occuredOn=%s; bikeId=%s; value=%s}", getClass().getSimpleName(), getOccuredOn(), bikeId, value);
+  }
 }
