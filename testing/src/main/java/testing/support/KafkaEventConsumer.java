@@ -4,9 +4,13 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import common.infrastructure.protobuf.Events.EventsEnvelope;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -14,6 +18,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
@@ -23,7 +28,7 @@ public class KafkaEventConsumer {
 
   static Logger logger = LoggerFactory.getLogger(KafkaEventConsumer.class);
 
-  private final KafkaConsumer<String, byte[]> kafkaConsumer;
+  private final Collection<EventsEnvelope> events = new ArrayList<>();
 
   KafkaEventConsumer() {
     Properties defaultConfig = new Properties();
@@ -39,22 +44,20 @@ public class KafkaEventConsumer {
     final String kafkaPort = kafkaPortOverride != null ? kafkaPortOverride : defaultConfig.getProperty("KAFKA_PORT");
     final String topic = kafkaTopicOverride != null ? kafkaTopicOverride : defaultConfig.getProperty("KAFKA_EVENT_TOPIC");
 
-    Properties props = new Properties();
-    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
-    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
-    props.put(ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, 10000);
-    props.put(ConsumerConfig.GROUP_ID_CONFIG, "testing");
-    this.kafkaConsumer = new KafkaConsumer<>(props);
-
-    // Use manual partition-assignment to not fall into rebalancing-issues
-    List<TopicPartition> partitions = new ArrayList<>();
-    for (PartitionInfo partition : kafkaConsumer.partitionsFor(topic))
-      partitions.add(new TopicPartition(topic, partition.partition()));
-    kafkaConsumer.assign(partitions);
-    // do an intial poll for proper connection-setup TODO improve this
-    kafkaConsumer.poll(0);
+    final ConsumerLoop consumer = new ConsumerLoop(kafkaHost, kafkaPort, topic);
+    final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    executorService.submit(consumer);
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+      consumer.shutdown();
+      executorService.shutdown();
+      try{
+        executorService.awaitTermination(1, TimeUnit.SECONDS);
+      } catch (InterruptedException e) {
+        logger.error(e.getMessage(), e);
+      }
+    }));
   }
+
 
   /**
    * Retrieves all {@link EventsEnvelope}s from the topic and tests each with the given predicate
@@ -62,22 +65,60 @@ public class KafkaEventConsumer {
    * @return the first envelope wrapped in an Optional that passed the predicate, otherwise empty.
    */
   public Optional<EventsEnvelope> lookupEvent(Predicate<EventsEnvelope> predicate) {
-    ConsumerRecords<String, byte[]> records = kafkaConsumer.poll(500);
     try {
-      for (ConsumerRecord<String, byte[]> record : records) {
-        EventsEnvelope envelope = EventsEnvelope.parseFrom(record.value());
-        if (predicate.test(envelope)) {
-          return Optional.of(envelope);
-        }
-      }
-    } catch (InvalidProtocolBufferException e) {
-      logger.error(e.getMessage());
+      // TODO improve this with a Future and Timeout
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
-    return Optional.empty();
+    synchronized (events) {
+      return events.stream().filter(predicate).findFirst();
+    }
   }
 
-  public void close() {
-    if(kafkaConsumer != null)
-      kafkaConsumer.close();
+  private final class ConsumerLoop implements Runnable {
+
+    private final KafkaConsumer<String, byte[]> kafkaConsumer;
+
+    private ConsumerLoop(String kafkaHost, String kafkaPort, String topic){
+      Properties props = new Properties();
+      props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
+      props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+      props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
+      props.put(ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, 10000);
+      props.put(ConsumerConfig.GROUP_ID_CONFIG, "testing");
+      this.kafkaConsumer = new KafkaConsumer<>(props);
+
+      // Use manual partition-assignment to not fall into rebalancing-issues
+      List<TopicPartition> partitions = new ArrayList<>();
+      for (PartitionInfo partition : kafkaConsumer.partitionsFor(topic))
+        partitions.add(new TopicPartition(topic, partition.partition()));
+      kafkaConsumer.assign(partitions);
+    }
+
+    @Override
+    public void run() {
+      try{
+        while(true){
+          ConsumerRecords<String, byte[]> records = kafkaConsumer.poll(Long.MAX_VALUE);
+          for (ConsumerRecord<String, byte[]> record : records) {
+            EventsEnvelope envelope = EventsEnvelope.parseFrom(record.value());
+            synchronized (events){
+              events.add(envelope);
+            }
+          }
+        }
+      } catch (InvalidProtocolBufferException e) {
+        logger.error(e.getMessage());
+      } catch(WakeupException e) {
+        // ignore for shutdown
+      }finally {
+        kafkaConsumer.close();
+      }
+    }
+
+    private void shutdown(){
+      kafkaConsumer.wakeup();
+    }
   }
 }

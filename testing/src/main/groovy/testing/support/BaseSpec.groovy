@@ -13,7 +13,5 @@ abstract class BaseSpec extends Specification {
   }
 
   def cleanupSpec(){
-    eventConsumer.close()
   }
-
 }
