@@ -24,6 +24,10 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class launches a KafkaConsumer-instance in a dedicated thread which polls for new messages.
+ * Available events/messages can be looked up.
+ */
 public class KafkaEventConsumer {
 
   static Logger logger = LoggerFactory.getLogger(KafkaEventConsumer.class);
@@ -47,6 +51,7 @@ public class KafkaEventConsumer {
     final ConsumerLoop consumer = new ConsumerLoop(kafkaHost, kafkaPort, topic);
     final ExecutorService executorService = Executors.newSingleThreadExecutor();
     executorService.submit(consumer);
+    // Make sure to stop the thread and cleanup resources when the JVM get stopped
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       consumer.shutdown();
       executorService.shutdown();
@@ -60,20 +65,35 @@ public class KafkaEventConsumer {
 
 
   /**
-   * Retrieves all {@link EventsEnvelope}s from the topic and tests each with the given predicate
+   * Checks against all, until now, received {@link EventsEnvelope}s from the topic and tests each with the given predicate.
+   * If the predicate did not match the loop continues until the default timeout of 1 second.
    * @param predicate the test-function applied against each new {@link EventsEnvelope}
    * @return the first envelope wrapped in an Optional that passed the predicate, otherwise empty.
    */
   public Optional<EventsEnvelope> lookupEvent(Predicate<EventsEnvelope> predicate) {
-    try {
-      // TODO improve this with a Future and Timeout
-      Thread.sleep(500);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
+    return lookupEvent(predicate, 1000);
+  }
+
+  /**
+   * Checks against all, until now, received {@link EventsEnvelope}s from the topic and tests each with the given predicate.
+   * If the predicate did not match the loop continues until the given timeout is reached.
+   * @param predicate the test-function applied against each new {@link EventsEnvelope}
+   * @param timeout custom timeout until the method will timeout its retries
+   * @return the first envelope wrapped in an Optional that passed the predicate, otherwise empty.
+   */
+  public Optional<EventsEnvelope> lookupEvent(Predicate<EventsEnvelope> predicate, long timeout) {
+    long deadline = System.currentTimeMillis() + timeout;
+
+    while(System.currentTimeMillis() < deadline) {
+      Optional<EventsEnvelope> result;
+      synchronized (events) {
+        result = events.stream().filter(predicate).findFirst();
+      }
+      if(result.isPresent()){
+        return result;
+      }
     }
-    synchronized (events) {
-      return events.stream().filter(predicate).findFirst();
-    }
+    return Optional.empty();
   }
 
   private final class ConsumerLoop implements Runnable {
@@ -100,6 +120,7 @@ public class KafkaEventConsumer {
     public void run() {
       try{
         while(true){
+          // polling will wait indefinately until an event is available or shut down
           ConsumerRecords<String, byte[]> records = kafkaConsumer.poll(Long.MAX_VALUE);
           for (ConsumerRecord<String, byte[]> record : records) {
             EventsEnvelope envelope = EventsEnvelope.parseFrom(record.value());
@@ -118,6 +139,7 @@ public class KafkaEventConsumer {
     }
 
     private void shutdown(){
+      // cause a WakeupException
       kafkaConsumer.wakeup();
     }
   }
