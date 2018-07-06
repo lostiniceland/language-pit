@@ -66,12 +66,12 @@ public class KafkaEventConsumer {
 
   /**
    * Checks against all, until now, received {@link EventsEnvelope}s from the topic and tests each with the given predicate.
-   * If the predicate did not match the loop continues until the default timeout of 1 second.
+   * If the predicate did not match the loop continues until the default timeout of 3 seconds.
    * @param predicate the test-function applied against each new {@link EventsEnvelope}
    * @return the first envelope wrapped in an Optional that passed the predicate, otherwise empty.
    */
   public Optional<EventsEnvelope> lookupEvent(Predicate<EventsEnvelope> predicate) {
-    return lookupEvent(predicate, 1000);
+    return lookupEvent(predicate, 3000);
   }
 
   /**
@@ -105,7 +105,6 @@ public class KafkaEventConsumer {
       props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
       props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
       props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
-      props.put(ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, 10000);
       props.put(ConsumerConfig.GROUP_ID_CONFIG, "testing");
       this.kafkaConsumer = new KafkaConsumer<>(props);
 

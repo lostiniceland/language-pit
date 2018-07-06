@@ -1,14 +1,12 @@
-version: '3.2'
+version: '3.4'
 services:
   zookeeper:
     image: wurstmeister/zookeeper
-    container_name: zookeeper
     ports:
       - 2181:2181
 
   kafka:
       image: wurstmeister/kafka:1.1.0
-      container_name: kafka
       ports:
         - target: 9094
           published: 9094
@@ -39,6 +37,12 @@ services:
       BIKE_PORT: 8080
       WIFE_HOST: wife
       WIFE_PORT: 8080
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://orchestration:9090/events/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 3s
 
   bike:
     image: languagepit/javaee-bikes:openliberty
@@ -52,6 +56,12 @@ services:
       KAFKA_EVENT_TOPIC: ${TOPIC_NAME:-language-pit.events}
       DERBY_DB_LOCATION: "/opt/wife-db"
       ORCHESTRATION_URL: "http://orchestration:9090/"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://bike:8080/bikes/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 3s
 
   wife:
     image: languagepit/javaee-wife:openliberty
@@ -65,4 +75,10 @@ services:
       KAFKA_EVENT_TOPIC: ${TOPIC_NAME:-language-pit.events}
       DERBY_DB_LOCATION: "/opt/bikes.db"
       ORCHESTRATION_URL: "http://orchestration:9090/"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://wife:8080/wife/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 3s
 

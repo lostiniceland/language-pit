@@ -2,7 +2,7 @@
 plugins {
   id "java"
   id "war"
-  id "com.google.protobuf" version "0.8.5" apply false
+  id "com.google.protobuf" version "0.8.6" apply false
   id "com.bmuschko.docker-remote-api" version "3.2.4" apply false
 }
 
