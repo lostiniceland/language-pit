@@ -20,6 +20,7 @@ subprojects {
 
   apply plugin: 'java'
   apply plugin: 'groovy'
+  apply plugin: 'com.google.protobuf'
 
   dependencies {
     compileOnly group: 'javax', name: 'javaee-api', version: '8.0'
@@ -42,19 +43,10 @@ subprojects {
   }
 
   compileJava {
-    dependsOn('generateProto')
+    dependsOn 'generateProto'
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
-}
-
-
-
-project(':jbikes') {
-
-  apply plugin: "com.google.protobuf"
-  apply plugin: 'war'
-  apply plugin: 'com.bmuschko.docker-remote-api'
 
   sourceSets.main.java.srcDirs += 'build/generated/source/proto/main/java'
 
@@ -65,7 +57,14 @@ project(':jbikes') {
       artifact = 'com.google.protobuf:protoc:3.5.1'
     }
   }
+}
 
+
+
+project(':jbikes') {
+
+  apply plugin: 'war'
+  apply plugin: 'com.bmuschko.docker-remote-api'
 
   def libertyDockerFolder = "$project.buildDir/docker/openliberty"
 
@@ -108,20 +107,8 @@ project(':jbikes') {
 
 project(':jwife') {
 
-  apply plugin: "com.google.protobuf"
   apply plugin: 'war'
   apply plugin: 'com.bmuschko.docker-remote-api'
-
-  sourceSets.main.java.srcDirs += 'build/generated/source/proto/main/java'
-
-  protobuf {
-    // Configure the protoc executable
-    protoc {
-      // Download from repositories
-      artifact = 'com.google.protobuf:protoc:3.5.1'
-    }
-  }
-
 
   def libertyDockerFolder = "$project.buildDir/docker/openliberty"
 

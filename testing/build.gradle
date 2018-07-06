@@ -15,7 +15,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 sourceSets.main.java.srcDirs += 'build/generated/source/proto/main/java'
 
-compileJava.dependsOn generateProto
+compileJava.dependsOn 'generateProto'
 
 protobuf {
   // Configure the protoc executable

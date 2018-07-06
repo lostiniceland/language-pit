@@ -2,12 +2,16 @@ docker-compose/.env
 */target/*
 */bin/*
 */pkg/*
+*/out/*
+*/build/*
+*/.gradle/*
 
 # IntelliJ project files
 *.iml
 *.iws
 *.ipr
 .idea/
+
 
 # eclipse project file
 .settings/
@@ -18,3 +22,6 @@ scala-akka/gradlew.bat
 
 #HipTest
 **/*HipSpec.groovy
+
+# LevelDB
+journal
