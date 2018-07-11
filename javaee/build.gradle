@@ -90,7 +90,7 @@ project(':jbikes') {
   task createDockerfile(type: Dockerfile) {
     dependsOn prepareDocker
     destFile = project.file("$libertyDockerFolder/Dockerfile")
-    from 'openliberty/open-liberty:latest'
+    from 'open-liberty:webProfile8'
     environmentVariable('DERBY_DB_LOCATION', '/tmp/jbikes-derby.db')
     addFile('server.xml', '/config/')
     addFile('bikes.war', '/config/apps')
@@ -134,7 +134,7 @@ project(':jwife') {
   task createDockerfile(type: Dockerfile) {
     dependsOn prepareDocker
     destFile = project.file("$libertyDockerFolder/Dockerfile")
-    from 'openliberty/open-liberty:latest'
+    from 'open-liberty:webProfile8'
     environmentVariable('DERBY_DB_LOCATION', '/tmp/jwife-derby.db')
     addFile('server.xml', '/config/')
     addFile('wife.war', '/config/apps')
