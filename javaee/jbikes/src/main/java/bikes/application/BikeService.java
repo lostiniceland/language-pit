@@ -35,7 +35,7 @@ public class BikeService {
     Bike entity = new Bike(manufacturer, name, weight, value);
     parts.forEach(part -> entity.addPart(new Part(part.getName(), part.getWeight())));
     bikeRepository.addBike(entity);
-    bikesCreatedPublisher.fire(new BikeCreatedEvent(entity.getId(), entity.getValue()));
+    bikesCreatedPublisher.fireAsync(new BikeCreatedEvent(entity.getId(), entity.getValue()));
     return entity;
   }
 

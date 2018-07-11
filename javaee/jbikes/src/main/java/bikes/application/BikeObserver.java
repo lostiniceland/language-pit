@@ -2,12 +2,11 @@ package bikes.application;
 
 import bikes.domain.BikeCreatedEvent;
 import bikes.infrastructure.messaging.Kafka;
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
-import javax.enterprise.event.Observes;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 
-@Stateless
+@ApplicationScoped
 public class BikeObserver {
 
   @Inject
@@ -17,8 +16,7 @@ public class BikeObserver {
   @Inject
   ExternalEventPublisher kafkaPublisher;
 
-  @Asynchronous
-  public void notifyWifeAboutNewBike(@Observes BikeCreatedEvent event){
+  public void notifyWifeAboutNewBike(@ObservesAsync BikeCreatedEvent event){
     publisher.notifyWifeAboutNewBike(event);
     kafkaPublisher.notifyWifeAboutNewBike(event);
   }

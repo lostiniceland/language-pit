@@ -38,10 +38,10 @@ public class ApprovalService {
 
     if (approved) {
       approval.setApproval(ApprovalStatus.Accepted);
-      bikesApprovedPublisher.fire(new BikeApprovedEvent(approval.getId(), approval.getBikeId()));
+      bikesApprovedPublisher.fireAsync(new BikeApprovedEvent(approval.getId(), approval.getBikeId()));
     } else {
       approval.setApproval(ApprovalStatus.Rejected);
-      bikesRejectedPublisher.fire(new BikeRejectedEvent(approval.getId(), approval.getBikeId()));
+      bikesRejectedPublisher.fireAsync(new BikeRejectedEvent(approval.getId(), approval.getBikeId()));
     }
   }
 
