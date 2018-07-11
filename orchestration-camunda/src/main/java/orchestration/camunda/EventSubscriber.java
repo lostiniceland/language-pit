@@ -1,8 +1,6 @@
 package orchestration.camunda;
 
-import common.infrastructure.protobuf.Events.BikeApprovedMessage;
-import common.infrastructure.protobuf.Events.BikeCreatedMessage;
-import common.infrastructure.protobuf.Events.BikeRejectedMessage;
+import common.infrastructure.protobuf.Events.*;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
