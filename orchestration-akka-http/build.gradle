@@ -3,6 +3,7 @@ plugins {
   id "com.bmuschko.docker-remote-api" version "3.2.4"
   id 'com.github.johnrengelman.shadow' version '2.0.4'
   id 'com.charlesahunt.scalapb' version '1.2.1'
+  id 'com.google.cloud.tools.jib' version '0.9.6'
 }
 
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
@@ -81,3 +82,21 @@ task buildImage(type: DockerBuildImage) {
   inputDir = createDockerfile.destFile.parentFile
   tag = 'languagepit/orchestration:akka'
 }
+
+
+//// with this, jib wants to push to dockerhub, whereas I want only a local image
+//jib {
+//  from {
+//    image = 'openjdk:8-jre-alpine'
+//  }
+//  to {
+//    image = 'languagepit/orchestration:akka'
+//  }
+//  container {
+//    mainClass = 'orchestration.Orchestration'
+//    ports = ['9090']
+//    jvmFlags = ['-Xms512m', '-Xdebug']
+//  }
+//}
+//
+//tasks.build.dependsOn tasks.jib
