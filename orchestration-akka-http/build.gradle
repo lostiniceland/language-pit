@@ -1,13 +1,8 @@
 plugins {
   id "scala"
-  id "com.bmuschko.docker-remote-api" version "3.2.4"
-  id 'com.github.johnrengelman.shadow' version '2.0.4'
   id 'com.charlesahunt.scalapb' version '1.2.1'
   id 'com.google.cloud.tools.jib' version '0.9.6'
 }
-
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 
 ext {
   versionScala = '2.12.5'
@@ -57,46 +52,18 @@ scalapbConfig {
 }
 
 
-jar {
-  manifest {
-    attributes 'Main-Class': 'orchestration.Orchestration'
+jib {
+  from {
+    image = 'openjdk:8-jre-alpine'
+  }
+  to {
+    image = 'languagepit/orchestration:akka'
+  }
+  container {
+    mainClass = 'orchestration.Orchestration'
+    ports = ['9090']
+    jvmFlags = ['-Xms128m', '-Xdebug']
   }
 }
 
-shadowJar{
-  // see https://doc.akka.io/docs/akka/snapshot/general/configuration.html#When_using_JarJar__OneJar__Assembly_or_any_jar-bundler
-  append 'reference.conf'
-}
-
-task createDockerfile(type: Dockerfile) {
-  dependsOn shadowJar
-  destFile = project.file("$shadowJar.destinationDir/Dockerfile")
-  from 'openjdk:8-jre-alpine'
-  copyFile (shadowJar.archiveName, '/')
-  exposePort(9090)
-  defaultCommand "java", "-jar", "$shadowJar.archiveName"
-}
-
-task buildImage(type: DockerBuildImage) {
-  dependsOn createDockerfile
-  inputDir = createDockerfile.destFile.parentFile
-  tag = 'languagepit/orchestration:akka'
-}
-
-
-//// with this, jib wants to push to dockerhub, whereas I want only a local image
-//jib {
-//  from {
-//    image = 'openjdk:8-jre-alpine'
-//  }
-//  to {
-//    image = 'languagepit/orchestration:akka'
-//  }
-//  container {
-//    mainClass = 'orchestration.Orchestration'
-//    ports = ['9090']
-//    jvmFlags = ['-Xms512m', '-Xdebug']
-//  }
-//}
-//
-//tasks.build.dependsOn tasks.jib
+tasks.build.dependsOn tasks.jibDockerBuild
