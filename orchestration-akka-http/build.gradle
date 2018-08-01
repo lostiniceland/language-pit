@@ -13,13 +13,18 @@ ext {
   versionLogback = '1.1.8'
   versionLevelDb = '0.10'
   versionProtobuf = '3.5.1'
+  versionScalaKafka = '1.1.0'
   versionSpecs2 = '4.2.0'
 }
 
 version = '0.1.0'
 
 repositories {
+  mavenLocal()
   mavenCentral()
+  maven {
+    url 'https://dl.bintray.com/cakesolutions/maven'
+  }
 }
 
 sourceSets.main.scala.srcDirs += 'build/generated/source/proto/main/scala'
@@ -34,10 +39,13 @@ dependencies {
   compile group: 'com.thesamet.scalapb', name: 'scalapb-runtime_2.12', version: '0.7.4'
   compile group: 'com.esotericsoftware', name: 'kryo', version: '4.0.2'
   compile group: 'com.github.romix.akka', name: 'akka-kryo-serialization_2.12', version: '0.5.2'
+  compile group: 'net.cakesolutions', name: 'scala-kafka-client_2.12', version: versionScalaKafka
+  compile group: 'net.cakesolutions', name: 'scala-kafka-client-akka_2.12', version: versionScalaKafka
   testCompile group: 'junit', name: 'junit', version: '4.+'
   testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: versionScalaTest
   testCompile group: 'com.typesafe.akka', name: 'akka-testkit_2.12', version: versionAkka
   testCompile group: 'com.typesafe.akka', name: 'akka-http-testkit_2.12', version: versionAkkaHttp
+  testCompile group: 'net.cakesolutions', name: 'scala-kafka-client-testkit_2.12', version: versionScalaKafka
   testCompile group: 'org.specs2', name: 'specs2-core_2.12', version: versionSpecs2
 }
 

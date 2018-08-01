@@ -148,6 +148,3 @@ project(':jwife') {
     tag = 'languagepit/javaee-wife:openliberty'
   }
 }
-
-
-

@@ -8,7 +8,7 @@ import orchestration.Commands._
 
 
 object WebServer extends HttpApp with EventSubscriber {
-  lazy val routerService: ActorRef = systemReference.get().actorOf(ServiceRouter.props(), "dispatcher")
+//  lazy val routerService: ActorRef = systemReference.get().actorOf(ServiceRouter.props(), "dispatcher")
 
   override protected def routes: Route = route
 
@@ -21,45 +21,46 @@ object WebServer extends HttpApp with EventSubscriber {
 
 trait EventSubscriber extends Directives with ProtobufSupport {
 
-  implicit val routerService: ActorRef
+//  implicit val routerService: ActorRef
 
   val route: Route = pathPrefix("events") {
     pathPrefix("health") {
        get {
          complete(StatusCodes.OK)
        }
-    } ~
-    pathPrefix("bikes" / "created") {
-      post {
-        decodeRequest {
-          entity(as[BikeCreatedMessage])(msg => {
-            routerService ! BikeCreated(msg.bikeId, msg.value)
-            complete(StatusCodes.Accepted)
-          })
-        }
-      }
-    } ~
-    pathPrefix("approvals") {
-      pathPrefix("accepted") {
-        post {
-          decodeRequest {
-            entity(as[BikeApprovedMessage])(msg => {
-              routerService ! BikeApproved(msg.bikeId)
-              complete(StatusCodes.Accepted)
-            })
-          }
-        }
-      } ~
-        pathPrefix("rejected") {
-          post {
-            decodeRequest {
-              entity(as[BikeRejectedMessage])(msg => {
-                routerService ! BikeRejected(msg.bikeId)
-                complete(StatusCodes.Accepted)
-              })
-            }
-          }
-        }
     }
+//    ~
+//    pathPrefix("bikes" / "created") {
+//      post {
+//        decodeRequest {
+//          entity(as[BikeCreatedMessage])(msg => {
+//            routerService ! BikeCreated(msg.bikeId, msg.value)
+//            complete(StatusCodes.Accepted)
+//          })
+//        }
+//      }
+//    } ~
+//    pathPrefix("approvals") {
+//      pathPrefix("accepted") {
+//        post {
+//          decodeRequest {
+//            entity(as[BikeApprovedMessage])(msg => {
+//              routerService ! BikeApproved(msg.bikeId)
+//              complete(StatusCodes.Accepted)
+//            })
+//          }
+//        }
+//      } ~
+//        pathPrefix("rejected") {
+//          post {
+//            decodeRequest {
+//              entity(as[BikeRejectedMessage])(msg => {
+//                routerService ! BikeRejected(msg.bikeId)
+//                complete(StatusCodes.Accepted)
+//              })
+//            }
+//          }
+//        }
+//    }
   }
 }
