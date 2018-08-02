@@ -30,16 +30,16 @@ public class BikeService {
     this.bikesCreatedPublisher = bikesCreatedPublisher;
   }
 
-  @Transactional(TxType.REQUIRES_NEW)
+  @Transactional(value = TxType.REQUIRES_NEW, rollbackOn = ApplicationRuntimeException.class)
   public Bike addBike(String manufacturer, String name, float weight, float value, List<Part> parts) {
     Bike entity = new Bike(manufacturer, name, weight, value);
     parts.forEach(part -> entity.addPart(new Part(part.getName(), part.getWeight())));
     bikeRepository.addBike(entity);
-    bikesCreatedPublisher.fireAsync(new BikeCreatedEvent(entity.getId(), entity.getValue()));
+    bikesCreatedPublisher.fire(new BikeCreatedEvent(entity.getId(), entity.getValue()));
     return entity;
   }
 
-  @Transactional(TxType.REQUIRES_NEW)
+  @Transactional(value = TxType.REQUIRES_NEW, rollbackOn = ApplicationRuntimeException.class)
   public Bike updateBike(long id, String manufacturer, String name, float weight, float value, List<Part> parts)
       throws EntityNotFoundException {
     Bike bike = bikeRepository.findBike(id).orElseThrow(() -> new EntityNotFoundException(Bike.class, id));
@@ -47,7 +47,7 @@ public class BikeService {
     return bike;
   }
 
-  @Transactional(TxType.REQUIRES_NEW)
+  @Transactional(value = TxType.REQUIRES_NEW, rollbackOn = ApplicationRuntimeException.class)
   public Bike updateApproval(long id, ApprovalStatus approval)
       throws EntityNotFoundException {
     Objects.requireNonNull(approval);

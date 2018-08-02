@@ -20,7 +20,7 @@ object Orchestration {
 
     lazy val routerService: ActorRef = system.actorOf(ServiceRouter.props(), "dispatcher")
     // start listening on Kafka
-    lazy val kafkaAcceptor: ActorRef = system.actorOf(KafkaAcceptorActor.props(config, routerService))
+    val kafkaAcceptor: ActorRef = system.actorOf(KafkaAcceptorActor.props(config, routerService))
 
     // start listening on Http
     WebServer.startServer("0.0.0.0", 9090, system)
