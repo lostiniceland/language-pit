@@ -5,7 +5,7 @@ plugins {
 }
 
 ext {
-  versionScala = '2.12.5'
+  versionScala = '2.12.6'
   versionScalaTest = '3.0.5'
   versionScalaLogging = '3.5.0'
   versionAkka = '2.5.13'
