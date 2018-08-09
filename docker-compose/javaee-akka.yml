@@ -37,6 +37,7 @@ services:
       BIKE_PORT: 8080
       WIFE_HOST: wife
       WIFE_PORT: 8080
+      KAFKA_BOOTSTRAP_SERVER: kafka:9092
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://orchestration:9090/events/health"]
       interval: 5s
@@ -54,8 +55,7 @@ services:
       KAFKA_HOST: "kafka"
       KAFKA_PORT: 9092
       KAFKA_EVENT_TOPIC: ${TOPIC_NAME:-language-pit.events}
-      DERBY_DB_LOCATION: "/opt/wife-db"
-      ORCHESTRATION_URL: "http://orchestration:9090/"
+      DERBY_DB_LOCATION: "/opt/bikes-db"
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://bike:8080/bikes/health"]
       interval: 5s
@@ -73,8 +73,7 @@ services:
       KAFKA_HOST: "kafka"
       KAFKA_PORT: 9092
       KAFKA_EVENT_TOPIC: ${TOPIC_NAME:-language-pit.events}
-      DERBY_DB_LOCATION: "/opt/bikes.db"
-      ORCHESTRATION_URL: "http://orchestration:9090/"
+      DERBY_DB_LOCATION: "/opt/wife.db"
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://wife:8080/wife/health"]
       interval: 5s
