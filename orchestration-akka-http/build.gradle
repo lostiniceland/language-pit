@@ -1,19 +1,19 @@
 plugins {
   id "scala"
   id 'com.charlesahunt.scalapb' version '1.2.1'
-  id 'com.google.cloud.tools.jib' version '0.9.6'
+  id 'com.google.cloud.tools.jib' version '0.9.8'
 }
 
 ext {
   versionScala = '2.12.6'
   versionScalaTest = '3.0.5'
   versionScalaLogging = '3.5.0'
-  versionAkka = '2.5.13'
+  versionAkka = '2.5.14'
   versionAkkaHttp = '10.1.2'
   versionLogback = '1.1.8'
   versionLevelDb = '0.10'
   versionProtobuf = '3.5.1'
-  versionScalaKafka = '1.1.0'
+  versionScalaKafka = '2.0.0'
   versionSpecs2 = '4.2.0'
 }
 
@@ -61,8 +61,11 @@ scalapbConfig {
 
 
 jib {
+  // since we only need a local image, only jibDockerBuild currently works
   from {
-    image = 'openjdk:8-jre-alpine'
+    image = 'library/openjdk:8-jre-alpine'
+    // use the following when behind a corporate proxy with a custom registry
+    // image = '<your-custom-registry>/library/openjdk:8-jre-alpine'
   }
   to {
     image = 'languagepit/orchestration:akka'

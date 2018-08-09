@@ -9,7 +9,7 @@ services:
       - 2181:2181
 
   kafka:
-      image: wurstmeister/kafka:1.1.0
+      image: wurstmeister/kafka
       container_name: kafka
       ports:
         - 9094:9094
