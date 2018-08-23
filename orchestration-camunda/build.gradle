@@ -6,15 +6,14 @@ plugins {
   id "com.bmuschko.docker-remote-api" version "3.2.4" apply false
 }
 
-
-
-import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-import com.bmuschko.gradle.docker.tasks.image.Dockerfile
-
 version = '0.1.0'
 
 repositories {
   mavenCentral()
+}
+
+ext {
+  versionCamunda = '7.9.0'
 }
 
 apply plugin: 'groovy'
@@ -33,14 +32,15 @@ dependencies {
   compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.5'
   compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
   compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-  compile group: 'org.camunda.bpm', name: 'camunda-engine', version: '7.8.0'
-  compile group: 'org.camunda.bpm', name: 'camunda-engine-cdi', version: '7.8.0'
-  compile group: 'org.camunda.bpm.javaee', name: 'camunda-ejb-client', version: '7.8.0'
+  compile group: 'org.camunda.bpm', name: 'camunda-engine', version: versionCamunda
+  compile group: 'org.camunda.bpm', name: 'camunda-engine-cdi', version: versionCamunda
+  compile group: 'org.camunda.bpm.javaee', name: 'camunda-ejb-client', version: versionCamunda
   compile group: 'com.h2database', name: 'h2', version: '1.4.197'
+  compile group: 'org.apache.kafka', name: 'kafka-clients', version: '2.0.0'
 
 
   testCompile group: 'junit', name: 'junit', version: '4.12'
-  testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.13'
+  testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.15'
   testCompile group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4'
   testCompile group: 'org.camunda.bpm.extension', name: 'camunda-bpm-assert', version: '1.2'
 }

@@ -3,6 +3,7 @@ package testing.support;
 import com.google.protobuf.InvalidProtocolBufferException;
 import common.infrastructure.protobuf.Events.EventsEnvelope;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -121,7 +122,7 @@ public class KafkaEventConsumer {
       try{
         while(true){
           // polling will wait indefinately until an event is available or shut down
-          ConsumerRecords<String, byte[]> records = kafkaConsumer.poll(Long.MAX_VALUE);
+          ConsumerRecords<String, byte[]> records = kafkaConsumer.poll(Duration.ofMillis(Long.MAX_VALUE));
           for (ConsumerRecord<String, byte[]> record : records) {
             EventsEnvelope envelope = EventsEnvelope.parseFrom(record.value());
             synchronized (events){

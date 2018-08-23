@@ -44,7 +44,8 @@ task integrationTest(type: Test){
   description 'Run integration tests using Docker images'
   testClassesDirs = sourceSets.itest.output.classesDirs
   classpath = sourceSets.itest.runtimeClasspath
-  systemProperty('SERVICE_HOST', 'localhost') // adjust when running on non-native Docker host
+  systemProperty('SERVICE_HOST', '10.0.75.1') // adjust when running on non-native Docker host
+  systemProperty('KAFKA_HOST', '10.0.75.1')
   testLogging {
     events "passed", "skipped", "failed"
   }
