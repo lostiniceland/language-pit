@@ -9,10 +9,6 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 @Named
 public class ApprovalPublisher implements JavaDelegate {
 
-  public void doSomething(){
-    System.out.println("Hello Approval");
-  }
-
   @Override
   public void execute(DelegateExecution execution) throws Exception {
     System.out.println("Hello Y");

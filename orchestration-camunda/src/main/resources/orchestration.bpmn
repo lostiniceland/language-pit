@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.15.1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
   <bpmn:process id="orchestration" isExecutable="true">
     <bpmn:startEvent id="StartEvent_0xz4a6o">
       <bpmn:outgoing>SequenceFlow_0s4iws6</bpmn:outgoing>
@@ -14,13 +14,13 @@
     <bpmn:sequenceFlow id="SequenceFlow_1uofcd3" sourceRef="ExclusiveGateway_08n65db" targetRef="Task_176t5xy">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${type == "approvalAccepted"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:serviceTask id="Task_176t5xy" camunda:delegateExpression="${approvalPublisher.doSomething()}">
+    <bpmn:serviceTask id="Task_176t5xy" camunda:delegateExpression="${approvalPublisher}">
       <bpmn:incoming>SequenceFlow_1uofcd3</bpmn:incoming>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_1u4wfci" sourceRef="ExclusiveGateway_08n65db" targetRef="Task_1fep8qz">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${type == "bikeCreated"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:serviceTask id="Task_1fep8qz" camunda:delegateExpression="${bikePublisher.doSomething()}">
+    <bpmn:serviceTask id="Task_1fep8qz" camunda:delegateExpression="${bikePublisher}">
       <bpmn:incoming>SequenceFlow_1u4wfci</bpmn:incoming>
     </bpmn:serviceTask>
   </bpmn:process>
