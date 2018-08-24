@@ -90,7 +90,7 @@ class Actionwords extends StatefullActionword {
    * Perform a health-check against the orchestration-layer to make sure it is up and running
    */
   boolean availabilityOrchestrationLayer(){
-    assert new RESTClient("http://${System.properties['SERVICE_HOST']}:9090/events/health").get([:]).status == 200
+    assert new RESTClient("http://${System.properties['SERVICE_HOST']}:${System.properties['ORCHESTRATION_PORT']}/events/health").get([:]).status == 200
     true
   }
 
@@ -100,10 +100,10 @@ class Actionwords extends StatefullActionword {
   }
 
   static RESTClient bikeClient(){
-    return new RESTClient("http://${System.properties['SERVICE_HOST']}:8080/")
+    return new RESTClient("http://${System.properties['SERVICE_HOST']}:${System.properties['BIKES_PORT']}/")
   }
 
   static RESTClient wifeClient(){
-    return new RESTClient("http://${System.properties['SERVICE_HOST']}:8090/")
+    return new RESTClient("http://${System.properties['SERVICE_HOST']}:${System.properties['WIFE_PORT']}/")
   }
 }

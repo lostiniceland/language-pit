@@ -1,13 +1,9 @@
 package orchestration.camunda;
 
 import com.google.protobuf.InvalidProtocolBufferException;
-import common.infrastructure.protobuf.Events.BikeApprovedMessage;
-import common.infrastructure.protobuf.Events.BikeCreatedMessage;
-import common.infrastructure.protobuf.Events.BikeRejectedMessage;
 import common.infrastructure.protobuf.Events.EventsEnvelope;
 import java.time.Duration;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Future;
@@ -53,38 +49,33 @@ public class KafkaConsumerTask implements Runnable, ManagedTask {
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
     props.put(ConsumerConfig.GROUP_ID_CONFIG, "orchestration");
     props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"); // TODO use confirmed offset
+    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest"); // TODO use confirmed offset
 
     this.kafkaConsumer = new KafkaConsumer<>(props);
     kafkaConsumer.subscribe(Collections.singletonList(kafkaEventTopic));
     while (!Thread.currentThread().isInterrupted()) {
       ConsumerRecords<String, byte[]> records;
       try {
-        records = kafkaConsumer.poll(Duration.ofSeconds(1));
+        records = kafkaConsumer.poll(Duration.ofSeconds(5));
 
         for (ConsumerRecord<String, byte[]> record : records) {
           EventsEnvelope envelope;
           try {
             envelope = EventsEnvelope.parseFrom(record.value());
-
-            if (envelope.hasBikeCreated()){
-              startProcess(envelope.getBikeCreated());
-            }else if (envelope.hasBikeApproved()){
-              startProcess(envelope.getBikeApproved());
-            }else if (envelope.hasBikeRejected()){
-              startProcess(envelope.getBikeRejected());
-            }
-
+            invokeProcess("EventReceived", Collections.singletonMap("envelope", envelope));
+            kafkaConsumer.commitSync();
           } catch (InvalidProtocolBufferException e) {
             logger.error("Error parsing event!", e);
           }
         }
       } catch (WakeupException e) {
         // ignore
+      } catch (Exception e){
+        // we catch everythin in order to continue...for now TODO imporove error handling
+        logger.error("Error during poll", e);
       }
     }
     // commit offset until this point
-    kafkaConsumer.commitSync(); // FIXME should only commit offsets for completed events
     kafkaConsumer.close();
   }
 
@@ -100,12 +91,20 @@ public class KafkaConsumerTask implements Runnable, ManagedTask {
 
       @Override
       public void taskAborted(Future<?> future, ManagedExecutorService executor, Object task, Throwable exception) {
-        logger.info("Kafka-Task aborted in thread {}", Thread.currentThread().getName());
+        if (exception != null){
+          logger.error("Kafka-Task aborted with error in thread {}", Thread.currentThread().getName(), exception);
+        } else {
+          logger.info("Kafka-Task aborted in thread {}", Thread.currentThread().getName());
+        }
       }
 
       @Override
       public void taskDone(Future<?> future, ManagedExecutorService executor, Object task, Throwable exception) {
-        logger.info("Kafka-Task completed in thread {}", Thread.currentThread().getName());
+        if (exception != null){
+          logger.error("Kafka-Task completed with error in thread {}", Thread.currentThread().getName(), exception);
+        } else {
+          logger.info("Kafka-Task completed in thread {}", Thread.currentThread().getName());
+        }
       }
 
       @Override
@@ -121,34 +120,15 @@ public class KafkaConsumerTask implements Runnable, ManagedTask {
   }
 
 
-  // FIXME use Proto-Messages instead of simple-types
-  private void startProcess(BikeCreatedMessage message){
-    Map<String, Object> variables = new HashMap<>(3);
-    variables.put("type", "bikeCreated");
-    variables.put("bikeId", message.getBikeId());
-    variables.put("value", message.getValue());
-    invokeProcess("EventReceived", variables);
-  }
-
-  private void startProcess(BikeApprovedMessage message){
-    Map<String, Object> variables = new HashMap<>(3);
-    variables.put("type", "approvalAccepted");
-    variables.put("bikeId", message.getBikeId());
-    invokeProcess("EventReceived", variables);
-  }
-
-  private void startProcess(BikeRejectedMessage message){
-    Map<String, Object> variables = new HashMap<>(3);
-    variables.put("type", "approvalRejected");
-    variables.put("bikeId", message.getBikeId());
-    invokeProcess("EventReceived", variables);
-  }
-
   private ProcessInstance invokeProcess(String messageName, Map<String, Object> variables){
     ProcessInstance instance = null;
     try{
       instance = engine.getRuntimeService().startProcessInstanceByMessage(messageName, variables);
-      logger.info("Process with ID '{}' started", instance.getId());
+      if(instance.isEnded()){
+        logger.info("Process with ID '{}' finished.", instance.getId());
+      }else{
+        logger.warn("Process with ID '{}' did not finish!", instance.getId());
+      }
     }catch(ProcessEngineException e){
       logger.error("Error invoking Process-Instance", e);
     }

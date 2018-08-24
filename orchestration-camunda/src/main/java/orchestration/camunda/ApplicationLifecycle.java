@@ -21,6 +21,9 @@ public class ApplicationLifecycle {
 
   private static final Logger logger = LoggerFactory.getLogger(ApplicationLifecycle.class);
 
+  @Resource(lookup = "h2DbLocation")
+  private String h2DbLocation;
+
   @Resource
   ManagedExecutorService managedExecutorService;
   @Inject
@@ -31,7 +34,7 @@ public class ApplicationLifecycle {
 
   @PostConstruct
   public void init() {
-    ProcessEngineConfiguration configuration = new StandalonePersistentH2ProcessEngineConfiguration();
+    ProcessEngineConfiguration configuration = new StandalonePersistentH2ProcessEngineConfiguration(h2DbLocation);
     processEngine = configuration.buildProcessEngine();
     runtimeContainerDelegate = RuntimeContainerDelegate.INSTANCE.get();
     runtimeContainerDelegate.registerProcessEngine(processEngine);
@@ -49,9 +52,9 @@ public class ApplicationLifecycle {
 
   private final static class StandalonePersistentH2ProcessEngineConfiguration extends StandaloneInMemProcessEngineConfiguration {
 
-    StandalonePersistentH2ProcessEngineConfiguration() {
+    StandalonePersistentH2ProcessEngineConfiguration(String dbLocation) {
       this.databaseSchemaUpdate = DB_SCHEMA_UPDATE_TRUE;
-      this.jdbcUrl = "jdbc:h2:file:/tmp/camunda.db";
+      this.jdbcUrl = "jdbc:h2:file:" + dbLocation;
 //      this.databaseSchemaUpdate = DB_SCHEMA_UPDATE_CREATE_DROP;
 //      this.jdbcDriver = null;
 //      this.jdbcUrl = null;

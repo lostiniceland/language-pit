@@ -7,11 +7,12 @@
 
   <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="9095"/>
 
-  <jndiEntry jndiName="urlBikesService" value="'http://localhost:8080/'" />
-  <jndiEntry jndiName="urlWifeService" value="'http://localhost:8090/'" />
-  <jndiEntry jndiName="kafkaHost" value='"${env.KAFKA_HOST}"' />
-  <jndiEntry jndiName="kafkaPort" value='"${env.KAFKA_PORT}"' />
-  <jndiEntry jndiName="kafkaEventTopic" value='"${env.KAFKA_EVENT_TOPIC}"' />
+  <jndiEntry jndiName="urlBikesService" value="&quot;http://${env.BIKE_HOST}:${env.BIKE_PORT}bikes&quot;" />
+  <jndiEntry jndiName="urlWifeService" value="&quot;http://${env.WIFE_HOST}:${env.WIFE_PORT}/wife&quot;" />
+  <jndiEntry jndiName="h2DbLocation" value="&quot;${env.H2_DB_LOCATION}&quot;" />
+  <jndiEntry jndiName="kafkaHost" value="&quot;${env.KAFKA_HOST}&quot;" />
+  <jndiEntry jndiName="kafkaPort" value="&quot;${env.KAFKA_PORT}&quot;" />
+  <jndiEntry jndiName="kafkaEventTopic" value="&quot;${env.KAFKA_EVENT_TOPIC}&quot;" />
 
   <webApplication contextRoot="events" location="orchestration-camunda.war"/>
 

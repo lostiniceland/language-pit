@@ -1,3 +1,5 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.Dockerfile
 
 plugins {
   id "java"
@@ -56,6 +58,40 @@ protobuf {
       // Download from repositories
       artifact = 'com.google.protobuf:protoc:3.5.1'
   }
+}
+
+
+def libertyDockerFolder = "$project.buildDir/docker/openliberty"
+
+// Copy all necessary files to the Docker build-context directory
+task prepareDocker() {
+  dependsOn war
+  doLast {
+    copy {
+      from war.archivePath.toString()
+      from project.projectDir.toString() + "/server"
+      into "$libertyDockerFolder"
+      rename { fileName ->
+        fileName.replace(war.archiveName, "orchestration-camunda.war")
+      }
+    }
+  }
+}
+
+task createDockerfile(type: Dockerfile) {
+  dependsOn prepareDocker
+  destFile = project.file("$libertyDockerFolder/Dockerfile")
+  from 'open-liberty:webProfile8'
+  environmentVariable('H2_DB_LOCATION', '/tmp/camunda.db')
+  addFile('server.xml', '/config/')
+  addFile('orchestration-camunda.war', '/config/apps')
+  exposePort(9095)
+}
+
+task buildImage(type: DockerBuildImage) {
+  dependsOn createDockerfile
+  inputDir = createDockerfile.destFile.parentFile
+  tag = 'languagepit/orchestration:camunda'
 }
 
 

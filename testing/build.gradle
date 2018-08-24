@@ -44,8 +44,11 @@ task integrationTest(type: Test){
   description 'Run integration tests using Docker images'
   testClassesDirs = sourceSets.itest.output.classesDirs
   classpath = sourceSets.itest.runtimeClasspath
-  systemProperty('SERVICE_HOST', '10.0.75.1') // adjust when running on non-native Docker host
-  systemProperty('KAFKA_HOST', '10.0.75.1')
+  systemProperty('SERVICE_HOST', 'localhost') // adjust when running on non-native Docker host
+  systemProperty('KAFKA_HOST', 'tux') // adjust when running on non-native Docker host
+  systemProperty('ORCHESTRATION_PORT', '9095')
+  systemProperty('BIKES_PORT', '8080')
+  systemProperty('WIFE_PORT', '8090')
   testLogging {
     events "passed", "skipped", "failed"
   }
@@ -71,6 +74,6 @@ dockerCompose {
   isRequiredBy(project.tasks.integrationTest)
   dockerComposeWorkingDirectory '../docker-compose'
   projectName 'testing' // use dedicated name in case another compose is running
-  useComposeFiles = ['javaee-akka.yml']
+  useComposeFiles = ['javaee-camunda.yml']
   forceRecreate = true
 }
