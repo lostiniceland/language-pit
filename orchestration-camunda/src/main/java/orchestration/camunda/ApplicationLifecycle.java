@@ -2,39 +2,54 @@ package orchestration.camunda;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.enterprise.concurrent.ManagedExecutorService;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import org.camunda.bpm.container.RuntimeContainerDelegate;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.ProcessEngineConfiguration;
 import org.camunda.bpm.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Startup
 @Singleton
-public class ProcessEngineStartup {
+public class ApplicationLifecycle {
 
-  private static ProcessEngineConfiguration configuration = new StandalonePersistentH2ProcessEngineConfiguration();
+  private static final Logger logger = LoggerFactory.getLogger(ApplicationLifecycle.class);
+
+  @Resource
+  ManagedExecutorService managedExecutorService;
+  @Inject
+  Instance<KafkaConsumerTask> taskInstanceKafka;
 
   private ProcessEngine processEngine;
   private RuntimeContainerDelegate runtimeContainerDelegate;
 
   @PostConstruct
-  public void init(){
+  public void init() {
+    ProcessEngineConfiguration configuration = new StandalonePersistentH2ProcessEngineConfiguration();
     processEngine = configuration.buildProcessEngine();
     runtimeContainerDelegate = RuntimeContainerDelegate.INSTANCE.get();
     runtimeContainerDelegate.registerProcessEngine(processEngine);
+
+    managedExecutorService.submit(taskInstanceKafka.get()); // do not shutdown/awaitTermination on destroy (this is handled by the server)
   }
 
   @PreDestroy
-  public void destroy(){
+  public void destroy() {
     processEngine.close();
     runtimeContainerDelegate.unregisterProcessEngine(processEngine);
   }
 
 
+
   private final static class StandalonePersistentH2ProcessEngineConfiguration extends StandaloneInMemProcessEngineConfiguration {
 
-    public StandalonePersistentH2ProcessEngineConfiguration() {
+    StandalonePersistentH2ProcessEngineConfiguration() {
       this.databaseSchemaUpdate = DB_SCHEMA_UPDATE_TRUE;
       this.jdbcUrl = "jdbc:h2:file:/tmp/camunda.db";
 //      this.databaseSchemaUpdate = DB_SCHEMA_UPDATE_CREATE_DROP;
@@ -43,5 +58,6 @@ public class ProcessEngineStartup {
 //      this.dataSourceJndiName = "jdbc/h2Persistent";
     }
   }
+
 
 }

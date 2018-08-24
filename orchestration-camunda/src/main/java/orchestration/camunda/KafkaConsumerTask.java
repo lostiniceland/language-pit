@@ -53,7 +53,7 @@ public class KafkaConsumerTask implements Runnable, ManagedTask {
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class.getName());
     props.put(ConsumerConfig.GROUP_ID_CONFIG, "orchestration");
     props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"); // TODO use confirmed offset
 
     this.kafkaConsumer = new KafkaConsumer<>(props);
     kafkaConsumer.subscribe(Collections.singletonList(kafkaEventTopic));
