@@ -44,8 +44,8 @@ services:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://orchestration:9095/events/health"]
       interval: 5s
       timeout: 5s
-      retries: 3
-      start_period: 3s
+      retries: 10
+      start_period: 20s
 
   bike:
     image: languagepit/javaee-bikes:openliberty
@@ -62,8 +62,8 @@ services:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://bike:8080/bikes/health"]
       interval: 5s
       timeout: 5s
-      retries: 3
-      start_period: 3s
+      retries: 10
+      start_period: 20s
 
   wife:
     image: languagepit/javaee-wife:openliberty
@@ -80,6 +80,6 @@ services:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://wife:8080/wife/health"]
       interval: 5s
       timeout: 5s
-      retries: 3
-      start_period: 3s
+      retries: 10
+      start_period: 20s
 
