@@ -1,6 +1,6 @@
 package orchestration.actor
 
-import akka.actor.SupervisorStrategy.{Escalate, Restart, Resume}
+import akka.actor.SupervisorStrategy.{Escalate}
 import akka.actor.{Actor, ActorInitializationException, ActorKilledException, ActorLogging, ActorRef, OneForOneStrategy, Props, SupervisorStrategy}
 import cakesolutions.kafka.KafkaConsumer
 import cakesolutions.kafka.akka.KafkaConsumerActor.{Confirm, Subscribe, Unsubscribe}
@@ -20,13 +20,7 @@ import scala.language.postfixOps
 object KafkaAcceptorActor {
 
   def apply(config: Config, routerService: ActorRef): Props = {
-    val consumerConf = KafkaConsumer.Conf(
-      config.getConfig("kafka"),
-      keyDeserializer = new StringDeserializer,
-      valueDeserializer = new ByteArrayDeserializer
-    )
     val actorConf = KafkaConsumerActor.Conf(1 seconds, 3 seconds)
-
     Props(new KafkaAcceptorActor(config, actorConf, routerService))
   }
 }
