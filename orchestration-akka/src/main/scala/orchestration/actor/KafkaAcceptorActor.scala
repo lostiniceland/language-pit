@@ -80,6 +80,7 @@ class KafkaAcceptorActor (
           case bikeEvent: Payload.BikeCreated => routerService ! BikeCreated(bikeEvent.value.bikeId, bikeEvent.value.value)
           case bikeEvent: Payload.BikeDeleted => routerService ! BikeDeleted(bikeEvent.value.bikeId)
           case bikeEvent: Payload.BikeRejected => routerService ! BikeRejected(bikeEvent.value.bikeId)
+          case Payload.Empty => log.warning("Empty payload received")
         })
       // By committing *after* processing we get at-least-once-processing, but that's OK here because we can identify duplicates by their timestamps
       kafkaConsumerActor ! Confirm(consumerRecords.offsets, commit = true)
