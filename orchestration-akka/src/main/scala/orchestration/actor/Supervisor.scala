@@ -3,7 +3,7 @@ package orchestration.actor
 import akka.actor.SupervisorStrategy.{Restart, Resume, Stop}
 import akka.actor.{Actor, ActorInitializationException, ActorKilledException, ActorLogging, ActorRef, AllForOneStrategy, OneForOneStrategy, Props, SupervisorStrategy}
 import cakesolutions.kafka.akka.KafkaConsumerActor
-import com.typesafe.config.{ConfigFactory}
+import com.typesafe.config.{Config, ConfigFactory}
 import orchestration.DefaultMessages.StatusRequest
 
 import scala.util.{Failure, Success}
@@ -21,7 +21,7 @@ object Supervisor {
   * wether an exception can be survived or not (e.g. an incorrect configuration wont heal itself)
   */
 class Supervisor () extends Actor with ActorLogging {
-  val config = ConfigFactory.load(getClass.getClassLoader)
+  val config: Config = ConfigFactory.load(getClass.getClassLoader)
   lazy val routerService: ActorRef = context.actorOf(ServiceRouter.props(), "routerServiceActor")
   // start listening on Kafka
   val kafkaAcceptor: ActorRef = context.actorOf(KafkaAcceptorActor(config, routerService), "kafkaAcceptorActor")

@@ -9,12 +9,11 @@ import com.typesafe.config.Config
 import common.infrastructure.protobuf.events.EventsEnvelope
 import common.infrastructure.protobuf.events.EventsEnvelope.Payload
 import common.infrastructure.protobuf.events.EventsEnvelope.Payload.BikeApprovalCreated
-import orchestration.DefaultMessages.StatusRequest
 import orchestration.actor.Commands.{BikeApproved, BikeCreated, BikeDeleted, BikeRejected}
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
 
 import scala.concurrent.duration._
-import scala.util.{Failure, Success}
+import scala.language.postfixOps
 
 
 

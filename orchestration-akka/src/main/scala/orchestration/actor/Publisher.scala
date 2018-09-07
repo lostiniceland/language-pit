@@ -39,7 +39,7 @@ class BikesPublisher extends PersistentActor with ActorLogging with HttpPostPubl
 
   private val state: ListBuffer[Command] = ListBuffer[Command]()
 
-  override implicit val healthCheckUrl: String = s"http://${bike_host}:${bike_port}/bikes/health"
+  override implicit val healthCheckUrl: String = s"http://$bike_host:$bike_port/bikes/health"
 
   override def receiveRecover: Receive = {
     case cmd: Command => updateState(cmd)
@@ -50,7 +50,7 @@ class BikesPublisher extends PersistentActor with ActorLogging with HttpPostPubl
       persist(approved) { approved =>
         updateState(approved)
         sendPostWithMessageAndHandleFailure(
-          s"http://${bike_host}:${bike_port}/bikes",
+          s"http://$bike_host:$bike_port/bikes",
           BikeApprovedMessage(bikeId = approved.id),
           approved)
       }
@@ -58,7 +58,7 @@ class BikesPublisher extends PersistentActor with ActorLogging with HttpPostPubl
       persist(rejected){rejected =>
         updateState(rejected)
         sendPostWithMessageAndHandleFailure(
-          s"http://${bike_host}:${bike_port}/bikes",
+          s"http://$bike_host:$bike_port/bikes",
           BikeRejectedMessage(bikeId = rejected.id),
           rejected)
       }
@@ -92,7 +92,7 @@ class WifePublisher extends PersistentActor with ActorLogging with HttpPostPubli
 
   private val state: ListBuffer[Command] = ListBuffer[Command]()
 
-  override implicit val healthCheckUrl: String = s"http://${wife_host}:${wife_port}/wife/health"
+  override implicit val healthCheckUrl: String = s"http://$wife_host:$wife_port/wife/health"
 
   override def receiveRecover: Receive = {
     case cmd: Command => updateState(cmd)
@@ -104,7 +104,7 @@ class WifePublisher extends PersistentActor with ActorLogging with HttpPostPubli
       persist(created){ created =>
         updateState(created)
         sendPostWithMessageAndHandleFailure(
-          s"http://${wife_host}:${wife_port}/wife/bikes",
+          s"http://$wife_host:$wife_port/wife/bikes",
           CreateBikeApprovalMessage(bikeId = created.id, value = created.value),
           created)
       }
