@@ -26,7 +26,7 @@ services:
       volumes:
           - /var/run/docker.sock:/var/run/docker.sock
 
-  orchestration:
+  orchestration-akka:
     image: languagepit/orchestration:camunda
     depends_on:
       - kafka
@@ -46,6 +46,27 @@ services:
       timeout: 5s
       retries: 3
       start_period: 3s
+
+  orchestration-camunda:
+    image: languagepit/orchestration:camunda
+    depends_on:
+    - kafka
+    ports:
+    - 9095:9095
+    environment:
+      BIKE_HOST: bike
+      BIKE_PORT: 8080
+      WIFE_HOST: wife
+      WIFE_PORT: 8080
+      KAFKA_HOST: "kafka"
+      KAFKA_PORT: 9092
+      KAFKA_EVENT_TOPIC: ${TOPIC_NAME:-language-pit.events}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://orchestration:9095/events/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
 
   bike:
     image: languagepit/javaee-bikes:openliberty
