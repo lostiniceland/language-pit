@@ -63,8 +63,8 @@ scalapbConfig {
 jib {
   // since we only need a local image, only jibDockerBuild currently works
   from {
-//    image = 'library/openjdk:8-jre-alpine'
-    image = 'docker.sdvrz.de:5000/library/openjdk:8-jre-alpine'
+    image = 'library/openjdk:8-jre-alpine'
+//    image = 'docker.sdvrz.de:5000/library/openjdk:8-jre-alpine'
     // use the following when behind a corporate proxy with a custom registry
     // image = '<your-custom-registry>/library/openjdk:8-jre-alpine'
   }
