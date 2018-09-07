@@ -8,5 +8,6 @@ object DefaultMessages {
   case class Stop() extends DefaultMessage
   case class Continue() extends DefaultMessage
   case class WakeUp() extends DefaultMessage
+  case class StatusRequest() extends DefaultMessage
 
 }

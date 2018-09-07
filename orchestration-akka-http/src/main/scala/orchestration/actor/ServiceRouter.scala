@@ -1,7 +1,7 @@
-package orchestration
+package orchestration.actor
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
-import orchestration.Commands.{BikeApproved, BikeCreated, BikeRejected}
+import orchestration.actor.Commands.{BikeApproved, BikeCreated, BikeRejected}
 
 
 object Commands {

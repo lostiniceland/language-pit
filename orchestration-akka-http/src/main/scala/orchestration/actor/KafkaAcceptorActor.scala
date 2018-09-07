@@ -1,26 +1,41 @@
-package orchestration
+package orchestration.actor
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import akka.actor.SupervisorStrategy.{Escalate, Restart, Resume}
+import akka.actor.{Actor, ActorInitializationException, ActorKilledException, ActorLogging, ActorRef, OneForOneStrategy, Props, SupervisorStrategy}
 import cakesolutions.kafka.KafkaConsumer
-import cakesolutions.kafka.akka.KafkaConsumerActor.Subscribe.AutoPartition
 import cakesolutions.kafka.akka.KafkaConsumerActor.{Confirm, Subscribe, Unsubscribe}
 import cakesolutions.kafka.akka.{ConsumerRecords, KafkaConsumerActor}
 import com.typesafe.config.Config
 import common.infrastructure.protobuf.events.EventsEnvelope
 import common.infrastructure.protobuf.events.EventsEnvelope.Payload
 import common.infrastructure.protobuf.events.EventsEnvelope.Payload.BikeApprovalCreated
-import orchestration.Commands.{BikeApproved, BikeCreated, BikeDeleted, BikeRejected}
+import orchestration.DefaultMessages.StatusRequest
+import orchestration.actor.Commands.{BikeApproved, BikeCreated, BikeDeleted, BikeRejected}
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, StringDeserializer}
+
+import scala.concurrent.duration._
+import scala.util.{Failure, Success}
+
 
 
 object KafkaAcceptorActor {
 
-  def props(config: Config, routerService: ActorRef) = Props(new KafkaAcceptorActor(config, routerService))
+  def apply(config: Config, routerService: ActorRef): Props = {
+    val consumerConf = KafkaConsumer.Conf(
+      config.getConfig("kafka"),
+      keyDeserializer = new StringDeserializer,
+      valueDeserializer = new ByteArrayDeserializer
+    )
+    val actorConf = KafkaConsumerActor.Conf(1 seconds, 3 seconds)
 
-  private val extractor = ConsumerRecords.extractor[String, EventsEnvelope]
+    Props(new KafkaAcceptorActor(config, actorConf, routerService))
+  }
 }
 
-class KafkaAcceptorActor (config: Config, routerService: ActorRef) extends Actor with ActorLogging {
+class KafkaAcceptorActor (
+         config: Config,
+         actorConfig: KafkaConsumerActor.Conf,
+         routerService: ActorRef) extends Actor with ActorLogging {
 
   private val kafkaConsumerActor = context.actorOf(
     KafkaConsumerActor.props(
@@ -35,6 +50,14 @@ class KafkaAcceptorActor (config: Config, routerService: ActorRef) extends Actor
     "KafkaConsumer"
   )
 
+
+  override def supervisorStrategy: SupervisorStrategy = OneForOneStrategy() {
+    case e: ActorKilledException => Escalate
+    case e: ActorInitializationException => Escalate
+    case e: KafkaConsumerActor.ConsumerException => Escalate
+    case e => Escalate
+  }
+
   override def preStart(): Unit = {
     super.preStart()
     kafkaConsumerActor ! Subscribe.AutoPartition(List("language-pit.events")) // TODO subscribe not using config
@@ -47,7 +70,6 @@ class KafkaAcceptorActor (config: Config, routerService: ActorRef) extends Actor
 
 
   override def receive: Receive = {
-
 //    case KafkaAcceptorActor.extractor(records) =>
 
     // TODO find a way to use an extractor as mentioned in docu
@@ -62,6 +84,5 @@ class KafkaAcceptorActor (config: Config, routerService: ActorRef) extends Actor
         })
       // By committing *after* processing we get at-least-once-processing, but that's OK here because we can identify duplicates by their timestamps
       kafkaConsumerActor ! Confirm(consumerRecords.offsets, commit = true)
-
   }
 }

@@ -1,4 +1,4 @@
-package orchestration
+package orchestration.actor
 
 import java.util.concurrent.TimeUnit
 
@@ -8,8 +8,9 @@ import akka.http.scaladsl.client.RequestBuilding.{Get, Post}
 import akka.http.scaladsl.model._
 import akka.persistence.{PersistentActor, RecoveryCompleted}
 import common.infrastructure.protobuf.events._
-import orchestration.Commands._
 import orchestration.DefaultMessages.Continue
+import orchestration.ProtobufSupport
+import orchestration.actor.Commands._
 import scalapb.GeneratedMessage
 import wife.infrastructure.protobuf.wife._
 
@@ -165,7 +166,7 @@ protected trait HttpHealthCheck extends Actor with ActorLogging {
 
   val sleepDurationPing = FiniteDuration(2, TimeUnit.SECONDS)
   implicit val system: ActorSystem = context.system
-  implicit val executionContext: ExecutionContextExecutor = system.dispatchers.lookup("akka.actor.publisher-dispatcher")
+  implicit val executionContext: ExecutionContextExecutor = system.dispatchers.lookup("akka.actor.blocking-dispatcher")
 
   implicit val healthCheckUrl: String
 
