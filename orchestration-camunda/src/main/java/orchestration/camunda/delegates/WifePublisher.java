@@ -35,7 +35,7 @@ public class WifePublisher implements JavaDelegate {
           .build();
       Optional<Response> response = jaxRsPublisher.sendToWifeService(() -> message);
       if (response.isPresent() && response.get().getStatus() == Status.CREATED.getStatusCode()) {
-        logger.info("Event '{}' successfully delivered", message);
+        logger.info("Event '{}' successfully delivered", message.getClass().getSimpleName());
       } else {
         // TODO handle error case -> process step must be retried
         logger.error("Failure delivering event '{}'", message);
