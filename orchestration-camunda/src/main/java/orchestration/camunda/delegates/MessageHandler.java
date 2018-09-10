@@ -17,7 +17,7 @@ public class MessageHandler implements JavaDelegate {
   @Override
   public void execute(DelegateExecution execution) throws Exception {
     EventsEnvelope envelope = (EventsEnvelope) execution.getVariable("envelope");
-    logger.info("Received {} {} {}", envelope.toString());
+    logger.debug("Received {} {} {}", envelope.toString());
 
     if (envelope.hasBikeRejected() || envelope.hasBikeApproved()){
       execution.setVariable("serviceToNotify", "bike");
