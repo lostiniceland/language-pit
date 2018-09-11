@@ -4,11 +4,15 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import common.infrastructure.protobuf.Events.EventsEnvelope;
 import java.io.IOException;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +36,7 @@ import org.slf4j.LoggerFactory;
 public class KafkaEventConsumer {
 
   static Logger logger = LoggerFactory.getLogger(KafkaEventConsumer.class);
+  private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss:SSS");
 
   private final Collection<EventsEnvelope> events = new ArrayList<>();
 
@@ -91,9 +96,18 @@ public class KafkaEventConsumer {
         result = events.stream().filter(predicate).findFirst();
       }
       if(result.isPresent()){
+        final LocalDateTime occuredOn = LocalDateTime
+            .ofInstant(Instant.ofEpochSecond(
+                  result.get().getOccuredOn().getSeconds(),
+                  result.get().getOccuredOn().getNanos()),
+                TimeZone.getDefault().toZoneId());
+        logger.info("Found matching envelope with payload '{}' which occured at '{}'",
+            result.get().getPayloadCase().name(),
+            occuredOn.format(formatter));
         return result;
       }
     }
+    logger.warn("No matching envelope found!");
     return Optional.empty();
   }
 
@@ -126,6 +140,7 @@ public class KafkaEventConsumer {
           for (ConsumerRecord<String, byte[]> record : records) {
             EventsEnvelope envelope = EventsEnvelope.parseFrom(record.value());
             synchronized (events){
+              logger.info("Added envelope with payload '{}' to buffer", envelope.getPayloadCase().name());
               events.add(envelope);
             }
           }
