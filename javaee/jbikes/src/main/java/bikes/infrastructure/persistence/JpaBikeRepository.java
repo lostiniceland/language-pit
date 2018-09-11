@@ -34,7 +34,6 @@ public class JpaBikeRepository implements BikeRepository {
   @TransactionAttribute(TransactionAttributeType.MANDATORY)
   public void addBike(Bike bike) {
     em.persist(bike);
-    em.flush(); // dont like that but needed to get id from db for now
   }
 
   @Override
