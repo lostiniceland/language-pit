@@ -1,0 +1,66 @@
+
+= Resources
+
+This section will describe the basic resources used for the communcation between the services.
+An exception will be Akka, which will pass messages accross service-boundaries (see README in module).
+
+I've choosen to use POST for all methods that will change the state of a class/struct not directly
+covered by this current resource. For instance, a new bike-resource can only be created via POST,
+because it will also create an pending-approval. Since this simulates some workflow, it is not
+idempotent. Once a bike is approved, it can be modified via PUT
+
+Instead of using the entities as the resource-representation, dedicated types
+will be used. This makes it easier to encapsulate domain-knowledge at the
+entity-level and gives more control over the interface (not leaking fields unintentionally)
+
+NOTE: The `port` will be different depending on the implementation in order to switch. Docker will make
+      this easier later
+
+==== Bike-Service
+
+
+
+.Table Usage
+|===
+|URL |HTTP Method |Description
+
+|http://localhost:8080/bikes
+|GET
+|List all available bikes
+
+
+|http://localhost:8080/bikes/{id}
+|POST
+|Creates a new bike with an pending approval
+
+|http://localhost:8080/bikes/{id}
+|PUT
+|Change the bike with {id}. For fun, only "approved" bike can be changed.
+
+|http://localhost:8080/bikes/{id}
+|GET
+|List the bike with {id}
+
+|http://localhost:8080/bikes/{id}/approval
+|GET
+|List approval-status of bike with {id}
+
+|http://localhost:8080/bikes/{id}/approval
+|POST
+|approve/reject approval-status (going back to pending is not allowed)
+|===
+
+
+==== Tour-Service
+
+TODO
+
+== Orchestration
+
+==== Camunda
+
+TODO
+
+==== Akka
+
+TODO

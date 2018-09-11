@@ -4,51 +4,50 @@
 == Purpose
 
 This repository is mainly for personal education, developing the same
-domain in different languages/frameworks.
+domain in different languages/frameworks. Another goal is to see which
+difficulties aries in a microservice architecture (distributed system)
 
 == Domain
 
 The following picture is just a rough explanation about the services and their purpose.
 Since I want to play with something little more challanging than simple CRUD, I've
-created a pseudo workflow.
-In order to keep the image free from to many connections, I've decided to make a logical
-connection (dashed line), which actually means a response to the orchestration. In case
-of the Akka service-implementation (not orchestration) the message flow will also be different,
-but the overall meaning remains the same.
+created a pseudo workflow
+
 
 [ditaa]
 ....
 
-       +--------------------------------------------------------------------+
-       |                                                                    |
-       |         Some Kind of Orchestration (Camunda, Akka Integration)     |
-       |                                                                    |
-       +--------------------------------------------------------------------+
-            |                            |                             |
-            |                   Request  |                             |
-   New Bike |                   Approval |                             |Expedition Planned
-            |                            |                             |
-            |                            v                             |
-            v                      /------------\                      v
-       /---------\    Rejected     |    Wife    |     Accepted    /---------\
-       |  Bikes  |<---------------=|------------|=--------------->|  Tours  |
-       |         |  (5 is enough)  |    Rule    |  (with Family)  |         |
-       \---------/                 |   Engine   |                 \---------/
-            |                      \------------/                      |
-            |                                                          |
-            v                                                          v
-         +-----+                                                    +-----+
-         |{s}  |                                                    |{s}  |
-         |     |                                                    |     |
-         |     |                                                    |     |
-         +-----+                                                    +-----+
+                             /----------------\                   /-------\
+                             |                |                   |       |
+                             |     Bikes      | <-----------------+       |
+                             |                |                   |       |
+                             \--------+-------/                   |   O   |
+                                      |                           |   r   |
+                                      | Event (New Bike)          |   c   |
+                                      v                           |   h   |
+                                                                  |   e   |
+/------------\         +--------------------------+               |   s   |
+|            |         |                          |               |   t   |
+|  Testing   | <-------+    Messaging (Kafka)     +-------------> |   r   |
+|            |         |                          |               |   a   |
+\------------/         +--------------------------+               |   t   |
+                                                                  |   i   |
+                                      ^                           |   o   |
+                                      | Event (Approved/Declined) |   n   |
+                                      |                           |       |
+                             /----------------\                   |       |
+                             |                |                   |       |
+                             |  Wife + Rules  | <-----------------+       |
+                             |                |                   |       |
+                             \--------+-------/                   \-------/
+
 
 ....
 
-Here a short step-by-step explanation for a bike-workflow (tour goes pretty much the same for now)
+Short step-by-step explanation
 
 . add a new Bike
-.. the bikes-domain creates this bike, with a pending approval state
+.. the bike-service creates the bike, with a pending approval state
 .. modification is not allowed until approved
 . request approval from the wife-domain
 ** decides with some simple rules if the request is to be approved
@@ -59,11 +58,10 @@ Here a short step-by-step explanation for a bike-workflow (tour goes pretty much
 
 The plan is to implement several services in the following languages/frameworks
 
-* Rust -> in progress
-* Go -> in progress
+* Rust
+* Go
 * JavaEE
 * Akka (Scala)
-* Spring
 
 Orchestration will probably be done with the following
 
@@ -94,11 +92,15 @@ entity-level and gives more control over the interface (not leaking fields unint
 NOTE: The `port` will be different depending on the implementation in order to switch. Docker will make
       this easier later
 
+==== Protobuf
+
+The Request/Response values are generated via Protocol-Buffers because it allows generation based on an IDL.
+Furthermore a schema is easier to share. In addition Protobuf allows the values to be parsed from, and written to
+either binary-format or JSON which is pretty hand (binary is fast, and JSON nice for Browsers and humans to debug).
+
 ==== Bike-Service
 
-
-
-.Table Usage
+.HTTP Endpoint
 |===
 |URL |HTTP Method |Description
 
@@ -129,7 +131,7 @@ NOTE: The `port` will be different depending on the implementation in order to s
 |===
 
 
-==== Tour-Service
+==== Wife-Service
 
 TODO
 
@@ -137,20 +139,10 @@ TODO
 
 ==== Camunda
 
-Camunda offers a way to orchestrate microservices using its BPMN notation.
-
-.Get and run Camunda
-----
-docker pull camunda/camunda-bpm-platform:latest
-docker run -d --name camunda -p 8080:8080 camunda/camunda-bpm-platform:latest
-----
-
-localhost:8080/camunda-welcome/index.html
-
 TODO
 
 ==== Akka
 
-Akka can be used to implement basic integration patterns. Let's see how this turns out...
-
 TODO
+
+<<Resources>>
