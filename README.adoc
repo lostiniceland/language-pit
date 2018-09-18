@@ -90,4 +90,4 @@ either binary-format or JSON which is pretty handy (binary is fast, and JSON nic
 
 
 
-<<Resources>>
+link:README-SERVICES.adoc[Readme-Services]
