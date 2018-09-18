@@ -10,8 +10,6 @@ difficulties aries in a microservice architecture (distributed system)
 == Domain
 
 The following picture is just a rough explanation about the services and their purpose.
-Since I want to play with something little more challanging than simple CRUD, I've
-created a pseudo workflow
 
 
 [ditaa]
@@ -54,95 +52,42 @@ Short step-by-step explanation
 ** depending on the language this might be something more advanced (e.g. Drools as a rules engine)
 . change state according to approval
 
+IMPORTANT: I advice against using an orchestration-layer in the way of a
+enterprise-process spanning multiple domains. Instead use messaging for
+crossing the boundaries, while using orchestration (like BPMN) within a
+bounded context if necessary. Using an process which is not owned by the team
+responsible for the domain, introduces a bottleneck (development/release-cycle)
+
 == Languages / Frameworks / Tools
 
 The plan is to implement several services in the following languages/frameworks
 
+* JavaEE
 * Rust
 * Go
-* JavaEE
-* Akka (Scala)
+* Scala (using Akka)
 
-Orchestration will probably be done with the following
+Orchestration is done with the following.
 
-* Camunda
-* Akka (Reactive style)
+* Camunda (just using a pseudo-process)
+* Akka
 
-And if there is time, the deployment within some PaaS
+TIP: Both orchestrations can be used at the same time, because the Kafka consumers use
+the same consumer-group with a round-robin partition-assignment-strategy.
 
-* Dockerize
-* Run on Openshift
-* Acceptance tests using Hiptest
+=== Tooling
+
+* Hiptest for acceptance-tests
+* Docker
+* Kubernetes
 
 
-= Resources
-
-This section will describe the basic resources used for the communcation between the services.
-An exception will be Akka, which will pass messages accross service-boundaries (see README in module).
-
-I've choosen to use POST for all methods that will change the state of a class/struct not directly
-covered by this current resource. For instance, a new bike-resource can only be created via POST,
-because it will also create an pending-approval. Since this simulates some workflow, it is not
-idempotent. Once a bike is approved, it can be modified via PUT
-
-Instead of using the entities as the resource-representation, dedicated types
-will be used. This makes it easier to encapsulate domain-knowledge at the
-entity-level and gives more control over the interface (not leaking fields unintentionally)
-
-NOTE: The `port` will be different depending on the implementation in order to switch. Docker will make
-      this easier later
-
-==== Protobuf
+=== Protobuf
 
 The Request/Response values are generated via Protocol-Buffers because it allows generation based on an IDL.
-Furthermore a schema is easier to share. In addition Protobuf allows the values to be parsed from, and written to
-either binary-format or JSON which is pretty hand (binary is fast, and JSON nice for Browsers and humans to debug).
-
-==== Bike-Service
-
-.HTTP Endpoint
-|===
-|URL |HTTP Method |Description
-
-|http://localhost:8080/bikes
-|GET
-|List all available bikes
+The schema is shared between all used languages/frameworks. In addition Protobuf allows the values to be parsed from, and written to
+either binary-format or JSON which is pretty handy (binary is fast, and JSON nice for Browsers and humans to debug).
 
 
-|http://localhost:8080/bikes/{id}
-|POST
-|Creates a new bike with an pending approval
-
-|http://localhost:8080/bikes/{id}
-|PUT
-|Change the bike with {id}. For fun, only "approved" bike can be changed.
-
-|http://localhost:8080/bikes/{id}
-|GET
-|List the bike with {id}
-
-|http://localhost:8080/bikes/{id}/approval
-|GET
-|List approval-status of bike with {id}
-
-|http://localhost:8080/bikes/{id}/approval
-|POST
-|approve/reject approval-status (going back to pending is not allowed)
-|===
-
-
-==== Wife-Service
-
-TODO
-
-== Orchestration
-
-==== Camunda
-
-TODO
-
-==== Akka
-
-TODO
 
 <<Resources>>
