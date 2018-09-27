@@ -25,3 +25,7 @@ scala-akka/gradlew.bat
 
 # LevelDB
 journal
+
+# Other
+devops/*/.vagrant/*
+.directory
