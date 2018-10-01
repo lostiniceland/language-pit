@@ -18,6 +18,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     node.vm.network :private_network, :libvirt__domain_name => "vnet.de", :libvirt__dhcp_enabled => false, :libvirt__network_name => "vnet.de", ip: "192.168.60.100"
     node.vm.provider :libvirt do |libvirt|
      libvirt.memory = 256
+     libvirt.storage :file, :size => '20G', :cache => 'writeback', :device => '/dev/'
     end
   end
   
@@ -25,6 +26,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "master" do |node|
     node.vm.hostname = "master.vnet.de"
     node.vm.network :private_network, :libvirt__domain_name => "vnet.de", :libvirt__dhcp_enabled => false, :libvirt__network_name => "vnet.de", ip: "192.168.60.150"
+    node.vm.provider :libvirt do |libvirt|
+     # Master needs more CPUs because it is also running ETCD
+     libvirt.cpus = 2
+    end
   end
   
 

@@ -29,3 +29,4 @@ journal
 # Other
 devops/*/.vagrant/*
 .directory
+devops/*/*.retry

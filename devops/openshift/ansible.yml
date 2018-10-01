@@ -33,6 +33,40 @@
   - name: Restart dnsmasq
     service: name=dnsmasq state=restarted
     when: "'domain' in inventory_hostname"
+  - name: Install NFS-Server
+    yum: name=nfs-utils state=present
+    when: "'domain' in inventory_hostname"
+  - name: Check if disk exists
+    shell: "file -sL /dev/vdb"
+    register: disk_exists
+    when: "'domain' in inventory_hostname"
+  - name: Format disk
+    shell: "mkfs.ext4 -m 0 -F -E lazy_itable_init=0,lazy_journal_init=0,discard /dev/vdb"
+    when: 
+      - "'domain' in inventory_hostname"
+      - "'UUID=' not in disk_exists.stdout"
+  - name: Setup NFS-Directory
+    file:
+      path: /var/nfs
+      owner: nfsnobody
+      group: nfsnobody
+      mode: 0777
+    when: "'domain' in inventory_hostname"
+  - name: Mount NFS Drive
+    mount:
+      path: "/mnt/disks/"
+      src: "/dev/vdb"
+      fstype: ext4
+      opts: discard,defaults
+      state: mounted
+    when: "'domain' in inventory_hostname"
+  - name: Setup NFS-Exports
+    lineinfile:
+      path: /etc/exports
+      line: '/var/nfs        192.168.60.0/24 (rw,all_squash)'
+  - name: Start NFS-Server
+    service: name=nfs-server state=started enabled=yes
+    when: "'domain' in inventory_hostname"
 # Following for all, except domain
   - name: Add gateway to eth1
     shell: nmcli c modify "System eth1" ipv4.gateway "192.168.60.1" ipv4.dns "192.168.60.100" ipv4.dns-search "vnet.de"
@@ -45,3 +79,5 @@
   - name: Restart NetworkManager
     service: name=network state=restarted
     when: "'domain' not in inventory_hostname"
+  - name: Allow SELinux to write to remote NFS
+    shell: 'setsebool -P virt_use_nfs 1'
