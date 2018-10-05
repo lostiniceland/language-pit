@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+set -e
+
 vagrant up
 # TODO check for include in ~/.ssh/config
 # Include config-vnet

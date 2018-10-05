@@ -1,6 +1,8 @@
 [quote, Isaac Asimov]
 > Self-education is, I firmly believe, the only kind of education there is.
 
+:toc:
+
 == Purpose
 
 This repository is mainly for personal education, developing the same
@@ -91,3 +93,4 @@ either binary-format or JSON which is pretty handy (binary is fast, and JSON nic
 
 
 link:README-SERVICES.adoc[Readme-Services]
+link:devops/README.adoc[Devops]
