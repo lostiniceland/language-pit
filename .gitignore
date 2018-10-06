@@ -30,3 +30,4 @@ journal
 devops/*/.vagrant/*
 .directory
 devops/*/*.retry
+devops/openshift/openshift-ansible
