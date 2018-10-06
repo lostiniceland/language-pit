@@ -18,7 +18,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     node.vm.network :private_network, :libvirt__domain_name => "vnet.de", :libvirt__dhcp_enabled => false, :libvirt__network_name => "vnet.de", ip: "192.168.60.100"
     node.vm.provider :libvirt do |libvirt|
      libvirt.memory = 256
-     libvirt.storage :file, :size => '20G', :cache => 'writeback', :device => '/dev/'
+     libvirt.storage :file, :size => '20G', :cache => 'writeback', :allow_existing => true
     end
   end
   
