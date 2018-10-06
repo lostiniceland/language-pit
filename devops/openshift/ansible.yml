@@ -48,6 +48,7 @@
   - name: Setup NFS-Directory
     file:
       path: /var/nfs
+      state: directory
       owner: nfsnobody
       group: nfsnobody
       mode: 0777
