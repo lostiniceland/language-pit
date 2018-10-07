@@ -67,6 +67,15 @@ then
   # Run OC tasks as cluster-admin
   echo -e "${INFO}Running additional task with the OKD client${NC}"
   ansible-playbook ansible-after-install.yml -i openshift-inventory
+  # Linkerd 2
+  echo -e "${INFO}Installing Linkerd ServiceMesh${NC}"
+  oc login --username=admin --password=admin
+  linkerd check --pre
+  linkerd install | oc apply -f -
+  oc adm policy add-scc-to-user privileged -z linkerd-controller -n linkerd
+  oc adm policy add-scc-to-user privileged -z linkerd-prometheus -n linkerd
+  oc adm policy add-scc-to-user privileged -z default -n linkerd
+  linkerd check
 fi
 
 echo -e "${INFO}DONE${NC}"

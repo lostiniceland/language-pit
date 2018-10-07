@@ -4,6 +4,11 @@ This module is intended to contain several deployment strategies for the produce
 
 === Prerequisites
 
+* KVM
+* Git
+* https://docs.okd.io/latest/cli_reference/get_started_cli.html#installing-the-cli[OC client]
+* https://linkerd.io/2/getting-started/[Linkerd client] (not yet used beside install-script)
+
 `KVM` is used as Hypervisor because it is included in the Linux-Kernel. Futhermore `Vagrant` is used to
 easily setup and destroy an environment.
 
