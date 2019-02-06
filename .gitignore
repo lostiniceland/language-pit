@@ -1,24 +1,11 @@
+**/target/*
+**/bin/*
+**/pkg/*
+**/out/*
+**/build/*
+**/.gradle/*
+
 docker-compose/.env
-*/target/*
-*/bin/*
-*/pkg/*
-*/out/*
-*/build/*
-*/.gradle/*
-
-# IntelliJ project files
-*.iml
-*.iws
-*.ipr
-.idea/
-
-
-# eclipse project file
-.settings/
-.classpath
-.project
-
-scala-akka/gradlew.bat
 
 #HipTest
 **/*HipSpec.groovy
@@ -26,8 +13,16 @@ scala-akka/gradlew.bat
 # LevelDB
 journal
 
+# IntelliJ project files
+*.iml
+*.iws
+*.ipr
+.idea/
+
+# eclipse project file
+.settings/
+.classpath
+.project
+
 # Other
-devops/*/.vagrant/*
 .directory
-devops/*/*.retry
-devops/openshift/openshift-ansible
