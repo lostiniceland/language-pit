@@ -1,6 +1,5 @@
 package wife.application;
 
-import javax.ejb.Asynchronous;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -14,17 +13,14 @@ public class WifeObserver {
   @Inject
   ExternalEventPublisher kafkaPublisher;
 
-  @Asynchronous
   public void notifyAboutNewApproval(@Observes BikeApprovalCreatedEvent event) {
     kafkaPublisher.notifyAboutApprovalCreated(event);
   }
 
-  @Asynchronous
   public void notifyAboutApproval(@Observes BikeApprovedEvent event) {
     kafkaPublisher.notifyAboutApproval(event);
   }
 
-  @Asynchronous
   public void notifyAboutReject(@Observes BikeRejectedEvent event) {
     kafkaPublisher.notifyAboutReject(event);
   }

@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
   <bpmn:process id="orchestration" isExecutable="true">
-    <bpmn:startEvent id="StartEvent_0xz4a6o">
-      <bpmn:outgoing>SequenceFlow_0s4iws6</bpmn:outgoing>
-      <bpmn:messageEventDefinition messageRef="Message_13q4plo" />
-    </bpmn:startEvent>
     <bpmn:exclusiveGateway id="ExclusiveGateway_serviceRouter" name="ServiceRouter">
       <bpmn:incoming>SequenceFlow_0c6h834</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_decisionWife</bpmn:outgoing>
@@ -45,14 +41,14 @@
     <bpmn:sequenceFlow id="SequenceFlow_0x0ug92" sourceRef="ExclusiveGateway_serviceRouter" targetRef="EndEvent_097nk66">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${serviceToNotify == "unknown"}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:startEvent id="StartEvent_0xz4a6o">
+      <bpmn:outgoing>SequenceFlow_0s4iws6</bpmn:outgoing>
+    </bpmn:startEvent>
   </bpmn:process>
   <bpmn:message id="Message_15lzcaw" name="Message_3itc0ab" />
   <bpmn:message id="Message_13q4plo" name="EventReceived" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="orchestration">
-      <bpmndi:BPMNShape id="StartEvent_0q64peu_di" bpmnElement="StartEvent_0xz4a6o">
-        <dc:Bounds x="96" y="200" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_08n65db_di" bpmnElement="ExclusiveGateway_serviceRouter" isMarkerVisible="true">
         <dc:Bounds x="334" y="193" width="50" height="50" />
         <bpmndi:BPMNLabel>
@@ -113,6 +109,9 @@
         <di:waypoint x="384" y="218" />
         <di:waypoint x="580" y="218" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1o4wlqn_di" bpmnElement="StartEvent_0xz4a6o">
+        <dc:Bounds x="96" y="200" width="36" height="36" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

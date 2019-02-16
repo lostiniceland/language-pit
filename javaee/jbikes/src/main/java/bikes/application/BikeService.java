@@ -7,6 +7,7 @@ import bikes.domain.BikeRepository;
 import bikes.domain.Part;
 import java.util.List;
 import java.util.Objects;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -14,7 +15,7 @@ import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
 
-@RequestScoped
+@ApplicationScoped
 public class BikeService {
 
   BikeRepository bikeRepository;

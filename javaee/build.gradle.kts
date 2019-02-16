@@ -67,8 +67,6 @@ subprojects {
 	}
 
 
-//  sourceSets["main"].java.srcDirs += "build/generated/source/proto/main/java"
-
 	protobuf {
 		// Configure the protoc executable
 		protoc {

@@ -6,8 +6,9 @@ import com.google.protobuf.gradle.protoc
 plugins {
 	java
 	war
-	id("com.google.protobuf") version "0.8.8" apply false
-	id("com.bmuschko.docker-remote-api") version "4.4.1" apply false
+	id("com.google.protobuf") version "0.8.8"
+	id("com.bmuschko.docker-remote-api") version "4.4.1"
+	groovy
 }
 
 version = "0.1.0"
@@ -22,9 +23,6 @@ repositories {
 val versionCamunda = "7.10.0"
 
 
-apply(plugin = "groovy")
-apply(plugin = "com.google.protobuf")
-apply(plugin = "com.bmuschko.docker-remote-api")
 
 sourceSets.main {
 	java {
@@ -58,7 +56,7 @@ configure<JavaPluginConvention> {
 	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-val libertyDockerFolder = "$project.buildDir/docker/openliberty"
+val libertyDockerFolder = "$project/buildDir/docker/openliberty"
 
 tasks {
 	register("prepareDocker") {

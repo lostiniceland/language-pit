@@ -49,7 +49,6 @@ public class ApplicationLifecycle {
   }
 
 
-
   private final static class StandalonePersistentH2ProcessEngineConfiguration extends StandaloneInMemProcessEngineConfiguration {
 
     StandalonePersistentH2ProcessEngineConfiguration(String dbLocation) {
@@ -61,6 +60,4 @@ public class ApplicationLifecycle {
 //      this.dataSourceJndiName = "jdbc/h2Persistent";
     }
   }
-
-
 }

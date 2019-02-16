@@ -44,6 +44,7 @@ public class JpaWifeRepository implements WifeRepository {
   @Override
   public void addBikeApproval(BikeApproval approval) {
     em.persist(approval);
+    em.flush();
   }
 
   @Override
