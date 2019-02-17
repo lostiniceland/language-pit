@@ -39,7 +39,7 @@ class BikesPublisher extends PersistentActor with ActorLogging with HttpPostPubl
 
   private val state: ListBuffer[Command] = ListBuffer[Command]()
 
-  override implicit val healthCheckUrl: String = s"http://$bike_host:$bike_port/bikes/health"
+  override implicit val healthCheckUrl: String = s"http://$bike_host:$bike_port/health"
 
   override def receiveRecover: Receive = {
     case cmd: Command => updateState(cmd)
@@ -84,15 +84,15 @@ class BikesPublisher extends PersistentActor with ActorLogging with HttpPostPubl
 
 class WifePublisher extends PersistentActor with ActorLogging with HttpPostPublisher {
 
-  private val wife_host = if (System.getProperty("WIFE_HOST") != null) System.getProperty("WIFE_HOST") else System.getenv("WIFE_HOST")
-  private val wife_port = if (System.getProperty("WIFE_PORT") != null) System.getProperty("WIFE_PORT") else System.getenv("WIFE_PORT")
+  private val wife_host = if (System.getProperty("BIKE_HOST") != null) System.getProperty("BIKE_HOST") else System.getenv("BIKE_HOST")
+  private val wife_port = if (System.getProperty("BIKE_PORT") != null) System.getProperty("BIKE_PORT") else System.getenv("BIKE_PORT")
 
   require(wife_host != null)
   require(wife_port != null)
 
   private val state: ListBuffer[Command] = ListBuffer[Command]()
 
-  override implicit val healthCheckUrl: String = s"http://$wife_host:$wife_port/wife/health"
+  override implicit val healthCheckUrl: String = s"http://$wife_host:$wife_port/health"
 
   override def receiveRecover: Receive = {
     case cmd: Command => updateState(cmd)

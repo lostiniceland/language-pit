@@ -11,11 +11,11 @@ import scala.language.postfixOps
 
 class LoadSimulation extends Simulation {
 
-	private val httpConfig = http.protocol
+	private val httpConfig = http.baseUrl("http://localhost:8080/")
 
 
 	val addBike: ChainBuilder = exec(http("create new bike")
-			.post("http://localhost:8080/bikes/")
+			.post("bikes")
 			.header(HttpHeaderNames.ContentType, HttpHeaderValues.ApplicationJson)
 			.body(
 				StringBody(
@@ -28,7 +28,7 @@ class LoadSimulation extends Simulation {
 	)
 
 	val checkApproval: ChainBuilder = exec(http("check approval for bike-id ${bikeId}")
-			.get("http://localhost:8090/wife/bikes/${bikeId}")
+			.get("bikes/${bikeId}")
 			.check(status.is(200))
 	)
 

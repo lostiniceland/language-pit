@@ -76,29 +76,11 @@ services:
       KAFKA_HOST: "kafka"
       KAFKA_PORT: 9092
       KAFKA_EVENT_TOPIC: ${TOPIC_NAME:-language-pit.events}
-      DERBY_DB_LOCATION: "/opt/bikes-db"
+      BIKES_DB_LOCATION: "/opt/bikes-db"
+      WIFE_DB_LOCATION: "/opt/wife-db"
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://bike:8080/bikes/health"]
       interval: 5s
       timeout: 5s
       retries: 10
       start_period: 20s
-
-  wife:
-    image: languagepit/javaee-wife:openliberty
-    depends_on:
-      - orchestration
-    ports:
-      - 8090:8080
-    environment:
-      KAFKA_HOST: "kafka"
-      KAFKA_PORT: 9092
-      KAFKA_EVENT_TOPIC: ${TOPIC_NAME:-language-pit.events}
-      DERBY_DB_LOCATION: "/opt/wife.db"
-    healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://wife:8080/wife/health"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 20s
-

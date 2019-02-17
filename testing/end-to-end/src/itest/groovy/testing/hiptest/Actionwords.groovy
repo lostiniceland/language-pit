@@ -72,16 +72,7 @@ class Actionwords extends StatefullActionword {
    * Perform a health-check against the bike-service to make sure it is up and running
    */
   boolean availabilityBikeService(){
-    assert bikeClient().get(path: 'bikes/health').status == 200
-    true
-  }
-
-
-  /**
-   * Perform a health-check against the wife-service to make sure it is up and running
-   */
-  boolean availabilityWifeService(){
-    assert wifeClient().get(path: 'wife/health').status == 200
+    assert bikeClient().get(path: 'health').status == 200
     true
   }
 

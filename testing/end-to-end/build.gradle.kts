@@ -66,8 +66,8 @@ tasks {
     }
     systemProperty("SERVICE_HOST", "localhost") // adjust when running on non-native Docker host
     systemProperty("KAFKA_HOST", "tux") // adjust when running on non-native Docker host
-//    systemProperty("ORCHESTRATION_PORT", "9090") // Akka
-    systemProperty("ORCHESTRATION_PORT", "9095") // Camunda
+    systemProperty("ORCHESTRATION_PORT", "9090") // Akka
+//    systemProperty("ORCHESTRATION_PORT", "9095") // Camunda
     systemProperty("BIKES_PORT", "8080")
     systemProperty("WIFE_PORT", "8090")
   }
