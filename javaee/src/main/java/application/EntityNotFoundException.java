@@ -1,4 +1,4 @@
-package wife.application;
+package application;
 
 public class EntityNotFoundException extends Exception {
   protected EntityNotFoundException(Class type, long id){

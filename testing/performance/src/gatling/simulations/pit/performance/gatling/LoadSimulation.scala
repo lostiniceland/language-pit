@@ -35,7 +35,7 @@ class LoadSimulation extends Simulation {
 	private val scn = scenario("Add Bike")
 			.exec(addBike)
 			.pause(1)
-			tryMax(5){
+			.tryMax(5){
 				exec(checkApproval)
 			}
 

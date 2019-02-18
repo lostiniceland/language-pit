@@ -1,5 +1,6 @@
 package wife.infrastructure.web;
 
+import application.WifeService;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
-import wife.application.WifeService;
 import wife.domain.BikeApproval;
 import wife.domain.BikeApproval.ApprovalStatus;
 import wife.domain.WifeRepository;

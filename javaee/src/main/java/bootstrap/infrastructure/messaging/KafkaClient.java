@@ -1,15 +1,13 @@
-package bikes.infrastructure.messaging;
+package bootstrap.infrastructure.messaging;
 
-import bikes.application.ApplicationRuntimeException;
-import bikes.application.ExternalEventPublisher;
-import bikes.domain.BikeCreatedEvent;
-import com.google.protobuf.Timestamp;
-import common.infrastructure.protobuf.Events.BikeCreatedMessage;
+import application.ApplicationRuntimeException;
+import application.EventPublisher;
 import common.infrastructure.protobuf.Events.EventsEnvelope;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -23,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
-public class KafkaClient implements ExternalEventPublisher {
+public class KafkaClient implements EventPublisher {
 
   private static final Logger logger = LoggerFactory.getLogger(KafkaClient.class);
 
@@ -38,30 +36,15 @@ public class KafkaClient implements ExternalEventPublisher {
 
 
   @PostConstruct
-  protected void init(){
+  protected void init() {
     Properties props = new Properties();
     props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost + ":" + kafkaPort);
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class.getName());
-    props.put(ProducerConfig.CLIENT_ID_CONFIG, "bikes");
+    props.put(ProducerConfig.CLIENT_ID_CONFIG, "wife");
     props.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, "2000");
     props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, "4000");
     this.kafkaProducer = new KafkaProducer<>(props);
-  }
-
-  @Override
-  public void notifyWifeAboutNewBike(BikeCreatedEvent event) {
-    logger.info("Sending event '{}' to Kafka", event.toString());
-    EventsEnvelope envelope = EventsEnvelope.newBuilder()
-        .setOccuredOn(Timestamp.newBuilder()
-            .setSeconds(event.getOccuredOn().toInstant().getEpochSecond())
-            .setNanos(event.getOccuredOn().toInstant().getNano()))
-        .setBikeCreated(
-          BikeCreatedMessage.newBuilder()
-            .setBikeId(event.getBikeId())
-            .setValue(event.getValue())
-            .build()).build();
-    send(envelope);
   }
 
   /**
@@ -69,7 +52,8 @@ public class KafkaClient implements ExternalEventPublisher {
    * @param envelope the message to send
    * @throws ApplicationRuntimeException when the message could not be send (whatever the cause)
    */
-  private void send(EventsEnvelope envelope) {
+  @Override
+  public void send(EventsEnvelope envelope) {
     try {
       Future<RecordMetadata> future = kafkaProducer.send(
           new ProducerRecord<>(kafkaEventTopic, envelope.toByteArray()));
@@ -78,5 +62,10 @@ public class KafkaClient implements ExternalEventPublisher {
       logger.error("Could not send event {} to Kafka", e);
       throw new ApplicationRuntimeException("Communication with Kafka failed");
     }
+  }
+
+  @PreDestroy
+  protected void destroy(){
+    kafkaProducer.close();
   }
 }

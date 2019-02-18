@@ -1,4 +1,4 @@
-package wife.application;
+package application;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -11,17 +11,17 @@ import wife.domain.BikeRejectedEvent;
 public class WifeObserver {
 
   @Inject
-  ExternalEventPublisher kafkaPublisher;
+  WifeEventPublisher eventPublisher;
 
   public void notifyAboutNewApproval(@Observes BikeApprovalCreatedEvent event) {
-    kafkaPublisher.notifyAboutApprovalCreated(event);
+    eventPublisher.notifyAboutApprovalCreated(event);
   }
 
   public void notifyAboutApproval(@Observes BikeApprovedEvent event) {
-    kafkaPublisher.notifyAboutApproval(event);
+    eventPublisher.notifyAboutApproval(event);
   }
 
   public void notifyAboutReject(@Observes BikeRejectedEvent event) {
-    kafkaPublisher.notifyAboutReject(event);
+    eventPublisher.notifyAboutReject(event);
   }
 }

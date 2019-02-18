@@ -1,4 +1,4 @@
-package wife.application;
+package application;
 
 /**
  * Something technical went wrong from which we cannot recover.

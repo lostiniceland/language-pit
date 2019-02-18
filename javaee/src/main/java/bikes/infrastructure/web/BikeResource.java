@@ -1,7 +1,7 @@
 package bikes.infrastructure.web;
 
-import bikes.application.BikeService;
-import bikes.application.EntityNotFoundException;
+import application.BikeService;
+import application.EntityNotFoundException;
 import bikes.domain.ApprovalStatus;
 import bikes.domain.Bike;
 import bikes.domain.BikeRepository;

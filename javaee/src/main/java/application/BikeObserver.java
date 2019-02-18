@@ -1,4 +1,4 @@
-package bikes.application;
+package application;
 
 import bikes.domain.BikeCreatedEvent;
 import javax.enterprise.context.ApplicationScoped;
@@ -9,9 +9,9 @@ import javax.inject.Inject;
 public class BikeObserver {
 
   @Inject
-  ExternalEventPublisher kafkaPublisher;
+  BikeEventPublisher eventPublisher;
 
   public void notifyWifeAboutNewBike(@Observes BikeCreatedEvent event){
-    kafkaPublisher.notifyWifeAboutNewBike(event);
+    eventPublisher.notifyWifeAboutNewBike(event);
   }
 }

@@ -1,4 +1,4 @@
-package bikes.application;
+package application;
 
 import bikes.domain.ApprovalStatus;
 import bikes.domain.Bike;
@@ -8,7 +8,6 @@ import bikes.domain.Part;
 import java.util.List;
 import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
