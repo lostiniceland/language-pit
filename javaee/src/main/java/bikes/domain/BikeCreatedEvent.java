@@ -2,25 +2,14 @@ package bikes.domain;
 
 public class BikeCreatedEvent extends DomainEvent {
 
-  private long bikeId;
-  private float value;
+  private Bike bike;
 
-  public BikeCreatedEvent(long bikeId, float value) {
+  public BikeCreatedEvent(Bike bike) {
     super();
-    this.bikeId = bikeId;
-    this.value = value;
+    this.bike = bike;
   }
 
-  public long getBikeId() {
-    return bikeId;
-  }
-
-  public float getValue() {
-    return value;
-  }
-
-  @Override
-  public String toString() {
-    return String.format("%s {occuredOn=%s; bikeId=%s; value=%s}", getClass().getSimpleName(), getOccuredOn(), bikeId, value);
+  public Bike getBike() {
+    return bike;
   }
 }

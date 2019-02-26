@@ -9,6 +9,9 @@ This repository is mainly for personal education, developing the same
 domain in different languages/frameworks. Another goal is to see which
 difficulties aries in a microservice architecture (distributed system)
 
+
+WARN: This document is deprecated. The additional orchestration was fun, but is currently being removed
+
 == Domain
 
 The following picture is just a rough explanation about the services and their purpose.

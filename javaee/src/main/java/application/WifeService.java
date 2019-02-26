@@ -37,7 +37,7 @@ public class WifeService {
   }
 
   @Transactional(TxType.REQUIRES_NEW)
-  public BikeApproval addBikeApproval(long bikeId, float value) {
+  BikeApproval handleNewBike(long bikeId, float value) {
     BikeApproval entity = new BikeApproval(bikeId, value);
     wifeRepository.addBikeApproval(entity);
     approvalCreatedPublisher.fire(new BikeApprovalCreatedEvent(entity.getId(), entity.getBikeId()));

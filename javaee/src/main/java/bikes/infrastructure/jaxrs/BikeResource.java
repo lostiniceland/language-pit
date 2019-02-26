@@ -1,4 +1,4 @@
-package bikes.infrastructure.web;
+package bikes.infrastructure.jaxrs;
 
 import application.BikeService;
 import application.EntityNotFoundException;

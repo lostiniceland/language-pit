@@ -1,4 +1,4 @@
-package bootstrap.infrastructure.messaging;
+package common.infrastructure.messaging;
 
 import application.ApplicationRuntimeException;
 import application.EventPublisher;

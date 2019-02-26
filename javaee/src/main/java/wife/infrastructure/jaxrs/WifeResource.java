@@ -1,15 +1,12 @@
-package wife.infrastructure.web;
+package wife.infrastructure.jaxrs;
 
 import application.WifeService;
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -26,7 +23,6 @@ import wife.infrastructure.protobuf.Wife.ApprovalEnumType;
 import wife.infrastructure.protobuf.Wife.BikeApprovalMessage;
 import wife.infrastructure.protobuf.Wife.BikeApprovalMessage.Builder;
 import wife.infrastructure.protobuf.Wife.BikeApprovalsMessage;
-import wife.infrastructure.protobuf.Wife.CreateBikeApprovalMessage;
 
 @Path("/wife")
 @Produces({MediaType.APPLICATION_JSON, "application/x-protobuf"})
@@ -63,20 +59,6 @@ public class WifeResource {
     return resp;
   }
 
-
-  @POST
-  @Path("/bikes")
-  @Consumes({MediaType.APPLICATION_JSON, "application/x-protobuf"})
-  public Response addBike(CreateBikeApprovalMessage approvalRequest) {
-    final Response resp;
-    BikeApproval approval = wifeService.addBikeApproval(
-        approvalRequest.getBikeId(),
-        approvalRequest.getValue());
-    URI uri = uriInfo.getBaseUriBuilder().path(WifeResource.class).path(String.valueOf(approval.getId())).build();
-    resp = Response.created(uri).entity(convertBikeApprovalToProtobuf.apply(approval)).build();
-
-    return resp;
-  }
 
 
   private static Function<BikeApproval, Wife.BikeApprovalMessage> convertBikeApprovalToProtobuf = entity -> {

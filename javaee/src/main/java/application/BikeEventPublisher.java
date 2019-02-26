@@ -25,8 +25,8 @@ class BikeEventPublisher {
             .setNanos(event.getOccuredOn().toInstant().getNano()))
         .setBikeCreated(
           BikeCreatedMessage.newBuilder()
-            .setBikeId(event.getBikeId())
-            .setValue(event.getValue())
+            .setBikeId(event.getBike().getId())
+            .setValue(event.getBike().getValue())
             .build()).build();
     eventPublisher.send(envelope);
   }

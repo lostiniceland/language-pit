@@ -1,4 +1,4 @@
-package bootstrap.infrastructure.web;
+package common.infrastructure.jaxrs;
 
 import application.ApplicationRuntimeException;
 import javax.ws.rs.core.Response;

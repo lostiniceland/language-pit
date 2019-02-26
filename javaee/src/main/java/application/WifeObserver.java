@@ -13,15 +13,15 @@ public class WifeObserver {
   @Inject
   WifeEventPublisher eventPublisher;
 
-  public void notifyAboutNewApproval(@Observes BikeApprovalCreatedEvent event) {
+  public void publishApprovalCreated(@Observes BikeApprovalCreatedEvent event) {
     eventPublisher.notifyAboutApprovalCreated(event);
   }
 
-  public void notifyAboutApproval(@Observes BikeApprovedEvent event) {
+  public void publishApprovalAccepted(@Observes BikeApprovedEvent event) {
     eventPublisher.notifyAboutApproval(event);
   }
 
-  public void notifyAboutReject(@Observes BikeRejectedEvent event) {
+  public void publishApprovalRejected(@Observes BikeRejectedEvent event) {
     eventPublisher.notifyAboutReject(event);
   }
 }

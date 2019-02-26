@@ -1,8 +1,7 @@
-package bootstrap.infrastructure.web;
+package common.infrastructure.jaxrs;
 
 import com.google.protobuf.GeneratedMessageV3;
 import com.google.protobuf.Message;
-import com.googlecode.protobuf.format.JsonFormat;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
