@@ -7,6 +7,9 @@
 
 docker-compose/.env
 
+# generated Server environment
+javaee/server
+
 #HipTest
 **/*HipSpec.groovy
 

@@ -1,0 +1,51 @@
+<server description="Default Server">
+
+  <featureManager>
+    <feature>webProfile-8.0</feature>
+    <feature>localConnector-1.0</feature>
+  </featureManager>
+
+  <applicationMonitor updateTrigger="mbean" />
+
+  <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="8080"/>
+
+  <dataSource id="BikeDataSource"
+              jndiName="jdbc/bikes"
+              jdbcDriverRef="postgres-driver"
+              type="javax.sql.ConnectionPoolDataSource"
+              transactional="true">
+    <properties serverName="${env.DB_HOST}"
+      portNumber="5432"
+      databaseName="postgres"
+      user="bikes"
+      password="1234"/>
+  </dataSource>
+
+  <dataSource id="WifeDataSource"
+              jndiName="jdbc/wife"
+              jdbcDriverRef="postgres-driver"
+              type="javax.sql.ConnectionPoolDataSource"
+              transactional="true">
+    <properties serverName="${env.DB_HOST}"
+      portNumber="5432"
+      databaseName="postgres"
+      user="wife"
+      password="4321"/>
+  </dataSource>
+
+  <jdbcDriver id="postgres-driver"
+              javax.sql.XADataSource="org.postgresql.xa.PGXADataSource"
+              javax.sql.ConnectionPoolDataSource="org.postgresql.ds.PGConnectionPoolDataSource"
+              libraryRef="postgres-library"/>
+
+  <library id="postgres-library">
+    <fileset dir="${server.config.dir}/lib-postgres"/>
+  </library>
+
+  <jndiEntry jndiName="kafkaHost" value='"${env.KAFKA_HOST}"' />
+  <jndiEntry jndiName="kafkaPort" value='"${env.KAFKA_PORT}"' />
+  <jndiEntry jndiName="kafkaEventTopic" value='"${env.KAFKA_EVENT_TOPIC}"' />
+
+  <!--<webApplication contextRoot="/" location="bikes.war"/>-->
+
+</server>

@@ -26,24 +26,13 @@ services:
       volumes:
           - /var/run/docker.sock:/var/run/docker.sock
 
-  orchestration:
-    image: languagepit/orchestration:akka
-    depends_on:
-      - kafka
+  postgres:
+    image: postgres
+    container_name: postgres
     ports:
-      - 9090:9090
-    environment:
-      BIKE_HOST: bike
-      BIKE_PORT: 8080
-      WIFE_HOST: wife
-      WIFE_PORT: 8080
-      KAFKA_BOOTSTRAP_SERVER: kafka:9092
-    healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://orchestration:9090/events/health"]
-      interval: 5s
-      timeout: 5s
-      retries: 3
-      start_period: 3s
+      - 5432:5432
+    volumes:
+      - ./postgres-init:/docker-entrypoint-initdb.d/
 
   bike:
     image: languagepit/javaee-bikes:openliberty

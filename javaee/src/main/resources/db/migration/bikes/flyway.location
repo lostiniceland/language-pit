@@ -1,0 +1,2 @@
+Necessary for Flyway to pick the files up.
+Its hardcoded in Flyways ClasspathScanner.
