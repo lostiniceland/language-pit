@@ -19,8 +19,8 @@ val versionScalaPb = "0.8.4"
 dependencies {
   compile (group = "org.slf4j", name = "slf4j-simple", version = versionSlf4j)
   compile (group = "org.scala-lang", name = "scala-library", version = versionScala)
-  gatling (group = "com.google.protobuf", name = "protobuf-java", version = versionProtobuf)
-  gatling (group = "com.thesamet.scalapb", name = "scalapb-runtime_2.12", version = versionScalaPb)
+  compile (group = "com.google.protobuf", name = "protobuf-java", version = versionProtobuf)
+  compile (group = "com.thesamet.scalapb", name = "scalapb-runtime_2.12", version = versionScalaPb)
   gatling (group = "com.thesamet.scalapb", name = "scalapb-json4s_2.12", version = "0.7.2")
 //  gatling (group = "io.netty", name = "netty-tcnative", version = "2.0.20.Final")
 }
