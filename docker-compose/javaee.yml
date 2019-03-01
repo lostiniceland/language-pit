@@ -28,7 +28,6 @@ services:
 
   postgres:
     image: postgres
-    container_name: postgres
     ports:
       - 5432:5432
     volumes:
@@ -37,17 +36,17 @@ services:
   bike:
     image: languagepit/javaee-bikes:openliberty
     depends_on:
-      - orchestration
+      - postgres
+      - kafka
     ports:
       - 8080:8080
     environment:
       KAFKA_HOST: "kafka"
       KAFKA_PORT: 9092
       KAFKA_EVENT_TOPIC: ${TOPIC_NAME:-language-pit.events}
-      BIKES_DB_LOCATION: "/opt/bikes-db"
-      WIFE_DB_LOCATION: "/opt/wife-db"
+      DB_HOST: "postgres"
     healthcheck:
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://bike:8080/bikes/health"]
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://bike:8080/health"]
       interval: 5s
       timeout: 5s
       retries: 10
