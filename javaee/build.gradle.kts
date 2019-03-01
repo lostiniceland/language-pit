@@ -93,35 +93,41 @@ tasks {
 	register("createServer"){
 		group = "server setup"
 		description = "Downloads and extracts a OpenLiberty server instance and configures the Postgres jdbc-driver"
+
+		outputs.dir("$libertyInstallFolder/wlp")
+
 		doLast{
+			println("Download Openliberty from Maven-Central")
 			val libertyDownloadZip = File(project.buildDir.absolutePath + "/wlp.zip")
-
-			if(!libertyDownloadZip.exists()) {
-				println("Download Openliberty from Maven-Central")
-				Fuel.download("http://central.maven.org/maven2/io/openliberty/openliberty-javaee8/19.0.0.1/openliberty-javaee8-19.0.0.1.zip")
-						.fileDestination { _, _ -> libertyDownloadZip }
-//						.progress {readBytes, totalBytes ->  println("${readBytes.toFloat() / totalBytes.toFloat() * 100} %")}
-						.response()
-			}
+			Fuel.download("http://central.maven.org/maven2/io/openliberty/openliberty-javaee8/19.0.0.2/openliberty-javaee8-19.0.0.2.zip")
+					.fileDestination { _, _ -> libertyDownloadZip }
+					.response()
 			unzipTo(File(libertyInstallFolder), libertyDownloadZip)
+		}
+	}
 
-			val postgresDownloadJar = File("$libertyServerPostgresFolder/postgresql-42.2.5.jar")
+	register("configurePostgres"){
+		group = "server setup"
+		description = "Installs the Postgres-JDBC driver"
+		dependsOn("createServer")
 
-			if(!postgresDownloadJar.exists()) {
-				Files.createDirectories(Paths.get(libertyServerPostgresFolder))
-				println("Download Postgres driver from Maven-Central")
-				Fuel.download("http://central.maven.org/maven2/org/postgresql/postgresql/42.2.5/postgresql-42.2.5.jar")
-						.fileDestination { _, _ -> postgresDownloadJar }
-//						.progress {readBytes, totalBytes ->  println("${readBytes.toFloat() / totalBytes.toFloat() * 100} %")}
-						.response()
-			}
+		val postgresDownloadJar = File("$libertyServerPostgresFolder/postgresql-42.2.5.jar")
+
+		outputs.file(postgresDownloadJar)
+
+		doLast {
+			Files.createDirectories(Paths.get(libertyServerPostgresFolder))
+			println("Download Postgres driver from Maven-Central")
+			Fuel.download("http://central.maven.org/maven2/org/postgresql/postgresql/42.2.5/postgresql-42.2.5.jar")
+					.fileDestination { _, _ -> postgresDownloadJar }
+					.response()
 		}
 	}
 
 	register("updateServer"){
 		group = "server setup"
-		description = "Copies the configureation-resource to the server directory"
-
+		description = "Copies the configureation-resources to the server directory"
+		dependsOn("configurePostgres")
 		doLast {
 			copy {
 				from(libertyConfigFolder)
