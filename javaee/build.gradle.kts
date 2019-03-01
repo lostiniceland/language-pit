@@ -158,11 +158,9 @@ tasks {
 		dependsOn("prepareDocker")
 		destFile.set(project.file("$libertyDockerFolder/Dockerfile"))
 		from("open-liberty:webProfile8")
-		environmentVariable("BIKES_DB_LOCATION", "/tmp/bikes-derby.db")
-		environmentVariable("WIFE_DB_LOCATION", "/tmp/wife-derby.db")
+		addFile("lib-postgres", "/config/lib-postgres")
 		addFile("server.xml", "/config/")
 		addFile("bikes.war", "/config/apps")
-		addFile("derbyLib", "/config/derbyLib")
 		exposePort(8080)
 	}
 
