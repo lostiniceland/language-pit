@@ -32,6 +32,8 @@ services:
       - 5432:5432
     volumes:
       - ./postgres-init:/docker-entrypoint-initdb.d/
+    # set random access cost for SSD (default is 4.0 which is targeted at HDDs)
+    command: ["-c", "random_page_cost=1.0"]
 
   bike:
     image: languagepit/javaee-bikes:openliberty
