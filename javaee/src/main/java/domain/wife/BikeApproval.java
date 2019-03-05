@@ -9,7 +9,6 @@ import javax.persistence.Entity;
 @Access(AccessType.FIELD)
 public class BikeApproval extends BaseEntity {
 
-
   private long bikeId;
   private float value;
   private ApprovalStatus approval;

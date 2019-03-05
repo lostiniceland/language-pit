@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
@@ -15,20 +14,15 @@ import javax.validation.constraints.NotNull;
 @Access(AccessType.FIELD)
 public class Bike extends BaseEntity {
 
-  @Column
   @NotNull
   private String manufacturer;
-  @Column
   @NotNull
   private String name;
-  @Column
   private float weight;
-  @Column
   @NotNull
   private float value;
   @ElementCollection
   private List<Part> parts;
-  @Column
   @NotNull
   private ApprovalStatus approval;
 
