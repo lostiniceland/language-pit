@@ -19,6 +19,7 @@ dependencies {
   compile (group ="com.google.protobuf", name ="protobuf-java", version ="3.6.1")
   compile (group ="com.googlecode.protobuf-java-format", name = "protobuf-java-format", version = "1.4")
   compile (group ="org.apache.kafka", name ="kafka-clients", version = "2.0.0")
+  compile(group = "org.codehaus.groovy", name = "groovy-all", version = "2.5.+")
   compile (group="org.spockframework", name ="spock-core", version = "1.2-groovy-2.5")
   testCompile (group= "junit", name ="junit", version ="4.+")
   // Groovy RESTClient

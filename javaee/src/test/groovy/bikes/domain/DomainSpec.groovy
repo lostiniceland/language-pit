@@ -4,6 +4,7 @@ import domain.bikes.ApprovalStatus
 import domain.bikes.Bike
 import domain.bikes.Part
 import nl.jqno.equalsverifier.EqualsVerifier
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -15,6 +16,7 @@ class DomainSpec extends Specification {
     sut = new Bike("manufacturer", "name", 12.0F, 4000F)
   }
 
+  @Ignore
   def 'Part is a ValueObject' () {
     given:
     Part partA = new Part("name", 2f)

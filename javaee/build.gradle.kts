@@ -47,9 +47,9 @@ dependencies {
 	compile(group = "org.flywaydb", name = "flyway-core", version = "6.0.0-beta") // beta due to Postgres 11
 
 	testCompile(group = "junit", name = "junit", version = "4.+")
-	testCompile(group = "org.codehaus.groovy", name = "groovy-all", version = "2.4.+")
-	testCompile(group = "org.spockframework", name = "spock-core", version = "1.1-groovy-2.4")
-	testCompile(group = "nl.jqno.equalsverifier", name = "equalsverifier", version = "2.4.6")
+	testCompile(group = "org.codehaus.groovy", name = "groovy-all", version = "2.5.+")
+	testCompile(group = "org.spockframework", name = "spock-core", version = "1.2-groovy-2.5")
+	testCompile(group = "nl.jqno.equalsverifier", name = "equalsverifier", version = "3.1.5")
 }
 
 
