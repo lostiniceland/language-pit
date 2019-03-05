@@ -1,11 +1,11 @@
 package application;
 
+import domain.wife.BikeApprovalCreatedEvent;
+import domain.wife.BikeApprovedEvent;
+import domain.wife.BikeRejectedEvent;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import wife.domain.BikeApprovalCreatedEvent;
-import wife.domain.BikeApprovedEvent;
-import wife.domain.BikeRejectedEvent;
 
 @ApplicationScoped
 public class WifeObserver {

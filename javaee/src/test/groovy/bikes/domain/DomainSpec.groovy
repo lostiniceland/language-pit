@@ -1,5 +1,8 @@
 package bikes.domain
 
+import domain.bikes.ApprovalStatus
+import domain.bikes.Bike
+import domain.bikes.Part
 import nl.jqno.equalsverifier.EqualsVerifier
 import spock.lang.Specification
 import spock.lang.Unroll

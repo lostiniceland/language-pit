@@ -1,6 +1,6 @@
 package application;
 
-import bikes.domain.BikeCreatedEvent;
+import domain.bikes.BikeCreatedEvent;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.event.TransactionPhase;

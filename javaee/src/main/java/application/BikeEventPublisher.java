@@ -1,9 +1,9 @@
 package application;
 
-import bikes.domain.BikeCreatedEvent;
 import com.google.protobuf.Timestamp;
 import common.infrastructure.protobuf.Events.BikeCreatedMessage;
 import common.infrastructure.protobuf.Events.EventsEnvelope;
+import domain.bikes.BikeCreatedEvent;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.slf4j.Logger;

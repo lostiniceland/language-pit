@@ -1,10 +1,10 @@
 package application;
 
-import bikes.domain.ApprovalStatus;
-import bikes.domain.Bike;
-import bikes.domain.BikeCreatedEvent;
-import bikes.domain.BikeRepository;
-import bikes.domain.Part;
+import domain.bikes.ApprovalStatus;
+import domain.bikes.Bike;
+import domain.bikes.BikeCreatedEvent;
+import domain.bikes.BikeRepository;
+import domain.bikes.Part;
 import java.util.List;
 import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
@@ -17,8 +17,8 @@ import javax.transaction.Transactional.TxType;
 @ApplicationScoped
 public class BikeService {
 
-  BikeRepository bikeRepository;
-  Event<BikeCreatedEvent>bikesCreatedPublisher;
+	private BikeRepository bikeRepository;
+	private Event<BikeCreatedEvent> bikesCreatedPublisher;
 
   protected BikeService () {
     // CDI only

@@ -5,13 +5,13 @@ import common.infrastructure.protobuf.Events.BikeApprovalCreatedMessage;
 import common.infrastructure.protobuf.Events.BikeApprovedMessage;
 import common.infrastructure.protobuf.Events.BikeRejectedMessage;
 import common.infrastructure.protobuf.Events.EventsEnvelope;
+import domain.wife.BikeApprovalCreatedEvent;
+import domain.wife.BikeApprovedEvent;
+import domain.wife.BikeRejectedEvent;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import wife.domain.BikeApprovalCreatedEvent;
-import wife.domain.BikeApprovedEvent;
-import wife.domain.BikeRejectedEvent;
 
 @ApplicationScoped
 class WifeEventPublisher {
