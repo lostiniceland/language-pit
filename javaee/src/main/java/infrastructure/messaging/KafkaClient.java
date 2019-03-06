@@ -1,7 +1,7 @@
 package infrastructure.messaging;
 
 import application.ApplicationRuntimeException;
-import application.EventPublisher;
+import application.ProtobufEventPublisher;
 import common.infrastructure.protobuf.Events.EventsEnvelope;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
-public class KafkaClient implements EventPublisher {
+public class KafkaClient implements ProtobufEventPublisher {
 
   private static final Logger logger = LoggerFactory.getLogger(KafkaClient.class);
 

@@ -1,6 +1,5 @@
 package domain.wife;
 
-import domain.wife.BikeApproval.ApprovalStatus;
 import java.util.Collection;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;

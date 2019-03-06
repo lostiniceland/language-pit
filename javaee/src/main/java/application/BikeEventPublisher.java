@@ -15,7 +15,7 @@ class BikeEventPublisher {
   private static final Logger logger = LoggerFactory.getLogger(BikeEventPublisher.class);
 
   @Inject
-  EventPublisher eventPublisher;
+	ProtobufEventPublisher protobufEventPublisher;
 
   void notifyWifeAboutNewBike(BikeCreatedEvent event) {
     logger.info("Sending event '{}' to Kafka", event.toString());
@@ -28,6 +28,6 @@ class BikeEventPublisher {
             .setBikeId(event.getBike().getId())
             .setValue(event.getBike().getValue())
             .build()).build();
-    eventPublisher.send(envelope);
+		protobufEventPublisher.send(envelope);
   }
 }

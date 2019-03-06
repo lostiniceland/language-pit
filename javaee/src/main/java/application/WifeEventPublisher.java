@@ -19,7 +19,7 @@ class WifeEventPublisher {
   private static final Logger logger = LoggerFactory.getLogger(WifeEventPublisher.class);
 
 	@Inject
-	EventPublisher eventPublisher;
+	ProtobufEventPublisher protobufEventPublisher;
 
 
   void notifyAboutApprovalCreated(BikeApprovalCreatedEvent event) {
@@ -33,7 +33,7 @@ class WifeEventPublisher {
                 .setApprovalId(event.getId())
                 .setBikeId(event.getBikeId())
                 .build()).build();
-    eventPublisher.send(envelope);
+		protobufEventPublisher.send(envelope);
   }
 
   void notifyAboutApproval(BikeApprovedEvent event) {
@@ -47,7 +47,7 @@ class WifeEventPublisher {
                 .setApprovalId(event.getId())
                 .setBikeId(event.getBikeId())
                 .build()).build();
-		eventPublisher.send(envelope);
+		protobufEventPublisher.send(envelope);
   }
 
   void notifyAboutReject(BikeRejectedEvent event) {
@@ -61,6 +61,6 @@ class WifeEventPublisher {
                 .setApprovalId(event.getId())
                 .setBikeId(event.getBikeId())
                 .build()).build();
-		eventPublisher.send(envelope);
+		protobufEventPublisher.send(envelope);
   }
 }

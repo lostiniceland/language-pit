@@ -1,5 +1,6 @@
 package application;
 
+import domain.DomainEventPublisher;
 import domain.bikes.ApprovalStatus;
 import domain.bikes.Bike;
 import domain.bikes.BikeCreatedEvent;
@@ -8,7 +9,6 @@ import domain.bikes.Part;
 import java.util.List;
 import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -18,16 +18,16 @@ import javax.transaction.Transactional.TxType;
 public class BikeService {
 
 	private BikeRepository bikeRepository;
-	private Event<BikeCreatedEvent> bikesCreatedPublisher;
+  private DomainEventPublisher domainEventPublisher;
 
   protected BikeService () {
     // CDI only
   }
 
   @Inject
-  protected BikeService(BikeRepository bikeRepository, Event<BikeCreatedEvent>bikesCreatedPublisher) {
+  protected BikeService(BikeRepository bikeRepository, DomainEventPublisher domainEventPublisher) {
     this.bikeRepository = bikeRepository;
-    this.bikesCreatedPublisher = bikesCreatedPublisher;
+    this.domainEventPublisher = domainEventPublisher;
   }
 
   @Transactional(value = TxType.REQUIRES_NEW, rollbackOn = ApplicationRuntimeException.class)
@@ -35,7 +35,7 @@ public class BikeService {
     Bike entity = new Bike(manufacturer, name, weight, value);
     parts.forEach(part -> entity.addPart(new Part(part.getName(), part.getWeight())));
     bikeRepository.addBike(entity);
-    bikesCreatedPublisher.fire(new BikeCreatedEvent(entity));
+    domainEventPublisher.fireSync(new BikeCreatedEvent(entity));
     return entity;
   }
 
@@ -43,7 +43,7 @@ public class BikeService {
   public Bike updateBike(long id, String manufacturer, String name, float weight, float value, List<Part> parts)
       throws EntityNotFoundException {
     Bike bike = bikeRepository.findBike(id).orElseThrow(() -> new EntityNotFoundException(Bike.class, id));
-    bike.update(manufacturer, name, weight, value, parts);
+    bike.update(manufacturer, name, weight, value, parts, domainEventPublisher);
     return bike;
   }
 
@@ -52,7 +52,7 @@ public class BikeService {
       throws EntityNotFoundException {
     Objects.requireNonNull(approval);
     Bike bike = bikeRepository.findBike(id).orElseThrow(() -> new EntityNotFoundException(Bike.class, id));
-    approval.updateBikeApproval(bike);
+    bike.updateApproval(approval, domainEventPublisher);
     return bike;
   }
 }

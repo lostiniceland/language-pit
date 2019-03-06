@@ -1,8 +1,8 @@
 package infrastructure.jaxrs;
 
 import application.WifeService;
+import domain.wife.ApprovalStatus;
 import domain.wife.BikeApproval;
-import domain.wife.BikeApproval.ApprovalStatus;
 import domain.wife.WifeRepository;
 import java.util.List;
 import java.util.Optional;

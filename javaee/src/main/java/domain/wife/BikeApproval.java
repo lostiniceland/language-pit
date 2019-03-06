@@ -39,9 +39,4 @@ public class BikeApproval extends BaseEntity {
     this.approval = approval;
   }
 
-  public enum ApprovalStatus {
-    Pending,
-    Accepted,
-		Rejected
-  }
 }

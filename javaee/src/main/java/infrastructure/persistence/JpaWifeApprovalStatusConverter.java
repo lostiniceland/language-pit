@@ -1,15 +1,15 @@
 package infrastructure.persistence;
 
-import domain.wife.BikeApproval;
+import domain.wife.ApprovalStatus;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter(autoApply = true)
-public class JpaWifeApprovalStatusConverter implements AttributeConverter<BikeApproval.ApprovalStatus, Character> {
+public class JpaWifeApprovalStatusConverter implements AttributeConverter<ApprovalStatus, Character> {
 
 	@SuppressWarnings("Duplicates")
 	@Override
-	public Character convertToDatabaseColumn(BikeApproval.ApprovalStatus attribute) {
+	public Character convertToDatabaseColumn(ApprovalStatus attribute) {
 		switch (attribute) {
 			case Pending:
 				return 'P';
@@ -23,14 +23,14 @@ public class JpaWifeApprovalStatusConverter implements AttributeConverter<BikeAp
 	}
 
 	@Override
-	public BikeApproval.ApprovalStatus convertToEntityAttribute(Character dbData) {
+	public ApprovalStatus convertToEntityAttribute(Character dbData) {
 		switch (dbData) {
 			case 'P':
-				return BikeApproval.ApprovalStatus.Pending;
+				return ApprovalStatus.Pending;
 			case 'A':
-				return BikeApproval.ApprovalStatus.Accepted;
+				return ApprovalStatus.Accepted;
 			case 'R':
-				return BikeApproval.ApprovalStatus.Rejected;
+				return ApprovalStatus.Rejected;
 			default:
 				throw new IllegalArgumentException("Unknown " + dbData);
 		}
