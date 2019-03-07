@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0gavit8" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.16.2">
+  <bpmn:process id="Wife_Approval_Bike" name="Wife Approval Process - Bikes" isExecutable="true">
+    <bpmn:startEvent id="BikeCreatedEvent_Received">
+      <bpmn:outgoing>SequenceFlow_06n7by7</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_1s4y9bf" />
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_06n7by7" sourceRef="BikeCreatedEvent_Received" targetRef="Task_CreateApproval" />
+    <bpmn:sequenceFlow id="SequenceFlow_19vzzio" sourceRef="Task_CreateApproval" targetRef="Task_Decide_Bike_Automatically" />
+    <bpmn:businessRuleTask id="Task_Decide_Bike_Automatically" name="Evaluate Approval" camunda:decisionRef="Decision_Bike_Rating">
+      <bpmn:incoming>SequenceFlow_19vzzio</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0x80pty</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0x80pty" sourceRef="Task_Decide_Bike_Automatically" targetRef="ExclusiveGateway_1avwgdw" />
+    <bpmn:eventBasedGateway id="ExclusiveGateway_1avwgdw">
+      <bpmn:incoming>SequenceFlow_0x80pty</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0bsr2kb</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_01qdofz</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_17uhvix</bpmn:outgoing>
+    </bpmn:eventBasedGateway>
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_020oejy" name="Rejected">
+      <bpmn:incoming>SequenceFlow_0bsr2kb</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1wj2cuh</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_02i1ng0" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0bsr2kb" sourceRef="ExclusiveGateway_1avwgdw" targetRef="IntermediateCatchEvent_020oejy" />
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_06ef3bs" name="Accepted&#10;&#10;">
+      <bpmn:incoming>SequenceFlow_01qdofz</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_01zuf9t</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_0v68qau" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_01qdofz" sourceRef="ExclusiveGateway_1avwgdw" targetRef="IntermediateCatchEvent_06ef3bs" />
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_0xdzaop" name="Needs Approval">
+      <bpmn:incoming>SequenceFlow_17uhvix</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_15roj63</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_1o5tdcz" />
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_17uhvix" sourceRef="ExclusiveGateway_1avwgdw" targetRef="IntermediateCatchEvent_0xdzaop" />
+    <bpmn:sequenceFlow id="SequenceFlow_1wj2cuh" sourceRef="IntermediateCatchEvent_020oejy" targetRef="Task_Reject_Bike" />
+    <bpmn:serviceTask id="Task_Reject_Bike" name="Reject" camunda:expression="print(Rejected)">
+      <bpmn:incoming>SequenceFlow_1wj2cuh</bpmn:incoming>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_01zuf9t" sourceRef="IntermediateCatchEvent_06ef3bs" targetRef="Task_Approve_Bike" />
+    <bpmn:serviceTask id="Task_Approve_Bike" name="Approve" camunda:expression="print(Accepted)">
+      <bpmn:incoming>SequenceFlow_01zuf9t</bpmn:incoming>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_15roj63" sourceRef="IntermediateCatchEvent_0xdzaop" targetRef="Task_Decide_Bike_Manually" />
+    <bpmn:userTask id="Task_Decide_Bike_Manually" name="Manual Approval">
+      <bpmn:incoming>SequenceFlow_15roj63</bpmn:incoming>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Task_CreateApproval" name="Create Approval" camunda:delegateExpression="${wifeCreateBikeApproval}">
+      <bpmn:incoming>SequenceFlow_06n7by7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_19vzzio</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:message id="Message_1s4y9bf" name="Message_Wife_Start_Bike_Process" />
+  <bpmn:message id="Message_02i1ng0" name="Message_Wife_Bike_Rejected" />
+  <bpmn:message id="Message_0v68qau" name="Message_Wife_Bike_Accepted" />
+  <bpmn:message id="Message_1o5tdcz" name="Message_Wife_Bike_Needs_Manual_Approval" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Wife_Approval_Bike">
+      <bpmndi:BPMNShape id="StartEvent_146z8p6_di" bpmnElement="BikeCreatedEvent_Received">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_06n7by7_di" bpmnElement="SequenceFlow_06n7by7">
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="259" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_19vzzio_di" bpmnElement="SequenceFlow_19vzzio">
+        <di:waypoint x="359" y="120" />
+        <di:waypoint x="409" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BusinessRuleTask_1mq3w5h_di" bpmnElement="Task_Decide_Bike_Automatically">
+        <dc:Bounds x="409" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0x80pty_di" bpmnElement="SequenceFlow_0x80pty">
+        <di:waypoint x="509" y="120" />
+        <di:waypoint x="559" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EventBasedGateway_0mftuo6_di" bpmnElement="ExclusiveGateway_1avwgdw">
+        <dc:Bounds x="559" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_020oejy_di" bpmnElement="IntermediateCatchEvent_020oejy">
+        <dc:Bounds x="688" y="-95" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="685" y="-52" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0bsr2kb_di" bpmnElement="SequenceFlow_0bsr2kb">
+        <di:waypoint x="584" y="95" />
+        <di:waypoint x="584" y="-77" />
+        <di:waypoint x="688" y="-77" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_06ef3bs_di" bpmnElement="IntermediateCatchEvent_06ef3bs">
+        <dc:Bounds x="688" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="684" y="145" width="46" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_01qdofz_di" bpmnElement="SequenceFlow_01qdofz">
+        <di:waypoint x="609" y="120" />
+        <di:waypoint x="688" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0xdzaop_di" bpmnElement="IntermediateCatchEvent_0xdzaop">
+        <dc:Bounds x="688" y="331" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="667" y="374" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_17uhvix_di" bpmnElement="SequenceFlow_17uhvix">
+        <di:waypoint x="584" y="145" />
+        <di:waypoint x="584" y="349" />
+        <di:waypoint x="688" y="349" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wj2cuh_di" bpmnElement="SequenceFlow_1wj2cuh">
+        <di:waypoint x="724" y="-77" />
+        <di:waypoint x="823" y="-77" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_097ocmv_di" bpmnElement="Task_Reject_Bike">
+        <dc:Bounds x="823" y="-117" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_01zuf9t_di" bpmnElement="SequenceFlow_01zuf9t">
+        <di:waypoint x="724" y="120" />
+        <di:waypoint x="823" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1w5ia2s_di" bpmnElement="Task_Approve_Bike">
+        <dc:Bounds x="823" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_15roj63_di" bpmnElement="SequenceFlow_15roj63">
+        <di:waypoint x="724" y="349" />
+        <di:waypoint x="823" y="349" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_08dmqq5_di" bpmnElement="Task_Decide_Bike_Manually">
+        <dc:Bounds x="823" y="309" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0y8hcxh_di" bpmnElement="Task_CreateApproval">
+        <dc:Bounds x="259" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

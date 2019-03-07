@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns:biodi="http://bpmn.io/schema/dmn/biodi/1.0" xmlns:camunda="http://camunda.org/schema/1.0/dmn" id="Definitions_0ydeta9" name="DRD" namespace="http://camunda.org/schema/1.0/dmn">
+  <decision id="Decision_Bike_Rating" name="Bike Rating">
+    <extensionElements>
+      <biodi:bounds x="150" y="150" width="180" height="80" />
+    </extensionElements>
+    <decisionTable id="decisionTable_1">
+      <input id="input_1" label="Bike Price" camunda:inputVariable="bikePrice">
+        <inputExpression id="inputExpression_1" typeRef="integer">
+          <text></text>
+        </inputExpression>
+      </input>
+      <input id="InputClause_011v3kq" label="Bikes Already Owned" camunda:inputVariable="bikesOwned">
+        <inputExpression id="LiteralExpression_0lme5s2" typeRef="integer">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="output_1" name="Approved" typeRef="boolean" />
+      <output id="OutputClause_1x8zvsh" name="Needs Manual Approval" typeRef="boolean" />
+      <rule id="DecisionRule_1luyepk">
+        <inputEntry id="UnaryTests_0k8yedf">
+          <text>&lt; 500</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_0dmtbfq">
+          <text>0</text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_1an4s91">
+          <text>true</text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0iyeu3j">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_0ezp3oa">
+        <inputEntry id="UnaryTests_0we3m1q">
+          <text>&lt; 2000</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_08qq7qz">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0h27dno">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_0u7gdlf">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_096px0j">
+        <inputEntry id="UnaryTests_0c6w4zl">
+          <text>[2001..5000]</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_03gizj5">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0hdpate">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_13o0ap3">
+          <text></text>
+        </outputEntry>
+      </rule>
+      <rule id="DecisionRule_1520ibx">
+        <inputEntry id="UnaryTests_1weeqpk">
+          <text>&gt; 5000</text>
+        </inputEntry>
+        <inputEntry id="UnaryTests_1po6jq6">
+          <text></text>
+        </inputEntry>
+        <outputEntry id="LiteralExpression_0p9dsuj">
+          <text></text>
+        </outputEntry>
+        <outputEntry id="LiteralExpression_01wqr7a">
+          <text>true</text>
+        </outputEntry>
+      </rule>
+    </decisionTable>
+  </decision>
+</definitions>

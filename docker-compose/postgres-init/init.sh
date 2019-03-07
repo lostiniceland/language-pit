@@ -11,4 +11,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
 	create schema authorization wife;
 	alter user bikes set search_path to 'bikes';
 	alter user wife set search_path to 'wife';
+	create database camunda;
+	create user camunda with password '666';
+	grant all privileges on database camunda to camunda;
 EOSQL

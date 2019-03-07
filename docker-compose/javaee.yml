@@ -33,7 +33,8 @@ services:
     volumes:
       - ./postgres-init:/docker-entrypoint-initdb.d/
     # set random access cost for SSD (default is 4.0 which is targeted at HDDs)
-    command: ["-c", "random_page_cost=1.0"]
+    # set prepared-transaction limit for XA-DataSources
+    command: ["-c", "random_page_cost=1.0", "-c", "max_prepared_transactions=110"]
 
   bike:
     image: languagepit/javaee-bikes:openliberty

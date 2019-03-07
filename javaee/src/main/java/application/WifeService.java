@@ -1,6 +1,5 @@
 package application;
 
-import domain.wife.ApprovalService;
 import domain.wife.BikeApproval;
 import domain.wife.BikeApprovalCreatedEvent;
 import domain.wife.WifeRepository;
@@ -15,29 +14,29 @@ import javax.transaction.Transactional.TxType;
 public class WifeService {
 
   private WifeRepository wifeRepository;
-  private ApprovalService approvalService;
   private Event<BikeApprovalCreatedEvent> approvalCreatedPublisher;
+  private WifeBpmnProcess wifeBpmnProcess;
 
   protected WifeService() {
     // CDI only
   }
 
   @Inject
-  protected WifeService(WifeRepository wifeRepository, ApprovalService approvalService, Event<BikeApprovalCreatedEvent> approvalCreatedPublisher) {
+  protected WifeService(WifeRepository wifeRepository, WifeBpmnProcess wifeBpmnProcess, Event<BikeApprovalCreatedEvent> approvalCreatedPublisher) {
     this.wifeRepository = wifeRepository;
-    this.approvalService = approvalService;
+    this.wifeBpmnProcess = wifeBpmnProcess;
     this.approvalCreatedPublisher = approvalCreatedPublisher;
   }
 
-  @Transactional(TxType.REQUIRES_NEW)
-  public void decideBike(long id) throws EntityNotFoundException {
-    BikeApproval approval = wifeRepository.findBikeApproval(id)
-        .orElseThrow(() -> new EntityNotFoundException(BikeApproval.class, id));
-    approvalService.decideAboutFateOfBike(approval);
-  }
 
   @Transactional(TxType.REQUIRES_NEW)
-  BikeApproval handleNewBike(long bikeId, float value) {
+  void handleNewBike(long bikeId, float value) {
+    int bikesOwned = wifeRepository.countAllBikesOwned();
+    wifeBpmnProcess.startApprovalProcessForNewBike(bikeId, value, bikesOwned);
+  }
+
+  @Transactional(TxType.MANDATORY)
+  public BikeApproval createNewApproval(long bikeId, float value) {
     BikeApproval entity = new BikeApproval(bikeId, value);
     wifeRepository.addBikeApproval(entity);
     approvalCreatedPublisher.fire(new BikeApprovalCreatedEvent(entity.getId(), entity.getBikeId()));

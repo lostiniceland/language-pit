@@ -31,11 +31,13 @@ repositories {
 }
 
 val versionProtobuf = "3.6.1"
+val versionCamunda = "7.10.0"
 
 
 dependencies {
 	compileOnly(group = "javax", name = "javaee-api", version = "8.0")
 	compileOnly(group = "org.eclipse.persistence", name = "eclipselink", version = "2.7.1")
+	compileOnly(group = "com.ibm.websphere.appserver.api", name = "com.ibm.websphere.appserver.api.transaction", version = "1.1.25")
 	compile(group = "com.google.auto.value", name = "auto-value-annotations", version = "1.6")
 	annotationProcessor(group = "com.google.auto.value", name = "auto-value", version = "1.6")
 	compile(group = "com.google.protobuf", name = "protobuf-java", version = versionProtobuf)
@@ -45,17 +47,20 @@ dependencies {
 	compile(group = "org.slf4j", name = "slf4j-simple", version = "1.7.26")
 	compile(group = "org.apache.kafka", name = "kafka-clients", version = "2.0.0")
 	compile(group = "org.flywaydb", name = "flyway-core", version = "6.0.0-beta") // beta due to Postgres 11
+	compile(group = "org.camunda.bpm", name = "camunda-engine", version = versionCamunda)
+	compile(group = "org.camunda.bpm", name = "camunda-engine-cdi", version = versionCamunda)
 
 	testCompile(group = "junit", name = "junit", version = "4.+")
 	testCompile(group = "org.codehaus.groovy", name = "groovy-all", version = "2.5.+")
 	testCompile(group = "org.spockframework", name = "spock-core", version = "1.2-groovy-2.5")
 	testCompile(group = "nl.jqno.equalsverifier", name = "equalsverifier", version = "3.1.5")
+	testCompile(group = "org.camunda.bpm.extension", name = "camunda-bpm-assert", version = "1.2")
 }
 
 
 configure<JavaPluginConvention> {
-	sourceCompatibility = JavaVersion.VERSION_11
-	targetCompatibility = JavaVersion.VERSION_11
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 
@@ -82,10 +87,12 @@ protobuf {
 }
 
 
+//val libertyVersion = "19.0.0.1"
+val libertyVersion = "19.0.0.2"
 val libertyDockerFolder = "$buildDir/docker/openliberty"
 val libertyConfigFolder = "${project.projectDir}/config-resources-openliberty"
-val libertyInstallFolder = "${project.projectDir}/server"
-val libertyServerFolder = "$libertyInstallFolder/wlp/usr/servers/default"
+val libertyInstallFolder = "${project.projectDir}/server/wlp-$libertyVersion"
+val libertyServerFolder = "$libertyInstallFolder/usr/servers/default"
 val libertyServerPostgresFolder = "$libertyServerFolder/lib-postgres"
 
 tasks {
@@ -94,12 +101,16 @@ tasks {
 		group = "server setup"
 		description = "Downloads and extracts a OpenLiberty server instance and configures the Postgres jdbc-driver"
 
-		outputs.dir("$libertyInstallFolder/wlp")
-
+		outputs.dir("$libertyInstallFolder/")
+		onlyIf {
+			!File(libertyServerFolder).exists()
+		}
 		doLast{
 			println("Download Openliberty from Maven-Central")
 			val libertyDownloadZip = File(project.buildDir.absolutePath + "/wlp.zip")
-			Fuel.download("http://central.maven.org/maven2/io/openliberty/openliberty-javaee8/19.0.0.2/openliberty-javaee8-19.0.0.2.zip")
+//			var url = "http://central.maven.org/maven2/io/openliberty/openliberty-javaee8/$libertyVersion/openliberty-javaee8-$libertyVersion.zip"
+			var url = "https://public.dhe.ibm.com/ibmdl/export/pub/software/openliberty/runtime/release/2019-01-24_2339/openliberty-javaee8-19.0.0.1.zip"
+			Fuel.download(url)
 					.fileDestination { _, _ -> libertyDownloadZip }
 					.response()
 			unzipTo(File(libertyInstallFolder), libertyDownloadZip)
@@ -114,6 +125,9 @@ tasks {
 		val postgresDownloadJar = File("$libertyServerPostgresFolder/postgresql-42.2.5.jar")
 
 		outputs.file(postgresDownloadJar)
+		onlyIf {
+			!File(libertyServerPostgresFolder).exists()
+		}
 
 		doLast {
 			Files.createDirectories(Paths.get(libertyServerPostgresFolder))

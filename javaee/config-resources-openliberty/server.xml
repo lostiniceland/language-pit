@@ -5,15 +5,15 @@
     <feature>localConnector-1.0</feature>
   </featureManager>
 
-  <applicationMonitor updateTrigger="mbean" />
+  <applicationMonitor updateTrigger="mbean"/>
 
   <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="8080"/>
 
   <dataSource id="BikeDataSource"
-              jndiName="jdbc/bikes"
-              jdbcDriverRef="postgres-driver"
-              type="javax.sql.ConnectionPoolDataSource"
-              transactional="true">
+    jndiName="jdbc/bikes"
+    jdbcDriverRef="postgres-driver"
+    type="javax.sql.XADataSource"
+    transactional="true">
     <properties serverName="${env.DB_HOST}"
       portNumber="5432"
       databaseName="postgres"
@@ -22,10 +22,10 @@
   </dataSource>
 
   <dataSource id="WifeDataSource"
-              jndiName="jdbc/wife"
-              jdbcDriverRef="postgres-driver"
-              type="javax.sql.ConnectionPoolDataSource"
-              transactional="true">
+    jndiName="jdbc/wife"
+    jdbcDriverRef="postgres-driver"
+    type="javax.sql.XADataSource"
+    transactional="true">
     <properties serverName="${env.DB_HOST}"
       portNumber="5432"
       databaseName="postgres"
@@ -33,18 +33,30 @@
       password="4321"/>
   </dataSource>
 
+  <dataSource id="CamundaDataSource"
+    jndiName="jdbc/camunda"
+    jdbcDriverRef="postgres-driver"
+    type="javax.sql.XADataSource"
+    transactional="true">
+    <properties serverName="${env.DB_HOST}"
+      portNumber="5432"
+      databaseName="camunda"
+      user="camunda"
+      password="666"/>
+  </dataSource>
+
   <jdbcDriver id="postgres-driver"
-              javax.sql.XADataSource="org.postgresql.xa.PGXADataSource"
-              javax.sql.ConnectionPoolDataSource="org.postgresql.ds.PGConnectionPoolDataSource"
-              libraryRef="postgres-library"/>
+    javax.sql.XADataSource="org.postgresql.xa.PGXADataSource"
+    javax.sql.ConnectionPoolDataSource="org.postgresql.ds.PGConnectionPoolDataSource"
+    libraryRef="postgres-library"/>
 
   <library id="postgres-library">
     <fileset dir="${server.config.dir}/lib-postgres"/>
   </library>
 
-  <jndiEntry jndiName="kafkaHost" value='"${env.KAFKA_HOST}"' />
-  <jndiEntry jndiName="kafkaPort" value='"${env.KAFKA_PORT}"' />
-  <jndiEntry jndiName="kafkaEventTopic" value='"${env.KAFKA_EVENT_TOPIC}"' />
+  <jndiEntry jndiName="kafkaHost" value='"${env.KAFKA_HOST}"'/>
+  <jndiEntry jndiName="kafkaPort" value='"${env.KAFKA_PORT}"'/>
+  <jndiEntry jndiName="kafkaEventTopic" value='"${env.KAFKA_EVENT_TOPIC}"'/>
 
   <!-- used for docker deployments, wont do anything on local -->
   <webApplication contextRoot="/" location="bikes.war"/>

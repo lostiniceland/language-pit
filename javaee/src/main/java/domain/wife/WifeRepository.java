@@ -15,5 +15,5 @@ public interface WifeRepository {
 
   void removeBikeApproval(BikeApproval bikeApproval);
 
-
+	int countAllBikesOwned();
 }

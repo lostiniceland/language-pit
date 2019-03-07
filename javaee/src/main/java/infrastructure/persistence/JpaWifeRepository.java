@@ -11,7 +11,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-
 @Stateless
 public class JpaWifeRepository implements WifeRepository {
 
@@ -50,5 +49,12 @@ public class JpaWifeRepository implements WifeRepository {
   @Override
   public void removeBikeApproval(BikeApproval approval) {
     em.remove(approval);
+  }
+
+  @Override
+  public int countAllBikesOwned() {
+    Query query = em.createQuery("select count(ba) from BikeApproval ba where ba.approval = :accepted");
+    query.setParameter("accepted", ApprovalStatus.Accepted);
+    return ((Number) query.getSingleResult()).intValue();
   }
 }

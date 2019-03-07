@@ -13,5 +13,4 @@
     <jta-data-source>jdbc/wife</jta-data-source>
   </persistence-unit>
 
-
 </persistence>
