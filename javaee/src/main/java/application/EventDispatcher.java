@@ -2,7 +2,7 @@ package application;
 
 import domain.bikes.BikeCreatedEvent;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
+import javax.enterprise.event.ObservesAsync;
 import javax.inject.Inject;
 
 /**
@@ -17,7 +17,7 @@ public class EventDispatcher {
 	@Inject
 	WifeService wifeService;
 
-	public void notifyWifeAboutNewBike(@Observes BikeCreatedEvent event){
+	public void notifyWifeAboutNewBike(@ObservesAsync BikeCreatedEvent event) {
 		wifeService.handleNewBike(event.getBike().getId(), event.getBike().getValue());
 	}
 

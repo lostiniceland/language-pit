@@ -10,7 +10,8 @@ import org.camunda.bpm.engine.ProcessEngine;
 @ApplicationScoped
 public class WifeCamundaBpmnProcess implements WifeBpmnProcess {
 
-	public static final String BUSINESS_KEY_BIKE_APPROVAL = "key_bike_approval";
+	static final String MESSAGE = "Message_Wife_Start_Bike_Process";
+	static final String BUSINESS_KEY_BIKE_APPROVAL = "key_bike_approval";
 
 	@Inject
 	ProcessEngine processEngine;
@@ -21,7 +22,7 @@ public class WifeCamundaBpmnProcess implements WifeBpmnProcess {
 		vars.put("bikeId", bikeId);
 		vars.put("bikePrice", value);
 		vars.put("bikesOwned", bikesOwned);
-		processEngine.getRuntimeService().startProcessInstanceByMessage("Message_Wife_Start_Bike_Process", BUSINESS_KEY_BIKE_APPROVAL, vars);
+		processEngine.getRuntimeService().startProcessInstanceByMessage(MESSAGE, BUSINESS_KEY_BIKE_APPROVAL, vars);
 //		processEngine.getRuntimeService()
 //				.createMessageCorrelation("Message_Wife_Start_Bike_Process")
 //				.processInstanceBusinessKey(BUSINESS_KEY_BIKE_APPROVAL)

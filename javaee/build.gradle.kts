@@ -53,8 +53,11 @@ dependencies {
 	testCompile(group = "junit", name = "junit", version = "4.+")
 	testCompile(group = "org.codehaus.groovy", name = "groovy-all", version = "2.5.+")
 	testCompile(group = "org.spockframework", name = "spock-core", version = "1.2-groovy-2.5")
+	testCompile(group = "cglib", name = "cglib-nodep", version = "3.2.10")
+	testCompile(group = "org.objenesis", name = "objenesis", version = "3.0.1")
 	testCompile(group = "nl.jqno.equalsverifier", name = "equalsverifier", version = "3.1.5")
 	testCompile(group = "org.camunda.bpm.extension", name = "camunda-bpm-assert", version = "1.2")
+	testCompile(group = "com.h2database", name = "h2", version = "1.4.198")
 }
 
 
