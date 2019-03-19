@@ -52,7 +52,8 @@ dependencies {
 
 	testCompile(group = "junit", name = "junit", version = "4.+")
 	testCompile(group = "org.codehaus.groovy", name = "groovy-all", version = "2.5.+")
-	testCompile(group = "org.spockframework", name = "spock-core", version = "1.2-groovy-2.5")
+	testCompile(group = "org.spockframework", name = "spock-core", version = "1.3-groovy-2.5")
+	testCompile(group = "com.athaydes", name = "spock-reports", version = "1.6.1") { setTransitive(false) }
 	testCompile(group = "cglib", name = "cglib-nodep", version = "3.2.10")
 	testCompile(group = "org.objenesis", name = "objenesis", version = "3.0.1")
 	testCompile(group = "nl.jqno.equalsverifier", name = "equalsverifier", version = "3.1.5")
@@ -102,7 +103,7 @@ tasks {
 
 	register("createServer"){
 		group = "server setup"
-		description = "Downloads and extracts a OpenLiberty server instance and configures the Postgres jdbc-driver"
+		description = "Downloads and extracts a OpenLiberty server instance"
 
 		outputs.dir("$libertyInstallFolder/")
 		onlyIf {

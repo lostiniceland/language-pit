@@ -20,14 +20,14 @@ class WifeDecisionSpec extends Specification {
 		given:
 		Map<String, Object> vars = ["bikePrice": bikePrice, "bikesOwned": bikesOwned]
 
-		when:
+		when: 'decision gets evaluated'
 		DmnDecisionResult result = processEngine().getDecisionService()
 				.evaluateDecisionByKey("Decision_Bike_Rating")
 				.variables(vars)
 				.evaluate()
 
 
-		then:
+		then: '#resultMessage'
 		result.getSingleResult().get("approved") == approvalResult
 		result.getSingleResult().get("manualApproval") == manualApprovalResult
 
