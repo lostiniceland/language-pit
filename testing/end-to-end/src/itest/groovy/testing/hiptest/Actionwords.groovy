@@ -15,18 +15,18 @@ class Actionwords extends StatefullActionword {
   /**
    * Adds a  new bike without any parts.
    */
-  boolean createBike(manufacturer = "Test-Manufacturer", name = "Test-Bike", weight = "13.5", value = "1000"){
+	boolean iWantToBuyANewBikeWorthBikePrice(manufacturer = "Test-Manufacturer", name = "Test-Bike", weight = "13.5", value = "1000", bikePrice = "bikePrice") {
     def resp = bikeClient()
-      .post(
+				.post(
         path: 'bikes',
         body: [
-          manufacturer: manufacturer,
-          name: name,
-          weight: weight,
-          value: value
+						manufacturer: manufacturer,
+						name        : name,
+						weight      : weight,
+						value       : value
         ],
         requestContentType: JSON
-      )
+		)
     assert resp.status == 201
     addState('created-bike-id', resp.headers['Location'].value.split('bikes/')[1])
     true
@@ -35,10 +35,10 @@ class Actionwords extends StatefullActionword {
 
   /**
    * Validates the status of a given bike according to the parameter ExpectedStatus
-   * 
+	 *
    * NOTE: makes use of shared state
    */
-  boolean checkApprovalstatusOfBike(expectedStatus = "Pending"){
+	boolean theBikeMustBeInTheCorrectStatus(expectedStatus = "Pending") {
     String bikeId = getState("created-bike-id", String)
     def resp = bikeClient()
         .get(
@@ -51,24 +51,20 @@ class Actionwords extends StatefullActionword {
   }
 
 
-  /**
-   * Once a bike gets created and additional approval must be created within the Wife-service. 
-   * This actionword must wait for the event that this approval has been created.
-   * 
-   * NOTE: makes use of shared state
-   */
-  boolean waitForNewBikeApproval(){
+	boolean aNotificationAboutTheApprovalOutcomeMustBeSent(approvalResult = "") {
     String id = getState("created-bike-id", String.class)
     def event = eventConsumer.lookupEvent { envelope ->
-      return envelope.hasBikeApprovalCreated() && envelope.getBikeApprovalCreated().bikeId == Long.valueOf(id)
+			if (approvalResult == "approved")
+				return envelope.hasBikeApproved() && envelope.getBikeApproved().bikeId == Long.valueOf(id)
+			else if (approvalResult == "rejected")
+				return envelope.hasBikeRejected() && envelope.getBikeRejected().bikeId == Long.valueOf(id)
     }
     assert event.isPresent()
     true
   }
 
-
   /**
-   * 
+	 *
    * Perform a health-check against the bike-service to make sure it is up and running
    */
   boolean availabilityBikeService(){
@@ -77,7 +73,7 @@ class Actionwords extends StatefullActionword {
   }
 
 
-  def cleanupState() {
+	boolean cleanupState() {
     clearState()
     true
   }

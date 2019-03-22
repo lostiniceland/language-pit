@@ -1,18 +1,19 @@
 ---
-- name: Create Bike
+- name: I want to buy a new bike worth "bikePrice"
   uid: 25d8e1b2-661f-4949-9b73-1a6d1e150b39
   parameters:
   - name: Manufacturer
   - name: Name
   - name: Weight
   - name: Value
+  - name: bikePrice
   body_hash: d41d8cd98f00b204e9800998ecf8427e
-- name: Check approval-status of bike
+- name: the bike must be in the correct status
   uid: ecdc442d-2131-4277-8344-a387cc884992
   parameters:
   - name: ExpectedStatus
   body_hash: d41d8cd98f00b204e9800998ecf8427e
-- name: Wait for new Bike-Approval
+- name: a notification must be sent that an approval has been created
   uid: 0e8a46ba-18f9-4e8b-8d62-71db2ffe217a
   parameters: []
   body_hash: d41d8cd98f00b204e9800998ecf8427e
@@ -20,15 +21,12 @@
   uid: 64ca9647-2d80-4cd2-be73-cdef008951de
   parameters: []
   body_hash: d41d8cd98f00b204e9800998ecf8427e
-- name: 'Availability: Wife-Service'
-  uid: 472bde69-d0f0-4dd6-92e0-2c79faf875f9
-  parameters: []
-  body_hash: d41d8cd98f00b204e9800998ecf8427e
-- name: 'Availability: Orchestration-Layer'
-  uid: 322fdaf4-185a-42b8-a910-c017697171f1
-  parameters: []
-  body_hash: d41d8cd98f00b204e9800998ecf8427e
 - name: Cleanup State
   uid: 181406dc-d8b3-4a1c-8a3b-9c7512663a7e
   parameters: []
+  body_hash: d41d8cd98f00b204e9800998ecf8427e
+- name: a notification about the approval outcome must be sent
+  uid: 2bcd2e66-30e7-4bd1-96d2-731303d31a63
+  parameters:
+    - name: ApprovalResult
   body_hash: d41d8cd98f00b204e9800998ecf8427e

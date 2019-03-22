@@ -2,12 +2,12 @@ package domain.wife;
 
 import domain.DomainEvent;
 
-public class BikeApprovalCreatedEvent extends DomainEvent {
+public class ApprovalAcceptedEvent extends DomainEvent {
 
   private final long id;
   private final long bikeId;
 
-  public BikeApprovalCreatedEvent(long id, long bikeId) {
+	ApprovalAcceptedEvent(long id, long bikeId) {
     super();
     this.id = id;
     this.bikeId = bikeId;

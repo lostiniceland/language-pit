@@ -1,13 +1,12 @@
 package application;
 
+import domain.DomainEventPublisher;
 import domain.bikes.Bike;
 import domain.wife.ApprovalService;
 import domain.wife.BikeApproval;
-import domain.wife.BikeApprovalCreatedEvent;
 import domain.wife.WifeRepository;
 import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
@@ -17,7 +16,7 @@ import javax.transaction.Transactional.TxType;
 public class WifeService {
 
   private WifeRepository wifeRepository;
-  private Event<BikeApprovalCreatedEvent> approvalCreatedPublisher;
+	private DomainEventPublisher domainEventPublisher;
   private WifeBpmnProcess wifeBpmnProcess;
 	private ApprovalService approvalService;
 
@@ -26,11 +25,11 @@ public class WifeService {
   }
 
   @Inject
-	protected WifeService(WifeRepository wifeRepository, WifeBpmnProcess wifeBpmnProcess, Event<BikeApprovalCreatedEvent> approvalCreatedPublisher,
+	protected WifeService(WifeRepository wifeRepository, WifeBpmnProcess wifeBpmnProcess, DomainEventPublisher domainEventPublisher,
 			ApprovalService approvalService) {
     this.wifeRepository = wifeRepository;
     this.wifeBpmnProcess = wifeBpmnProcess;
-    this.approvalCreatedPublisher = approvalCreatedPublisher;
+		this.domainEventPublisher = domainEventPublisher;
 		this.approvalService = approvalService;
   }
 
@@ -45,7 +44,6 @@ public class WifeService {
   public BikeApproval createNewApproval(long bikeId, float value) {
     BikeApproval entity = new BikeApproval(bikeId, value);
     wifeRepository.addBikeApproval(entity);
-    approvalCreatedPublisher.fire(new BikeApprovalCreatedEvent(entity.getId(), entity.getBikeId()));
     return entity;
   }
 

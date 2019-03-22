@@ -13,7 +13,7 @@ import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.pro
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.complete
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.withVariables
 
-class WifeApprovalProcessSpec extends Specification {
+class WifeBikeApprovalProcessSpec extends Specification {
 
 	@Rule
 	public ProcessEngineRule processEngineRule = new ProcessEngineRule()
@@ -34,7 +34,7 @@ class WifeApprovalProcessSpec extends Specification {
 		when: 'approval process gets started'
 		def instance = processEngineRule.getRuntimeService().startProcessInstanceByMessage(WifeCamundaBpmnProcess.MESSAGE, WifeCamundaBpmnProcess.BUSINESS_KEY_BIKE_APPROVAL, vars)
 
-		then: 'execution passes the task "Create Approval" as well as the automatic decision'
+		then: 'execution passes the task "Create BikeApproval" as well as the automatic decision'
 		assertThat(instance).hasPassed("Task_CreateApproval")
 		assertThat(instance).hasPassed("Task_Decide_Bike_Automatically")
 
@@ -60,7 +60,7 @@ class WifeApprovalProcessSpec extends Specification {
 		when: 'approval process gets started'
 		def instance = processEngineRule.getRuntimeService().startProcessInstanceByMessage(WifeCamundaBpmnProcess.MESSAGE, WifeCamundaBpmnProcess.BUSINESS_KEY_BIKE_APPROVAL, vars)
 
-		then: 'execution passes the task "Create Approval" as well as the automatic decision'
+		then: 'execution passes the task "Create BikeApproval" as well as the automatic decision'
 		assertThat(instance).hasPassed("Task_CreateApproval")
 		assertThat(instance).hasPassed("Task_Decide_Bike_Automatically")
 

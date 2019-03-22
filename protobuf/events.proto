@@ -12,9 +12,8 @@ message EventsEnvelope {
   oneof payload {
     BikeCreatedMessage bike_created = 11;
     BikeDeletedMessage bike_deleted = 12;
-    BikeApprovalCreatedMessage bike_approval_created = 13;
-    BikeApprovedMessage bike_approved = 14;
-    BikeRejectedMessage bike_rejected = 15;
+    BikeApprovedMessage bike_approved = 13;
+    BikeRejectedMessage bike_rejected = 14;
   }
 }
 
@@ -28,17 +27,11 @@ message BikeDeletedMessage {
   int64 bike_id = 1;
 }
 
-message BikeApprovalCreatedMessage {
-  int64 approval_id = 1;
-  int64 bike_id = 2;
-}
 
 message BikeApprovedMessage {
-  int64 approval_id = 1;
-  int64 bike_id = 2;
+  int64 bike_id = 1;
 }
 
 message BikeRejectedMessage {
-  int64 approval_id = 1;
-  int64 bike_id = 2;
+  int64 bike_id = 1;
 }

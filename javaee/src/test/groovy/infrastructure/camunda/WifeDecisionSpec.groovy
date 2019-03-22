@@ -38,9 +38,9 @@ class WifeDecisionSpec extends Specification {
 		"manual approval"        | 2000      | 5          | false          | true
 		"automatically approved" | 2000      | 3          | false          | true
 		"manual approval"        | 5000      | 4          | false          | true
-		"automatically declined" | 5000      | 5          | false          | false
+		"automatically rejected" | 5000      | 5          | false          | false
 		"manual approval"        | 10000     | 0          | false          | true
-		"automatically declined" | 10000     | 3          | false          | false
+		"automatically rejected" | 10000     | 3          | false          | false
 	}
 
 }

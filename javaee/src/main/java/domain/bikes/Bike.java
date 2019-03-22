@@ -10,12 +10,20 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Access(AccessType.FIELD)
 public class Bike extends BaseEntity {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "BIKES_SEQ")
+	@SequenceGenerator(name = "BIKES_SEQ", sequenceName = "bikes_seq")
+	private long id;
   @NotNull
   private String manufacturer;
   @NotNull
@@ -49,8 +57,11 @@ public class Bike extends BaseEntity {
     }
   }
 
+	public long getId() {
+		return id;
+	}
 
-  public String getManufacturer() {
+	public String getManufacturer() {
     return manufacturer;
   }
 
@@ -96,7 +107,7 @@ public class Bike extends BaseEntity {
 		}
 		this.approval = newStatus;
 		if (approval == ApprovalStatus.Accepted) {
-			publisher.fireAsync(new BikeAcceptedEvent(getId()));
+			publisher.fireAsync(new BikeApprovedEvent(getId()));
 		} else {
 			publisher.fireAsync(new BikeRejectedEvent(getId()));
 		}
@@ -113,7 +124,7 @@ public class Bike extends BaseEntity {
     this.value = value;
     this.parts.retainAll(parts);
 
-//    publisher.fireSync(new BikeUpdateEvent());
+		publisher.fireSync(new BikeApprovedEvent(getId()));
 
     return this;
   }

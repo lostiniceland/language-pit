@@ -1,4 +1,4 @@
-# This config is intended to only run Kafka and have all other applications running locally,
+# This config is intended to only run Kafka and PostgreSQL and have all other applications running locally,
 # e.g. within an IDE
 version: '3.2'
 services:
@@ -38,19 +38,4 @@ services:
     # set prepared-transaction limit for XA-DataSources
     command: ["-c", "random_page_cost=1.0", "-c", "max_prepared_transactions=110"]
 
-  # Doesn' work right now.
-  # Even when the database is shared, both engines are separated
-  # The idea was to connect the cockput/admin/tasklist to the database provided by the application
-#  camunda:
-#    image: camunda/camunda-bpm-platform:7.10.0
-#    ports:
-#      - 9090:8080
-#    environment:
-#      DB_DRIVER: "org.postgresql.Driver"
-#      DB_URL: "jdbc:postgresql://postgres:5432/camunda"
-#      DB_USERNAME: "camunda"
-#      DB_PASSWORD: "666"
-#      SKIP_DB_CONFIG: "true"
-#      WAIT_FOR: "postgres:5432"
-#      WAIT_FOR_TIMEOUT: 60
-#      TZ: "Europe/Berlin"
+

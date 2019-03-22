@@ -1,6 +1,6 @@
 package domain.wife;
 
-import javax.enterprise.event.Event;
+import domain.DomainEventPublisher;
 import javax.inject.Inject;
 
 /**
@@ -9,26 +9,23 @@ import javax.inject.Inject;
 public class ApprovalService {
 
   private WifeRepository wifeRepository;
-  private Event<BikeApprovedEvent> bikesApprovedPublisher;
-  private Event<BikeRejectedEvent> bikesRejectedPublisher;
+	private DomainEventPublisher domainEventPublisher;
 
   @Inject
   protected ApprovalService(
       WifeRepository wifeRepository,
-      Event<BikeApprovedEvent> bikesApprovedPublisher,
-      Event<BikeRejectedEvent> bikesRejectedPublisher) {
+			DomainEventPublisher domainEventPublisher) {
     this.wifeRepository = wifeRepository;
-    this.bikesApprovedPublisher = bikesApprovedPublisher;
-    this.bikesRejectedPublisher = bikesRejectedPublisher;
+		this.domainEventPublisher = domainEventPublisher;
   }
 
-	public void completeApproval(BikeApproval approval, boolean decision) {
+	public void completeApproval(BikeApproval bikeApproval, boolean decision) {
 		if (decision) {
-      approval.setApproval(ApprovalStatus.Accepted);
-      bikesApprovedPublisher.fire(new BikeApprovedEvent(approval.getId(), approval.getBikeId()));
+			bikeApproval.setApproval(ApprovalStatus.Accepted);
+			domainEventPublisher.fireAsync(new ApprovalAcceptedEvent(bikeApproval.getId(), bikeApproval.getBikeId()));
     } else {
-      approval.setApproval(ApprovalStatus.Rejected);
-      bikesRejectedPublisher.fire(new BikeRejectedEvent(approval.getId(), approval.getBikeId()));
+			bikeApproval.setApproval(ApprovalStatus.Rejected);
+			domainEventPublisher.fireAsync(new ApprovalRejectedEvent(bikeApproval.getId(), bikeApproval.getBikeId()));
     }
 
 	}

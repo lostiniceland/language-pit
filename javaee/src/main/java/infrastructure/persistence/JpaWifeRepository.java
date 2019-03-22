@@ -41,14 +41,13 @@ public class JpaWifeRepository implements WifeRepository {
   }
 
   @Override
-  public void addBikeApproval(BikeApproval approval) {
-    em.persist(approval);
-    em.flush();
+	public void addBikeApproval(BikeApproval bikeApproval) {
+		em.persist(bikeApproval);
   }
 
   @Override
-  public void removeBikeApproval(BikeApproval approval) {
-    em.remove(approval);
+	public void removeBikeApproval(BikeApproval bikeApproval) {
+		em.remove(bikeApproval);
   }
 
   @Override
