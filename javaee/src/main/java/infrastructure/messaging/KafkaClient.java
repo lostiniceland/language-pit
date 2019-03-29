@@ -59,7 +59,7 @@ public class KafkaClient implements ProtobufEventPublisher {
           new ProducerRecord<>(kafkaEventTopic, envelope.toByteArray()));
       future.get(); // Block until delivered
     } catch (KafkaException | InterruptedException | ExecutionException e) {
-      logger.error("Could not send event {} to Kafka", e);
+      logger.error("Could not send event {} to Kafka", envelope, e);
       throw new ApplicationRuntimeException("Communication with Kafka failed");
     }
   }

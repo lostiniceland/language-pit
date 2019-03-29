@@ -13,18 +13,8 @@ public class CdiDomainEventPublisher implements DomainEventPublisher {
 	Event<DomainEvent> domainEventPublisher;
 
 	@Override
-	public void fireSync(DomainEvent event) {
+	public void fire(DomainEvent event) {
 		domainEventPublisher.fire(event);
 	}
 
-	@Override
-	public void fireAsync(DomainEvent event) {
-		domainEventPublisher.fireAsync(event);
-	}
-
-	@Override
-	public void fireSyncAndAsync(DomainEvent event) {
-		domainEventPublisher.fireAsync(event);
-		domainEventPublisher.fire(event);
-	}
 }

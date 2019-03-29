@@ -1,6 +1,5 @@
 package application;
 
-import domain.DomainEventPublisher;
 import domain.bikes.Bike;
 import domain.wife.ApprovalService;
 import domain.wife.BikeApproval;
@@ -16,7 +15,6 @@ import javax.transaction.Transactional.TxType;
 public class WifeService {
 
   private WifeRepository wifeRepository;
-	private DomainEventPublisher domainEventPublisher;
   private WifeBpmnProcess wifeBpmnProcess;
 	private ApprovalService approvalService;
 
@@ -25,16 +23,14 @@ public class WifeService {
   }
 
   @Inject
-	protected WifeService(WifeRepository wifeRepository, WifeBpmnProcess wifeBpmnProcess, DomainEventPublisher domainEventPublisher,
-			ApprovalService approvalService) {
+	protected WifeService(WifeRepository wifeRepository, WifeBpmnProcess wifeBpmnProcess, ApprovalService approvalService) {
     this.wifeRepository = wifeRepository;
     this.wifeBpmnProcess = wifeBpmnProcess;
-		this.domainEventPublisher = domainEventPublisher;
 		this.approvalService = approvalService;
   }
 
 
-  @Transactional(TxType.REQUIRES_NEW)
+	@Transactional(TxType.MANDATORY)
   void handleNewBike(long bikeId, float value) {
     int bikesOwned = wifeRepository.countAllBikesOwned();
     wifeBpmnProcess.startApprovalProcessForNewBike(bikeId, value, bikesOwned);

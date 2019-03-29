@@ -22,10 +22,10 @@ public class ApprovalService {
 	public void completeApproval(BikeApproval bikeApproval, boolean decision) {
 		if (decision) {
 			bikeApproval.setApproval(ApprovalStatus.Accepted);
-			domainEventPublisher.fireAsync(new ApprovalAcceptedEvent(bikeApproval.getId(), bikeApproval.getBikeId()));
+			domainEventPublisher.fire(new ApprovalAcceptedEvent(bikeApproval.getId(), bikeApproval.getBikeId()));
     } else {
 			bikeApproval.setApproval(ApprovalStatus.Rejected);
-			domainEventPublisher.fireAsync(new ApprovalRejectedEvent(bikeApproval.getId(), bikeApproval.getBikeId()));
+			domainEventPublisher.fire(new ApprovalRejectedEvent(bikeApproval.getId(), bikeApproval.getBikeId()));
     }
 
 	}

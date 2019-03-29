@@ -36,7 +36,7 @@ public class BikeService {
     parts.forEach(part -> entity.addPart(new Part(part.getName(), part.getWeight())));
     bikeRepository.addBike(entity);
 		// we know that a bike cannot be updated as long as it is pending, so running async is fine
-		domainEventPublisher.fireAsync(new BikeCreatedEvent(entity));
+    domainEventPublisher.fire(new BikeCreatedEvent(entity));
     return entity;
   }
 

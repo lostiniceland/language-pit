@@ -107,9 +107,9 @@ public class Bike extends BaseEntity {
 		}
 		this.approval = newStatus;
 		if (approval == ApprovalStatus.Accepted) {
-			publisher.fireAsync(new BikeApprovedEvent(getId()));
+			publisher.fire(new BikeApprovedEvent(getId()));
 		} else {
-			publisher.fireAsync(new BikeRejectedEvent(getId()));
+			publisher.fire(new BikeRejectedEvent(getId()));
 		}
 	}
 
@@ -124,7 +124,7 @@ public class Bike extends BaseEntity {
     this.value = value;
     this.parts.retainAll(parts);
 
-		publisher.fireSync(new BikeApprovedEvent(getId()));
+		publisher.fire(new BikeApprovedEvent(getId()));
 
     return this;
   }

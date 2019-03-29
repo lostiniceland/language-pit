@@ -54,7 +54,7 @@ class Actionwords extends StatefullActionword {
 	boolean aNotificationAboutTheApprovalOutcomeMustBeSent(approvalResult = "") {
     String id = getState("created-bike-id", String.class)
     def event = eventConsumer.lookupEvent { envelope ->
-			if (approvalResult == "approved")
+			if (approvalResult == "accepted")
 				return envelope.hasBikeApproved() && envelope.getBikeApproved().bikeId == Long.valueOf(id)
 			else if (approvalResult == "rejected")
 				return envelope.hasBikeRejected() && envelope.getBikeRejected().bikeId == Long.valueOf(id)

@@ -12,9 +12,10 @@ import javax.persistence.Version;
 public class BaseEntity {
 
   @Version
-  @Column
+  private long version;
+  @Column(columnDefinition = "TIMESTAMP")
   private Timestamp updated;
-  @Column(updatable = false)
+  @Column(columnDefinition = "TIMESTAMP")
   private Timestamp created;
 
   public LocalDateTime getUpdated() {
@@ -26,12 +27,11 @@ public class BaseEntity {
   }
 
   @PrePersist
-  void onCreate() {
-    this.created = Timestamp.valueOf(LocalDateTime.now());
-  }
-
   @PreUpdate
-  void onUpdate() {
+  void onCreateOrUpdate() {
+    if (created == null) {
+      this.created = Timestamp.valueOf(LocalDateTime.now());
+    }
     this.updated = Timestamp.valueOf(LocalDateTime.now());
   }
 }
