@@ -10,29 +10,20 @@ public class JpaBikeApprovalStatusConverter implements AttributeConverter<Approv
 	@SuppressWarnings("Duplicates")
 	@Override
 	public String convertToDatabaseColumn(ApprovalStatus attribute) {
-		switch (attribute) {
-			case Pending:
-				return "P";
-			case Accepted:
-				return "A";
-			case Rejected:
-				return "R";
-			default:
-				throw new IllegalArgumentException("Unknown " + attribute);
-		}
+		return switch (attribute) {
+			case Pending -> "P";
+			case Accepted -> "A";
+			case Rejected -> "R";
+		};
 	}
 
 	@Override
 	public ApprovalStatus convertToEntityAttribute(String dbData) {
-		switch (dbData) {
-			case "P":
-				return ApprovalStatus.Pending;
-			case "A":
-				return ApprovalStatus.Accepted;
-			case "R":
-				return ApprovalStatus.Rejected;
-			default:
-				throw new IllegalArgumentException("Unknown " + dbData);
-		}
+		return switch (dbData) {
+			case "P" -> ApprovalStatus.Pending;
+			case "A" -> ApprovalStatus.Accepted;
+			case "R" -> ApprovalStatus.Rejected;
+			default -> throw new IllegalArgumentException("Unknown " + dbData);
+		};
 	}
 }

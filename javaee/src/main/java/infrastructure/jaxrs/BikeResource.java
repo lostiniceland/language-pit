@@ -172,20 +172,11 @@ public class BikeResource {
   }
 
   private static ApprovalStatus convertApprovalToDomain(Bikes.ApprovalEnumType approval) {
-    ApprovalStatus result;
-    switch (approval) {
-      case PENDING:
-        result = ApprovalStatus.Pending;
-        break;
-      case ACCEPTED:
-        result = ApprovalStatus.Accepted;
-        break;
-      case REJECTED:
-        result = ApprovalStatus.Rejected;
-        break;
-      default:
-        throw new IllegalArgumentException("enum not handled: " + approval);
-    }
-    return result;
+    return switch (approval) {
+      case PENDING -> ApprovalStatus.Pending;
+      case ACCEPTED -> ApprovalStatus.Accepted;
+      case REJECTED -> ApprovalStatus.Rejected;
+      case UNRECOGNIZED, UNKNOWN -> throw new IllegalArgumentException("enum not handled: " + approval);
+    };
   }
 }

@@ -71,20 +71,10 @@ public class WifeResource {
 
 
   private static Wife.ApprovalEnumType convertApprovalToProtobuf(ApprovalStatus approvalStatus) {
-    ApprovalEnumType result;
-    switch (approvalStatus) {
-      case Pending:
-        result = ApprovalEnumType.PENDING;
-        break;
-      case Accepted:
-        result = ApprovalEnumType.ACCEPTED;
-        break;
-      case Rejected:
-        result = ApprovalEnumType.REJECTED;
-        break;
-      default:
-        throw new IllegalArgumentException("enum not handled: " + approvalStatus);
-    }
-    return result;
+    return switch (approvalStatus) {
+      case Pending -> ApprovalEnumType.PENDING;
+      case Accepted -> ApprovalEnumType.ACCEPTED;
+      case Rejected -> ApprovalEnumType.REJECTED;
+    };
   }
 }

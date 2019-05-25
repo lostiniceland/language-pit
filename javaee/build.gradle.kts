@@ -63,14 +63,15 @@ dependencies {
 
 
 configure<JavaPluginConvention> {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	sourceCompatibility = JavaVersion.VERSION_12
+	targetCompatibility = JavaVersion.VERSION_12
 }
 
 
 tasks {
 	withType<JavaCompile> {
 		dependsOn("generateProto")
+		options.compilerArgs.add("--enable-preview")
 	}
 }
 
@@ -91,12 +92,11 @@ protobuf {
 }
 
 
-//val libertyVersion = "19.0.0.1"
-val libertyVersion = "19.0.0.2"
+val libertyVersion = "19.0.0.5"
 val libertyDockerFolder = "$buildDir/docker/openliberty"
 val libertyConfigFolder = "${project.projectDir}/config-resources-openliberty"
 val libertyInstallFolder = "${project.projectDir}/server/wlp-$libertyVersion"
-val libertyServerFolder = "$libertyInstallFolder/usr/servers/default"
+val libertyServerFolder = "$libertyInstallFolder/wlp/usr/servers/default"
 val libertyServerPostgresFolder = "$libertyServerFolder/lib-postgres"
 
 tasks {
@@ -112,8 +112,7 @@ tasks {
 		doLast{
 			println("Download Openliberty from Maven-Central")
 			val libertyDownloadZip = File(project.buildDir.absolutePath + "/wlp.zip")
-//			var url = "http://central.maven.org/maven2/io/openliberty/openliberty-javaee8/$libertyVersion/openliberty-javaee8-$libertyVersion.zip"
-			var url = "https://public.dhe.ibm.com/ibmdl/export/pub/software/openliberty/runtime/release/2019-01-24_2339/openliberty-javaee8-19.0.0.1.zip"
+			var url = "http://central.maven.org/maven2/io/openliberty/openliberty-javaee8/$libertyVersion/openliberty-javaee8-$libertyVersion.zip"
 			Fuel.download(url)
 					.fileDestination { _, _ -> libertyDownloadZip }
 					.response()
