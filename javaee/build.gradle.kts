@@ -30,35 +30,56 @@ repositories {
 	jcenter()
 }
 
+val versionJEE = "8.0"
+val versionSLF4J = "1.7.26"
 val versionProtobuf = "3.6.1"
+val versionProtobufJavaFormat = "1.4"
 val versionCamunda = "7.10.0"
+val versionAutoValue = "1.6"
+val versionKafkaClient = "2.0.0"
+val versionFlyway = "6.0.0-beta"
+
+val versionOpenlibertyEclipselink = "2.7.1"
+val versionOpenlibertyJackson = "2.9.5"
+val versionOpenlibertyTransactionApi = "1.1.25"
+
+// testing
+val versionJUnit = "4.+"
+val versionGroovy = "2.5.+"
+val versionSpock = "1.3-groovy-2.5"
+val versionSpockReports = "1.6.1"
+val versionCglib = "3.2.10"
+val versionObjenesis = "3.0.1"
+val versionEqualsVerifier = "3.1.5"
+val versionCamundaAssert = "1.2"
+val versionH2 = "1.3.198"
 
 
 dependencies {
-	compileOnly(group = "javax", name = "javaee-api", version = "8.0")
-	compileOnly(group = "org.eclipse.persistence", name = "eclipselink", version = "2.7.1")
-	compileOnly(group = "com.ibm.websphere.appserver.api", name = "com.ibm.websphere.appserver.api.transaction", version = "1.1.25")
-	compile(group = "com.google.auto.value", name = "auto-value-annotations", version = "1.6")
-	annotationProcessor(group = "com.google.auto.value", name = "auto-value", version = "1.6")
+	compileOnly(group = "javax", name = "javaee-api", version = versionJEE)
+	compileOnly(group = "org.eclipse.persistence", name = "eclipselink", version = versionOpenlibertyEclipselink)
+	compileOnly(group = "com.ibm.websphere.appserver.api", name = "com.ibm.websphere.appserver.api.transaction", version = versionOpenlibertyTransactionApi)
+	compile(group = "com.google.auto.value", name = "auto-value-annotations", version = versionAutoValue)
+	annotationProcessor(group = "com.google.auto.value", name = "auto-value", version = versionAutoValue)
 	compile(group = "com.google.protobuf", name = "protobuf-java", version = versionProtobuf)
-	compile(group = "com.googlecode.protobuf-java-format", name = "protobuf-java-format", version = "1.4")
-	compileOnly(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = "2.9.5")
-	compile(group = "org.slf4j", name = "slf4j-api", version = "1.7.26")
-	compile(group = "org.slf4j", name = "slf4j-simple", version = "1.7.26")
-	compile(group = "org.apache.kafka", name = "kafka-clients", version = "2.0.0")
-	compile(group = "org.flywaydb", name = "flyway-core", version = "6.0.0-beta") // beta due to Postgres 11
+	compile(group = "com.googlecode.protobuf-java-format", name = "protobuf-java-format", version = versionProtobufJavaFormat)
+	compileOnly(group = "com.fasterxml.jackson.core", name = "jackson-databind", version = versionOpenlibertyJackson)
+	compile(group = "org.slf4j", name = "slf4j-api", version = versionSLF4J)
+	compile(group = "org.slf4j", name = "slf4j-simple", version = versionSLF4J)
+	compile(group = "org.apache.kafka", name = "kafka-clients", version = versionKafkaClient)
+	compile(group = "org.flywaydb", name = "flyway-core", version = versionFlyway) // beta due to Postgres 11
 	compile(group = "org.camunda.bpm", name = "camunda-engine", version = versionCamunda)
 	compile(group = "org.camunda.bpm", name = "camunda-engine-cdi", version = versionCamunda)
 
-	testCompile(group = "junit", name = "junit", version = "4.+")
-	testCompile(group = "org.codehaus.groovy", name = "groovy-all", version = "2.5.+")
-	testCompile(group = "org.spockframework", name = "spock-core", version = "1.3-groovy-2.5")
-	testCompile(group = "com.athaydes", name = "spock-reports", version = "1.6.1") { setTransitive(false) }
-	testCompile(group = "cglib", name = "cglib-nodep", version = "3.2.10")
-	testCompile(group = "org.objenesis", name = "objenesis", version = "3.0.1")
-	testCompile(group = "nl.jqno.equalsverifier", name = "equalsverifier", version = "3.1.5")
-	testCompile(group = "org.camunda.bpm.extension", name = "camunda-bpm-assert", version = "1.2")
-	testCompile(group = "com.h2database", name = "h2", version = "1.4.198")
+	testCompile(group = "junit", name = "junit", version = versionJUnit)
+	testCompile(group = "org.codehaus.groovy", name = "groovy-all", version = versionGroovy)
+	testCompile(group = "org.spockframework", name = "spock-core", version = versionSpock)
+	testCompile(group = "com.athaydes", name = "spock-reports", version = versionSpockReports) { setTransitive(false) }
+	testCompile(group = "cglib", name = "cglib-nodep", version = versionCglib)
+	testCompile(group = "org.objenesis", name = "objenesis", version = versionObjenesis)
+	testCompile(group = "nl.jqno.equalsverifier", name = "equalsverifier", version = versionEqualsVerifier)
+	testCompile(group = "org.camunda.bpm.extension", name = "camunda-bpm-assert", version = versionCamundaAssert)
+	testCompile(group = "com.h2database", name = "h2", version = versionH2)
 }
 
 
