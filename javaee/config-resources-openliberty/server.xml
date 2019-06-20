@@ -7,7 +7,7 @@
 
   <applicationMonitor updateTrigger="mbean"/>
 
-  <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="8080"/>
+  <httpEndpoint id="defaultHttpEndpoint" host="*" httpPort="9080"/>
 
   <dataSource id="BikeDataSource"
     jndiName="jdbc/bikes"

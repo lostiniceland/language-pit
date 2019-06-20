@@ -154,20 +154,11 @@ public class BikeResource {
       .build();
 
   private static Bikes.ApprovalEnumType convertApprovalToProtobuf(ApprovalStatus approvalStatus) {
-    ApprovalEnumType result;
-    switch (approvalStatus) {
-      case Pending:
-        result = ApprovalEnumType.PENDING;
-        break;
-      case Accepted:
-        result = ApprovalEnumType.ACCEPTED;
-        break;
-      case Rejected:
-        result = ApprovalEnumType.REJECTED;
-        break;
-      default:
-        throw new IllegalArgumentException("enum not handled: " + approvalStatus);
-    }
+    ApprovalEnumType result = switch (approvalStatus) {
+      case Pending -> ApprovalEnumType.PENDING;
+      case Accepted -> ApprovalEnumType.ACCEPTED;
+      case Rejected -> ApprovalEnumType.REJECTED;
+    };
     return result;
   }
 
