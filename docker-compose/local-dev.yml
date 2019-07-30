@@ -2,11 +2,13 @@
 # e.g. within an IDE
 version: '3.2'
 services:
+
   zookeeper:
     image: wurstmeister/zookeeper
     container_name: zookeeper
     ports:
       - 2181:2181
+
 
   kafka:
     image: wurstmeister/kafka
@@ -24,8 +26,10 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_CREATE_TOPICS: "${TOPIC_NAME:-language-pit.events}:2:1"
+      LOG4J_LOGGER_KAFKA: WARN
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
 
   postgres:
     image: postgres
@@ -37,5 +41,51 @@ services:
     # set random access cost for SSD (default is 4.0 which is targeted at HDDs)
     # set prepared-transaction limit for XA-DataSources
     command: ["-c", "random_page_cost=1.0", "-c", "max_prepared_transactions=110"]
+
+
+  zeebe:
+    image: camunda/zeebe:latest
+    container_name: zeebe
+    ports:
+      - 26500:26500
+    volumes:
+      - ./zeebe/zeebe.cfg.toml:/usr/local/zeebe/conf/zeebe.cfg.toml
+
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.7.1
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      - discovery.type=single-node
+      - cluster.name=elasticsearch
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+
+
+  zeebe-operate:
+    depends_on:
+      - elasticsearch
+      - zeebe
+    image: camunda/operate:latest
+    container_name: operate
+    ports:
+      - 8080:8080
+    volumes:
+      - ./zeebe/operate-application.yml:/usr/local/operate/config/application.yml
+
+
+  kibana:
+    depends_on:
+      - elasticsearch
+    image: docker.elastic.co/kibana/kibana:6.7.1
+    container_name: kibana
+    ports:
+      - 5601:5601
+    environment:
+      SERVER_NAME: localhost
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      LOGGING_QUIET: "true"
 
 

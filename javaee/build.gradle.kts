@@ -19,6 +19,7 @@ plugins {
 	groovy
 	id("com.google.protobuf") version "0.8.8"
 	id("com.google.cloud.tools.jib") version "1.2.0"
+//	id("info.solidsoft.pitest") version "1.4.0" doesnt work with Spock
 }
 
 version = "0.1.0"
@@ -29,15 +30,14 @@ repositories {
 	jcenter()
 }
 
-val versionJEE = "8.0"
+val versionJEE = "8.0.1"
 val versionSLF4J = "1.7.26"
-val versionProtobuf = "3.6.1"
+val versionProtobuf = "3.8.0"
 val versionProtobufJavaFormat = "1.4"
-val versionZeebe = "0.18.0"
-val versionCamunda = "7.10.0"
+val versionZeebe = "0.20.0"
 val versionAutoValue = "1.6"
-val versionKafkaClient = "2.0.0"
-val versionFlyway = "6.0.0-beta"
+val versionKafkaClient = "2.3.0"
+val versionFlyway = "6.0.0-beta2"
 
 val versionOpenlibertyEclipselink = "2.7.1"
 val versionOpenlibertyJackson = "2.9.5"
@@ -51,8 +51,6 @@ val versionSpockReports = "1.6.1"
 val versionCglib = "3.2.+"
 val versionObjenesis = "3.0.+"
 val versionEqualsVerifier = "3.+"
-val versionCamundaAssert = "1.2"
-val versionH2 = "1.3.+"
 
 
 dependencies {
@@ -69,18 +67,15 @@ dependencies {
 	compile(group = "org.apache.kafka", name = "kafka-clients", version = versionKafkaClient)
 	compile(group = "org.flywaydb", name = "flyway-core", version = versionFlyway) // beta due to Postgres 11
 	compile(group = "io.zeebe", name = "zeebe-client-java", version = versionZeebe)
-	compile(group = "org.camunda.bpm", name = "camunda-engine", version = versionCamunda)
-	compile(group = "org.camunda.bpm", name = "camunda-engine-cdi", version = versionCamunda)
 
 	testCompile(group = "junit", name = "junit", version = versionJUnit)
 	testCompile(group = "org.codehaus.groovy", name = "groovy-all", version = versionGroovy)
 	testCompile(group = "org.spockframework", name = "spock-core", version = versionSpock)
-	testCompile(group = "com.athaydes", name = "spock-reports", version = versionSpockReports) { setTransitive(false) }
+	testCompile(group = "com.athaydes", name = "spock-reports", version = versionSpockReports) { isTransitive = false }
 	testCompile(group = "cglib", name = "cglib-nodep", version = versionCglib)
 	testCompile(group = "org.objenesis", name = "objenesis", version = versionObjenesis)
 	testCompile(group = "nl.jqno.equalsverifier", name = "equalsverifier", version = versionEqualsVerifier)
-	testCompile(group = "org.camunda.bpm.extension", name = "camunda-bpm-assert", version = versionCamundaAssert)
-	testCompile(group = "com.h2database", name = "h2", version = versionH2)
+	testCompile(group = "io.zeebe", name = "zeebe-test", version = versionZeebe)
 }
 
 
@@ -131,7 +126,15 @@ jib {
 	}
 }
 
-val libertyVersion = "19.0.0.5"
+//pitest {
+// doesnt work with Spock
+//	targetClasses = mutableSetOf("bikes.domain.*")  //by default "${project.group}.*"
+//	threads = 4
+//	outputFormats = mutableSetOf("XML", "HTML")
+//	timestampedReports = false
+//}
+
+val libertyVersion = "19.0.0.7"
 val libertyConfigFolder = "${project.projectDir}/config-resources-openliberty"
 val libertyInstallFolder = "${project.projectDir}/server/wlp-$libertyVersion"
 val libertyServerFolder = "$libertyInstallFolder/wlp/usr/servers/default"

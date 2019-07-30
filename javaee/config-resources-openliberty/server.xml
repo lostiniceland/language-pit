@@ -58,7 +58,4 @@
   <jndiEntry jndiName="kafkaPort" value='"${env.KAFKA_PORT}"'/>
   <jndiEntry jndiName="kafkaEventTopic" value='"${env.KAFKA_EVENT_TOPIC}"'/>
 
-  <!-- used for docker deployments, wont do anything on local -->
-  <webApplication contextRoot="/" location="bikes.war"/>
-
 </server>

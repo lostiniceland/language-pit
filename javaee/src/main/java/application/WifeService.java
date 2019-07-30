@@ -36,7 +36,7 @@ public class WifeService {
     wifeBpmnProcess.startApprovalProcessForNewBike(bikeId, value, bikesOwned);
   }
 
-  @Transactional(TxType.MANDATORY)
+	@Transactional(TxType.REQUIRED)
   public BikeApproval createNewApproval(long bikeId, float value) {
     BikeApproval entity = new BikeApproval(bikeId, value);
     wifeRepository.addBikeApproval(entity);
